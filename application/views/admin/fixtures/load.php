@@ -1,0 +1,1 @@
+<?php echo html::anchor('admin/fixtures/menu', 'Menu'); ?>

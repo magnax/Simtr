@@ -1,0 +1,15 @@
+<?php defined('SYSPATH') or die('No direct script access.'); ?>
+
+2011-01-21 16:31:10 --- ERROR: ReflectionException [ -1 ]: Class controller_guest_location does not exist ~ SYSPATH/classes/kohana/request.php [ 1028 ]
+2011-01-21 16:32:00 --- ERROR: ReflectionException [ 0 ]: Method action_index does not exist ~ SYSPATH/classes/kohana/request.php [ 1046 ]
+2011-01-21 16:52:24 --- ERROR: ErrorException [ 8 ]: Undefined variable: used_slots ~ APPPATH/views/user/location/index.php [ 1 ]
+2011-01-21 16:53:05 --- ERROR: ReflectionException [ -1 ]: Class controller_guest_inventory does not exist ~ SYSPATH/classes/kohana/request.php [ 1028 ]
+2011-01-21 16:55:57 --- ERROR: ErrorException [ 8 ]: Undefined variable: character ~ APPPATH/views/user/location/index.php [ 2 ]
+2011-01-21 16:57:41 --- ERROR: ErrorException [ 8 ]: Undefined variable: location ~ APPPATH/views/user/location/index.php [ 2 ]
+2011-01-21 16:58:06 --- ERROR: Kohana_Exception [ 0 ]: View variable is not set: location ~ SYSPATH/classes/kohana/view.php [ 171 ]
+2011-01-21 17:03:25 --- ERROR: ErrorException [ 8 ]: Trying to get property of non-object ~ APPPATH/classes/controller/user/location.php [ 9 ]
+2011-01-21 17:20:41 --- ERROR: ErrorException [ 8 ]: Undefined variable: id ~ APPPATH/classes/model/location/redis.php [ 11 ]
+2011-01-21 17:25:05 --- ERROR: ErrorException [ 1 ]: Cannot access protected property Model_Location_Redis::$used_slots ~ APPPATH/classes/controller/user/location.php [ 10 ]
+2011-01-21 17:25:34 --- ERROR: ErrorException [ 1 ]: Cannot access protected property Model_Location_Redis::$used_slots ~ APPPATH/classes/controller/user/location.php [ 10 ]
+2011-01-21 17:33:57 --- ERROR: ErrorException [ 8 ]: Undefined index: name ~ APPPATH/views/user/location/index.php [ 2 ]
+2011-01-21 17:43:57 --- ERROR: ErrorException [ 1 ]: Class 'Model_Resource' not found ~ APPPATH/classes/controller/user/location.php [ 13 ]
