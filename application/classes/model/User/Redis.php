@@ -84,13 +84,23 @@ class Model_User_Redis extends Model_User {
         $this->source->expire("active:{$this->id}", 900);
     }
 
-    public function update(array $data) {
-        $this->firstname = $data['firstname'];
-        $this->lastname = $data['lastname'];
-        $this->birthdate = strtotime($data['birthdate']);
+    public function save() {
         $this->source->set("users:{$this->id}", json_encode($this->toArray()));
     }
 
+    public function createNew($post) {
+        $this->id = $this->source->incr('global:IDUser');
+
+        $this->email = $post['email'];
+        $this->register_date = date("Y-m-d H:i:s");
+        $this->characters = array();
+
+        $this->source->sadd('global:emails', $post['email']);
+        $this->source->set("users:{$this->id}:password", $post['pass']);
+        $this->source->set("users:{$this->id}:email", $post['email']);
+
+        return $this;
+    }
 }
 
 ?>

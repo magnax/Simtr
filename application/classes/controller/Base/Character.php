@@ -28,8 +28,7 @@ class Controller_Base_Character extends Controller_Base_User {
 
         $this->character = 
             Model_Character::getInstance($this->redis)
-                ->fetchOne($this->user
-                ->getCurrentCharacter());
+                ->fetchOne($this->user->getCurrentCharacter());
 
         $this->character->countAge($this->game->getRawTime());
 

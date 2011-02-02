@@ -3,7 +3,7 @@
 abstract class Model_ChNames {
 
     protected $age_strings = array(
-        'F'=>array(
+        'K'=>array(
             20=>'dwudziestoletnia',
             30=>'trzydziestoletnia',
             40=>'czterdziestoletnia',

@@ -3,6 +3,6 @@
 <?php endif; ?>
 <form action="<?php echo URL::site('check_login'); ?>" method="POST">
     ID użytkownika: <input type="text" name="iduser"><br />
-    Hasło: <input type="text" name="pass"><br />
+    Hasło: <input type="password" name="pass"><br />
     <input type="submit" value="Zaloguj">
 </form>

@@ -80,7 +80,41 @@ class Controller_User_Event extends Controller_Base_Character {
         $this->request->redirect('events');
         
     }
-    
+
+    public function action_give_raw($id) {
+        $raws = $this->character->getRaws();
+        $all_characters = $this->location
+            ->getAllHearableCharacters(true);
+        $this->view->all_characters = array();
+        foreach ($all_characters as $char) {
+            if ($char['id'] != $this->character->getId()) {
+                $this->view->all_characters[$char['id']] = $char['name'];
+            }
+        }
+        $this->view->res = $raws[$id];
+        $this->view->character = $this->template->character;
+    }
+
+    public function action_give() {
+        print_r($_POST);
+        $dest_character = Model_Character::getInstance($this->redis)
+                ->fetchOne($_POST['character_id']);
+        $this->character->putRaw($_POST['res_id'], $_POST['amount']);
+        $dest_character->addRaw($_POST['res_id'], $_POST['amount']);
+
+        //wysłanie eventu
+        $event = Model_Event::getInstance(Model_Event::GIVE_RAW, $this->game->getRawTime(), $this->redis);
+        $event->setResource($_POST['res_id'], $_POST['amount']);
+        //recipients to lista obiektów klasy Character
+        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType()));
+        $event->setSender($this->character->getId());
+        $event->setRecipient($dest_character->getId());
+        $event->send();
+
+        $this->request->redirect('events');
+
+    }
+
 }
 
 ?>

@@ -1,3 +1,4 @@
+<div class="title_bar">User info</div>
 <div id="userinfo">
     <table>
         <tr>

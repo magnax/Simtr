@@ -91,3 +91,7 @@ body, td {
 .myproject {
     font-weight: bold;
 }
+
+.list {
+    text-align: left;
+}

@@ -2,7 +2,7 @@
 
 abstract class Model_Location {
 
-    protected $PLACE_HEARABLE = array('loc', 'veh', 'shp', 'cab');
+    protected $PLACE_HEARABLE = array('loc', 'veh', 'shp');
     
     protected $id;
     protected $name;

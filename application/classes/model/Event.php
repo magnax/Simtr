@@ -7,6 +7,8 @@ abstract class Model_Event {
     const PUT_RAW = 'PutRaw';
     const GET_RAW = 'GetRaw';
     const GET_RAW_END = 'GetRawEnd';
+    const SPAWN = 'Spawn';
+    const GIVE_RAW = 'GiveRaw';
 
     /**
      * wspólne właściwości

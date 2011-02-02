@@ -23,6 +23,10 @@ class Model_Location_Redis extends Model_Location {
         }
     }
 
+    public function appendCharacter($id) {
+        $this->source->sadd("locations:{$this->id}:characters", $id);
+    }
+
     private function getAllCharactersId() {
         //wszystkie id postaci należących do danej lokacji
         //łącznie z budynkami, pojazdami, statkami
@@ -30,10 +34,10 @@ class Model_Location_Redis extends Model_Location {
 
     }
 
-    public function getAllHearableCharacters() {
+    public function getAllHearableCharacters($as_array = false) {
 
         $all_chars_id = $this->getAllCharactersId();
-        
+
         $hearable_chars = array();
 
         foreach ($all_chars_id as $char_id) {
@@ -41,7 +45,11 @@ class Model_Location_Redis extends Model_Location {
                     ->fetchOne($char_id)
                     ->toArray();
             if (in_array($tmp_char['place_type'], $this->PLACE_HEARABLE)) {
-                $hearable_chars[] = $tmp_char['id'];
+                if ($as_array) {
+                    $hearable_chars[] = $tmp_char;
+                } else {
+                    $hearable_chars[] = $tmp_char['id'];
+                }
             }
 
         }

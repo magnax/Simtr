@@ -6,39 +6,6 @@
  */
 class Controller_User_Char extends Controller_Base_Character {
 
-    /**
-     * formularz tworzenia nowej postaci
-     */
-    public function action_newform() {
-        
-    }
-
-    /**
-     * sprawdzenie i utworzenie nowej postaci
-     * "spawning" w losowej lokacji
-     * przypisanie początkowych współczynników
-     */
-    public function action_new() {
-
-        if (!isset ($_POST['name']) || !isset ($_POST['sex'])) {
-            $this->redirectError('Musi być podane imię oraz płeć', '/u/char/newform');
-        }
-
-        $character = Model_Character::getInstance($this->redis);
-        $character->setName($_POST['name']);
-        $character->setSex($_POST['sex']);
-        $character->setIDUser($this->user->getID());
-
-        $id_location = $this->redis->srandmember('global:locations');
-        $character->setIDLocation($id_location);
-
-        $character->save($this->game->getRawTime());
-
-        $this->request->redirect('u/menu');
-
-    }
-    
-
     public function action_nameform($id) {
         $character = Model_Character::getInstance($this->redis)->fetchOne($id);
         $this->view->character_id = $id;

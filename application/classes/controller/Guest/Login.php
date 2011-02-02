@@ -61,14 +61,14 @@ class Controller_Guest_Login extends Controller_Base_Guest {
             $this->redirectError('Istnieje podany mail', 'registerform');
         }
 
-        $IDUser = $this->redis->incr('global:IDUser');
-        $this->redis->sadd('global:emails', $email);
-        $this->redis->set("users:$IDUser:password", $password);
-        $this->redis->set("users:$IDUser:email", $email);
+        $user = Model_User::getInstance($this->redis)
+            ->createNew($_POST);
 
-        $this->redis->save();
+        $user->save();
+        
+        //$this->redis->save();
 
-        $this->view->IDUser = $IDUser;
+        $this->view->IDUser = $user->getID();
 
     }
 

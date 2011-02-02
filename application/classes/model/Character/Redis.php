@@ -1,7 +1,21 @@
 <?php
 
 class Model_Character_Redis extends Model_Character {
-    
+
+    public function createNew($time, $id_location) {
+
+        if (!$this->id) {
+            $this->id = $this->source->incr("global:IDCharacter");
+        }
+        $this->spawn_date = $time;
+        $this->spawn_location_id = $id_location;
+        $this->location_id = $id_location;
+        $this->eq_weight = 0;
+        $this->place_type = 'loc';
+        $this->place_id = $id_location;
+
+    }
+
     public function save() {
 
         $tmp_char = $this->toArray();
@@ -43,15 +57,6 @@ class Model_Character_Redis extends Model_Character {
         
     }
 
-    /**
-     * zwraca zapamiętane imię podanej postaci
-     */
-    public function getChName($id) {
-        $name = $this->source->get("characters:{$this->id}:chnames:$id");
-
-        return $name ? $name : '20-latek';
-    }
-
     public function getEvents() {
         $size = $this->source->llen("characters:{$this->id}:events");
         if ($size) {
@@ -60,43 +65,13 @@ class Model_Character_Redis extends Model_Character {
             return array();
         }
         $return_events = array();
+
+        $event_dispatcher = Model_EventDispatcher::getInstance($this->source);
+        $event_dispatcher->setIdCharacter($this->id);
+
         foreach ($events as $event) {
 
-            $e = json_decode($this->source->get("events:$event"), true);
-            
-            if ($e['sndr'] == $this->id) {
-                $person = 1;
-            } elseif (isset($e['rcpt']) && $e['rcpt'] == $this->id) {
-                $person = 2;
-            } else {
-                $person = 3;
-            }
-            
-            $format = $this->source->get("global:event_tpl:{$e['type']}:$person");
-            $args = $this->source->lrange("global:event_tpl:{$e['type']}:$person:params", 0, -1);
-            
-            foreach($args as &$a) {
-                if ($a == 'sndr' || $a == 'rcpt') {                   
-                    $a = html::anchor('u/char/nameform/'.$e[$a], $this->getChName($e[$a]));
-                } elseif ($a == 'res_id') {
-                    $res = Model_Resource::getInstance($this->source)
-                            ->findOneById($e[$a])
-                            ->getName('d');
-                    $a = $res;
-                } else {
-                    $a = $e[$a];
-                }
-            }
-            if (!$format || !$args) {
-                $e['text'] = 'coś nie tak...';
-            } else {
-                $e['text'] = @vsprintf($format, $args);
-                if (!$e['text']) {
-                    $e['text'] = 'ERROR: '.$format.' L.arg.:'.count($args).' Person:'.$person;
-                }
-            }
-
-            $return_events[] = $e;
+            $return_events[] = $event_dispatcher->formatEvent($event);
             
         }
                
@@ -137,16 +112,12 @@ class Model_Character_Redis extends Model_Character {
         $this->eq_weight -= $amount;
         $this->save();
 
-        $this->source->del("characters:{$this->id}:equipment:raws");
-
-        foreach ($raws as $r) {
-            $tmp = array($r['id']=>$r['amount']);
-            $this->source->sadd("characters:{$this->id}:equipment:raws", json_encode($tmp));
-        }
+        $this->saveRaws($raws);
 
     }
 
     public function addRaw($id, $amount) {
+
         $raws = $this->getRaws();
         if (isset($raws[$id])) {
             $raws[$id]['amount'] += $amount;
@@ -161,6 +132,11 @@ class Model_Character_Redis extends Model_Character {
         $this->eq_weight += $amount;
         $this->save();
 
+        $this->saveRaws($raws);
+
+    }
+
+    protected function saveRaws($raws) {
 
         $this->source->del("characters:{$this->id}:equipment:raws");
 
@@ -168,6 +144,7 @@ class Model_Character_Redis extends Model_Character {
             $tmp = array($r['id']=>$r['amount']);
             $this->source->sadd("characters:{$this->id}:equipment:raws", json_encode($tmp));
         }
+
     }
 
 }

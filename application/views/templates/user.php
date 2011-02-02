@@ -14,8 +14,11 @@
 <div id="usermenu">
     <?php include Kohana::find_file('views', 'user/menu') ?>
 </div>
+
 <?php if (isset($character)): ?>
     <?php echo View::factory('user/charinfo', array('character'=>$character)); ?>
+<?php else: ?>
+    <?php echo View::factory('user/userinfo', array('user'=>$user)); ?>
 <?php endif; ?>
 <?php echo $content; ?>
         </div>

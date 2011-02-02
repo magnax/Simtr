@@ -9,7 +9,7 @@ class Model_ChNames_Redis extends Model_ChNames {
                     ->fetchOne($id_character1);
             if ($ch) {
                 $age = $ch->countVisibleAge(Model_GameTime::getRawTime());
-                $name = $this->age_strings[$ch->getSex()][$age].' '.$this->dict->getString($ch->getSex());
+                $name = $this->dict->getString("{$ch->getSex()}:$age").' '.$this->dict->getString($ch->getSex());
             } else {
                 $name = $this->dict->getString('nieznany');
             }

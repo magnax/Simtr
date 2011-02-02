@@ -48,4 +48,41 @@ $this->redis->lpush("$key:$person:params", 'name');$loaded++;
 $this->redis->lpush("$key:$person:params", 'res_id');$loaded++;
 $this->redis->lpush("$key:$person:params", 'amount');$loaded++;
 
+//Spawn - utworzenie nowej postaci
+$key = "global:event_tpl:Spawn";
+$person = 1;
+$this->redis->set("$key:$person", 'Znajdujesz się w miejscu X');$loaded++;
+//$this->redis->del("$key:$person:params");
+//$this->redis->lpush("$key:$person:params", 'name');$loaded++;
+//$this->redis->lpush("$key:$person:params", 'res_id');$loaded++;
+//$this->redis->lpush("$key:$person:params", 'amount');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Widzisz nową osobę, której jeszcze nie widziałeś, to %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->lpush("$key:$person:params", 'sndr');$loaded++;
+
+//GiveRaw
+$key = "global:event_tpl:GiveRaw";
+$person = 1;
+$this->redis->set("$key:$person", 'Podajesz %s gram %s do %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->lpush("$key:$person:params", 'rcpt');$loaded++;
+$this->redis->lpush("$key:$person:params", 'res_id');$loaded++;
+$this->redis->lpush("$key:$person:params", 'amount');$loaded++;
+
+$person = 2;
+$this->redis->set("$key:$person", '%s podaje Tobie %s gram %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
+$this->redis->rpush("$key:$person:params", 'amount');$loaded++;
+$this->redis->rpush("$key:$person:params", 'res_id');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Widzisz jak %s podaje trochę %s do %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
+$this->redis->rpush("$key:$person:params", 'res_id');$loaded++;
+$this->redis->rpush("$key:$person:params", 'rcpt');$loaded++;
+
 ?>

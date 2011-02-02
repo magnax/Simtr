@@ -78,6 +78,10 @@ abstract class Model_User {
         return $this->characters;
     }
 
+    public function appendCharacter($id) {
+        $this->characters[] = $id;
+    }
+    
     public function toArray() {
         return array(
             'id'=>$this->id,
@@ -90,7 +94,14 @@ abstract class Model_User {
         );
     }
 
-    public abstract function update(array $data);
+    public function update(array $data) {
+        $this->firstname = $data['firstname'];
+        $this->lastname = $data['lastname'];
+        $this->birthdate = strtotime($data['birthdate']);
+        $this->save();
+    }
+
+    public abstract function save();
 
 }
 

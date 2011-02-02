@@ -1,5 +1,4 @@
-<div class="title_bar">User info</div>
-<?php include Kohana::find_file('views', 'user/userinfo') ?>
+
 <div class="title_bar">Characters</div>
 <?php if (isset($characters) && count($characters)): ?>
     <?php foreach ($characters as $character): ?>
@@ -14,5 +13,5 @@
     Nie masz aktualnie żadnych postaci w grze
 <?php endif; ?>
 <div>
-    <?php echo html::anchor('u/char/newform', 'Twórz nową postać'); ?>
+    <?php echo html::anchor('u/menu/newform', 'Twórz nową postać'); ?>
 </div>
