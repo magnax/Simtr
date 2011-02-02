@@ -9,7 +9,8 @@ class Controller_User_Char extends Controller_Base_Character {
     public function action_nameform($id) {
         $character = Model_Character::getInstance($this->redis)->fetchOne($id);
         $this->view->character_id = $id;
-        $this->view->name = $this->character->getChname($id);
+        //$this->view->name = $this->character->getChname($id);
+        $this->view->name = $this->chnames->getName($this->character->getId(), $id);
     }
 
     public function action_namechange() {

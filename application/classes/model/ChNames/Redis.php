@@ -4,12 +4,16 @@ class Model_ChNames_Redis extends Model_ChNames {
 
     public function getName($id_character, $id_character1) {
         $name = $this->source->get("characters:$id_character:chnames:$id_character1");
-        if (!$name && ($id_character!=$id_character1)) {
+        if (!$name) {
             $ch = Model_Character::getInstance($this->source)
-                    ->fetchOne($id_character1);
+                ->fetchOne($id_character1);
             if ($ch) {
-                $age = $ch->countVisibleAge(Model_GameTime::getRawTime());
-                $name = $this->dict->getString("{$ch->getSex()}:$age").' '.$this->dict->getString($ch->getSex());
+                if ($id_character!=$id_character1) {
+                    $age = $ch->countVisibleAge(Model_GameTime::getRawTime());
+                    $name = $this->dict->getString("{$ch->getSex()}:$age").' '.$this->dict->getString($ch->getSex());
+                } else {
+                    $name = $ch->getName();
+                }
             } else {
                 $name = $this->dict->getString('nieznany');
             }
