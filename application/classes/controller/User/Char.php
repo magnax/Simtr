@@ -9,7 +9,6 @@ class Controller_User_Char extends Controller_Base_Character {
     public function action_nameform($id) {
         $character = Model_Character::getInstance($this->redis)->fetchOne($id);
         $this->view->character_id = $id;
-        //$this->view->name = $this->character->getChname($id);
         $this->view->name = $this->chnames->getName($this->character->getId(), $id);
     }
 
@@ -29,14 +28,17 @@ class Controller_User_Char extends Controller_Base_Character {
             //$location = Model_Location::getInstance($this->redis)
             //    ->findOneByID($this->character->getIDLocation(), $this->character->getID());
 
-            $event = Model_Event::getInstance(Model_Event::TALK_TO,
-                $this->game->getRawTime(),
-                $this->redis);
+            $event = Model_EventSender::getInstance(
+                Model_Event::getInstance(
+                    Model_Event::TALK_TO, $this->game->getRawTime(), $this->redis
+                )
+            );
 
             $event->setText($_POST['text']);           
             //recipients to lista obiektów klasy Character
-            $event->addRecipients(array($recipient));
-            $event->setSender($this->user->getCurrentCharacter());
+            $event->setRecipient($recipient->getId());
+            $event->setSender($this->character->getId());
+            $event->addRecipients($this->location->getAllHearableCharacters());
             $event->send();
     
         }

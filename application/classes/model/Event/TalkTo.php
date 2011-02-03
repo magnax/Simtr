@@ -7,12 +7,7 @@ class Model_Event_TalkTo extends Model_Event {
      */
     protected $text;
     protected $sender;
-
-    public function  __construct($date, $source) {
-        $this->type = self::TALK_TO;
-        $this->source = $source;
-        $this->date = $date;
-    }
+    protected $recipient;
 
     public function setText($t) {
         $this->text = $t;
@@ -20,6 +15,22 @@ class Model_Event_TalkTo extends Model_Event {
 
     public function setSender($ch) {
         $this->sender = $ch;
+    }
+
+    public function setRecipient($ch) {
+        $this->recipient = $ch;
+    }
+
+    public function toArray() {
+
+        $arr = parent::toArray();
+
+        $arr['text'] = $this->text;
+        $arr['sndr'] = $this->sender;
+        $arr['rcpt'] = $this->recipient;
+
+        return $arr;
+
     }
 
     public function send() {

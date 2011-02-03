@@ -8,12 +8,6 @@ class Model_Event_TalkAll extends Model_Event {
     protected $text;
     protected $sender;
 
-    public function  __construct($date, $source) {
-        $this->type = self::TALK_ALL;
-        $this->source = $source;
-        $this->date = $date;
-    }
-
     public function setText($t) {
         $this->text = $t;
     }
@@ -22,9 +16,18 @@ class Model_Event_TalkAll extends Model_Event {
         $this->sender = $ch;
     }
 
-    public function send() {
+    public function toArray() {
+
+        $arr = parent::toArray();
+
+        $arr['text'] = $this->text;
+        $arr['sndr'] = $this->sender;
+
+        return $arr;
 
     }
+
+    public function send() {}
     
 }
 

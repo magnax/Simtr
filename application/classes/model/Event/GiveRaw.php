@@ -34,12 +34,6 @@ class Model_Event_GiveRaw extends Model_Event {
      */
     protected $recipient;
 
-    public function  __construct($date, $source) {
-        $this->type = self::GIVE_RAW;
-        $this->source = $source;
-        $this->date = $date;
-    }
-
     public function setResource($res_id, $amount) {
         $this->res_id = $res_id;
         $this->amount = $amount;
@@ -53,9 +47,20 @@ class Model_Event_GiveRaw extends Model_Event {
         $this->recipient = $ch;
     }
 
-    public function send() {
+    public function toArray() {
+
+        $arr = parent::toArray();
+
+        $arr['res_id'] = $this->res_id;
+        $arr['amount'] = $this->amount;
+        $arr['sndr'] = $this->sender;
+        $arr['rcpt'] = $this->recipient;
+
+        return $arr;
 
     }
+
+    public function send() {}
 
 }
 

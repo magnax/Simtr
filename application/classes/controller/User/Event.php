@@ -16,7 +16,11 @@ class Controller_User_Event extends Controller_Base_Character {
     public function action_talkall() {
         if (isset($_POST['text']) && $_POST['text']) {
             
-            $event = Model_Event::getInstance(Model_Event::TALK_ALL, $this->game->getRawTime(), $this->redis);       
+            $event = Model_EventSender::getInstance(
+                Model_Event::getInstance(
+                    Model_Event::TALK_ALL, $this->game->getRawTime(), $this->redis
+                )
+            );
             $event->setText($_POST['text']);
             //recipients to lista obiektów klasy Character
             $event->addRecipients($this->location->getAllHearableCharacters());
@@ -44,7 +48,11 @@ class Controller_User_Event extends Controller_Base_Character {
         $this->location->addRaw($id, $amount);
 
         //wysłanie eventu
-        $event = Model_Event::getInstance(Model_Event::PUT_RAW, $this->game->getRawTime(), $this->redis);
+        $event = Model_EventSender::getInstance(
+            Model_Event::getInstance(
+                Model_Event::PUT_RAW, $this->game->getRawTime(), $this->redis
+            )
+        );
         $event->setResource($_POST['res_id'], $_POST['amount']);
         //recipients to lista obiektów klasy Character
         $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType()));
@@ -70,7 +78,11 @@ class Controller_User_Event extends Controller_Base_Character {
         $this->character->addRaw($id, $amount);
 
         //wysłanie eventu
-        $event = Model_Event::getInstance(Model_Event::GET_RAW, $this->game->getRawTime(), $this->redis);
+        $event = Model_EventSender::getInstance(
+            Model_Event::getInstance(
+                Model_Event::GET_RAW, $this->game->getRawTime(), $this->redis
+            )
+        );
         $event->setResource($_POST['res_id'], $_POST['amount']);
         //recipients to lista obiektów klasy Character
         $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType()));
@@ -88,7 +100,7 @@ class Controller_User_Event extends Controller_Base_Character {
         $this->view->all_characters = array();
         foreach ($all_characters as $char) {
             if ($char['id'] != $this->character->getId()) {
-                $this->view->all_characters[$char['id']] = $char['name'];
+                $this->view->all_characters[$char['id']] = $this->chnames->getName($this->character->getId(), $char['id']);
             }
         }
         $this->view->res = $raws[$id];
@@ -96,14 +108,18 @@ class Controller_User_Event extends Controller_Base_Character {
     }
 
     public function action_give() {
-        print_r($_POST);
+
         $dest_character = Model_Character::getInstance($this->redis)
-                ->fetchOne($_POST['character_id']);
+            ->fetchOne($_POST['character_id']);
         $this->character->putRaw($_POST['res_id'], $_POST['amount']);
         $dest_character->addRaw($_POST['res_id'], $_POST['amount']);
 
         //wysłanie eventu
-        $event = Model_Event::getInstance(Model_Event::GIVE_RAW, $this->game->getRawTime(), $this->redis);
+        $event = Model_EventSender::getInstance(
+            Model_Event::getInstance(
+                Model_Event::GIVE_RAW, $this->game->getRawTime(), $this->redis
+            )
+        );
         $event->setResource($_POST['res_id'], $_POST['amount']);
         //recipients to lista obiektów klasy Character
         $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType()));

@@ -1,6 +1,6 @@
 <?php
 
-abstract class Model_Event {
+class Model_Event {
 
     const TALK_ALL = 'TalkAll';
     const TALK_TO = 'TalkTo';
@@ -19,22 +19,39 @@ abstract class Model_Event {
 
     protected $source;
 
-    public function  __construct($source) {
+    public function  __construct($type, $date, $source) {
+        $this->type = $type;
+        $this->date = $date;
         $this->source = $source;
     }
 
-    public static function getInstance($typ, $date, $source) {
-        if ($source instanceof Predis_Client) {
-            $src = 'Model_Event_'.$typ.'_Redis';
-            return new $src($date, $source);
-        }
+    public static function getInstance($type, $date, $source) {
+        //if ($source instanceof Predis_Client) {
+            $src = 'Model_Event_'.$type;
+            //$src = 'Model_Event_'.$type.'_Redis';
+            return new $src($type, $date, $source);
+        //}
+    }
+
+    public function getSource() {
+        return $this->source;
     }
 
     public function addRecipients(array $recipients) {
         $this->recipients = $recipients;
     }
 
-    abstract public function send();
+    public function getRecipients() {
+        return $this->recipients;
+    }
+
+    public function toArray() {
+        return array(
+            'date'=>$this->date,
+            'type'=>$this->type
+        );
+    }
+
 }
 
 ?>
