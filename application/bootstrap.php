@@ -49,7 +49,7 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
  * - boolean  profile     enable or disable internal profiling               TRUE
  * - boolean  caching     enable or disable internal caching                 FALSE
  */
-Kohana::init(array('base_url' => 'http://simtr2.mn'));
+Kohana::init(array('base_url' => 'http://simtr2.ubu'));
 
 /**
  * Attach the file write to logging. Multiple writers are supported.
@@ -79,32 +79,44 @@ Kohana::modules(array(
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
  */
-Route::set('people', 'people') // strona projektów
+Route::set('build2', 'u/build/<id>') // menu budowania
+	->defaults(array(
+        'directory'  => 'user',
+		'controller' => 'build',
+		'action'     => 'index'
+	));
+Route::set('buildings', 'buildings') // strona 'budynki i pojazdy'
+	->defaults(array(
+        'directory'  => 'user',
+		'controller' => 'building',
+		'action'     => 'index'
+	));
+Route::set('people', 'people') // strona 'ludzie'
 	->defaults(array(
         'directory'  => 'user',
 		'controller' => 'people',
 		'action'     => 'index'
 	));
-Route::set('objects', 'objects') // strona projektów
+Route::set('objects', 'objects') // strona 'obiekty'
 	->defaults(array(
         'directory'  => 'user',
 		'controller' => 'location',
 		'action'     => 'objects'
 	));
-Route::set('inventory', 'inventory(/<type>)') // strona projektów
+Route::set('inventory', 'inventory(/<type>)') // strona 'inwentarz'
 	->defaults(array(
         'directory'  => 'user',
 		'controller' => 'inventory',
 		'action'     => 'index',
         'type'       => 'raws'
 	));
-Route::set('projects', 'projects') // strona projektów
+Route::set('projects', 'projects') // strona 'projekty'
 	->defaults(array(
         'directory'  => 'user',
 		'controller' => 'project',
 		'action'     => 'index'
 	));
-Route::set('location', 'location') // strona bieżącej lokacji
+Route::set('location', 'location') // strona 'miejsce'
 	->defaults(array(
         'directory'  => 'user',
 		'controller' => 'location',

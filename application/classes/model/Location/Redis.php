@@ -83,8 +83,8 @@ class Model_Location_Redis extends Model_Location {
     }
 
     public function calculateUsedSlots() {
-        $projects = Model_Project::getInstance($this->source)
-                ->find('loc', $this->id);
+        $projects = Model_ProjectManager::getInstance(null, $this->source)
+            ->find('loc', $this->id);
         $used_slots = 0;
         foreach ($projects as $p) {
             if ($p['type_id'] == 'get_raw') {
@@ -100,6 +100,15 @@ class Model_Location_Redis extends Model_Location {
 
         $this->source->set("locations:{$this->id}", json_encode($tmp_loc));
 
+    }
+
+    public function saveProjects() {
+        $this->source->multi();
+        $this->source->del("locations:{$this->id}:projects");
+        foreach ($this->projects as $p) {
+            $this->source->sadd("locations:{$this->id}:projects", $p);
+        }
+        $this->source->exec();
     }
 
     public function getRaws() {

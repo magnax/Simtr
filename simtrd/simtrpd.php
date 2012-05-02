@@ -31,13 +31,13 @@ if ($runmode['help'] == true) {
 
 require_once "System/Daemon.php";                 // Include the Class
 
-define ('PATH', '/home/mn/simtrd/d.py');
+define ('PATH', '/usr/local/lib/simtr/d.py');
 define ('SLEEP_TIME', 20);
 
 error_reporting(E_ALL);
 
 $options = array(
-    'appName' => 'simtrd_projects',
+    'appName' => 'simtrd-p',
     'appDir' => dirname(__FILE__),
     'appDescription' => 'Przelicza projekty',
     'authorName' => 'Magnus Nox',
@@ -45,8 +45,10 @@ $options = array(
     'sysMaxExecutionTime' => '0',
     'sysMaxInputTime' => '0',
     'sysMemoryLimit' => '1024M',
-    'appRunAsGID' => 1000,
-    'appRunAsUID' => 1000,
+    'appRunAsGID' => 0,
+    'appRunAsUID' => 0,
+    'logLocation' => '/usr/local/lib/simtr/simtrd-p.log',
+    'appPidLocation' => '/usr/local/lib/simtr/simtrd-p/.simtrd-p.pid',
 );
 
 System_Daemon::setOptions($options);

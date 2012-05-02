@@ -31,7 +31,7 @@ if ($runmode['help'] == true) {
 
 require_once "System/Daemon.php";                 // Include the Class
 
-define ('PATH', '/home/mn/simtrd/d.py');
+define ('PATH', '/usr/local/lib/simtr/d.py');
 define ('SLEEP_TIME', 20);
 
 error_reporting(E_ALL);
@@ -47,6 +47,8 @@ $options = array(
     'sysMemoryLimit' => '1024M',
     'appRunAsGID' => 0,
     'appRunAsUID' => 0,
+    'logLocation' => '/usr/local/lib/simtr/simtrd-pf.log',
+    'appPidLocation' => '/usr/local/lib/simtr/simtrd-pf/.simtrd-pf.pid',
 );
 
 System_Daemon::setOptions($options);
@@ -171,8 +173,8 @@ while(!System_Daemon::isDying() && $runningOK) {
             }
 
             //zwolnij wszystkich pracowników
-            $num_workers = $redis->scard("projects:$project_id:workers");
-            $workers = $redis->smembers("projects:$project_id:workers");
+            $workers = json_decode($redis->get("projects:$project_id:workers"), true);
+            $num_workers = count($workers);
             //pusta tablica odbiorców eventu
             $event_recipients[] = array();
             foreach ($workers as $worker_id) {
@@ -186,7 +188,7 @@ while(!System_Daemon::isDying() && $runningOK) {
             $redis->del("projects:$project_id:participants");
 
             //jeśli projekt zbierania surowców to zwolnij miejsce wydobycia
-            if ($project['type_id'] == 'get_raw') {
+            if ($project['type_id'] == 'GetRaw') {
                 $location = json_decode($redis->get("locations:{$project['place_id']}"), true);
                 $location['used_slots'] -= $num_workers;
                 $redis->set("locations:{$project['place_id']}", json_encode($location));
@@ -206,7 +208,7 @@ while(!System_Daemon::isDying() && $runningOK) {
             $event = array(
                 'date'=>$time,
                 'type'=>$event_type,
-                'name'=>$resource['type'], //@todo: ściągać z surowca czynność
+                'name'=>$project['name'],
                 'sndr'=>$project['owner_id'],
                 'res_id'=>$project['resource_id'], //@todo: ujednolicić res_id/resource_id
                 'amount'=>$project['amount']

@@ -21,6 +21,11 @@
     <?php echo View::factory('user/userinfo', array('user'=>$user)); ?>
 <?php endif; ?>
 <?php echo $content; ?>
+<?php if (isset($character)): ?>
+    <div id="buildmenu">
+        <?php include Kohana::find_file('views', 'user/buildmenu') ?>
+    </div>
+<?php endif; ?>
         </div>
     </body>
 </html>

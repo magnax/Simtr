@@ -1,7 +1,9 @@
 <?php
 
+defined('SYSPATH') or die('No direct script access.');
+
 /**
- * rejestracja i logowanie użytkownika
+ * user login & register controller
  */
 class Controller_Guest_Login extends Controller_Base_Guest {
 

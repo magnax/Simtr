@@ -8,6 +8,7 @@ class Model_Resource_Redis extends Model_Resource {
 
         $this->id = $id;
         $this->name = $data['name'];
+        $this->type = $data['type'];
         $this->gather_base = $data['gather_base'];
 
         return $this;

@@ -37,9 +37,10 @@ class Controller_Base_Character extends Controller_Base_User {
         $ch['spawn_day'] =
             Model_GameTime::formatDateTime($this->character->getSpawnDate(), 'd');
         if ($ch['project_id']) {
-            $project = Model_Project::getInstance($this->redis)->findOneByID($ch['project_id']);
+            $project = Model_ProjectManager::getInstance(null, $this->redis)
+                ->findOneByID($ch['project_id'])->getProject();
             $ch['myproject'] = array(
-                'name'=>$project->getName(),
+                'name'=>$this->dict->getString($project->getName()),
                 'percent'=>$project->getPercent(1)
             );
         }

@@ -28,4 +28,9 @@ $data[12] = array(
   'gather_base' => 300
 );
 
+$this->redis->set("resources:3:names:d", 'ziemniaków');$loaded++;
+$this->redis->set("resources:7:names:d", 'pomidorów');$loaded++;
+$this->redis->set("resources:11:names:d", 'piasku');$loaded++;
+$this->redis->set("resources:12:names:d", 'drewna');$loaded++;
+
 ?>

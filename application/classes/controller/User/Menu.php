@@ -18,9 +18,9 @@ class Controller_User_Menu extends Controller_Base_User {
             $char['location'] = $lnames->getName($char['id'], $char['location_id']);
             $char['sex'] = $dict->getString($char['sex']);
             if ($char['project_id']) {
-                $char['project'] = 'P '.Model_Project::getInstance($this->redis)
+                $char['project'] = 'P '.Model_ProjectManager::getInstance(null, $this->redis)
                     ->findOneByID($char['project_id'])
-                    ->getPercent(1).'%';
+                    ->getProject()->getPercent(1).'%';
                 
             }
 

@@ -101,6 +101,26 @@ class Model_User_Redis extends Model_User {
 
         return $this;
     }
+    
+    public function getPasswordForUserId($id) {
+        
+        if ($this->source->exists("users:$id")) {
+            return $this->source->get("users:$id:password");
+        } else {
+            return null;
+        }
+    }
+    
+    public function getPasswordForUserEmail($email) {
+        
+        if ($this->source->exists("emails:$email")) {
+            $user_id = $this->source->get("emails:$email");
+            return $this->source->get("users:$user_id:password");
+        } else {
+            return null;
+        }
+    }
+    
 }
 
 ?>

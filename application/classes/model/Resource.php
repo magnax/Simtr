@@ -4,6 +4,7 @@ abstract class Model_Resource {
 
     protected $id;
     protected $name;
+    protected $type;
     /**
      * podstawowa ilość zbierana na dzień
      * @var integer
@@ -19,11 +20,16 @@ abstract class Model_Resource {
     public function getGatherBase() {
         return $this->gather_base;
     }
+
+    public function getType() {
+        return $this->type;
+    }
     
     public function toArray() {
         return array(
             'id'=>$this->id,
             'name'=>$this->name,
+            'type'=>$this->type,
             'gather_base'=>$this->gather_base
         );
     }

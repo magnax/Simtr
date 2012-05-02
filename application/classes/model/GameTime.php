@@ -3,12 +3,12 @@
 class Model_GameTime {
 
     /**
-     * ścieżka do demona czasu
+     * path to game time deamon
      */
-    const PATH = '/home/mn/simtrd/d.py';
+    const PATH = '/usr/local/lib/simtr/d.py';
 
     /**
-     * długość dnia w sekundach
+     * day length in seconds
      */
     const DAY_LENGTH = 86400; // => 24 * 60 * 60
 
@@ -45,7 +45,7 @@ class Model_GameTime {
     }
 
     public function getTime() {
-        return $this->h.':'.$this->m.':'.$this->s;
+        return $this->h.':'.(($this->m < 10) ? '0'.$this->m : $this->m).':'.(($this->s < 10) ? '0'.$this->s : $this->s);
     }
 
     public function getDate() {
@@ -57,19 +57,7 @@ class Model_GameTime {
     }
 
     public static function decodeRawTime($raw_time) {
-        /*
-        $day_length = 60*60*24;
-        $d = floor($raw_time / ($day_length));
-        $y = floor($d / 20);
-        $r1 = $raw_time - ($y * 20 * $day_length);
-        $f = floor($r1 / ($day_length));
-        $rest = $raw_time - ($d * $day_length);
-        $h = floor($rest / 3600);
-        $rest = $rest - ($h * 3600);
-        $m = floor($rest / 60);
-        $s = $rest - ($m*60);
-         *
-         */
+
         $s = $raw_time % 60;
         $r = ($raw_time - $s) / 60;
         $m = $r % 60;

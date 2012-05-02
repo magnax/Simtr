@@ -1,22 +1,18 @@
 #!/usr/bin/env python
-import sys, time
+import sys
+import time
 from datetime import datetime
 
 from daemon import Daemon
 
-from socket import *
-
-# Set the socket parameters
-host = "localhost"
-port = 21567
-buf = 1024
-addr = (host,port)
+#files:
+simtr_dir = '/usr/local/lib/simtr/'
+counter_file =  simtr_dir + 'counter'
+time_file = simtr_dir + 'ctime'
+pid_file = simtr_dir + '.d.py.pid'
 
 class MyDaemon(Daemon):
   def say(self):
-    # Create socket and bind to address
-    UDPSock = socket(AF_INET,SOCK_DGRAM)
-    UDPSock.bind(addr)
     
     try:
       p = file(self.pidfile)
@@ -25,40 +21,35 @@ class MyDaemon(Daemon):
     
     if not p:
       print 'Error: daemon not running!! last time:'
-      print self.get()
-    else:
-      UDPSock.sendto("asdfg", addr)
-      print self.get()
-    UDPSock.close()
+    print self.get()
 
     return 1
     
   def get(self):
-    pf = file('/home/mn/licznik.txt', 'r')
+    pf = file(counter_file, 'r')
     ls_czas = long(pf.read()) + 1
     pf.close()
     return ls_czas
     
   def run(self):
     while True:
-      pf = file('/home/mn/czas.txt','r')
+      pf = file(time_file,'r')
       czas = pf.read()
       pf.close()
       now = str(datetime.now())[0:19]
       if now != czas:
-        #pf = file('/home/mn1/licznik.txt', 'r')
-        ls_czas = self.get() #long(pf.read()) + 1
+        ls_czas = self.get()
         #pf.close()
-        pf = file('/home/mn/licznik.txt', 'w')
+        pf = file(counter_file, 'w')
         pf.write(str(ls_czas))
         pf.close()
-        pf = file('/home/mn/czas.txt', 'w')
+        pf = file(time_file, 'w')
         pf.write(str(now))
         pf.close()
       time.sleep(0.1)
 
 if __name__ == "__main__":
-  daemon = MyDaemon('/home/mn/tmp/daemon-example.pid')
+  daemon = MyDaemon(pid_file)
   if len(sys.argv) == 2:
     if 'start' == sys.argv[1]:
       daemon.start()

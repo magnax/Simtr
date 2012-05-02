@@ -10,49 +10,78 @@ class Controller_User_Project extends Controller_Base_Character {
 
         $this->view->character = $this->template->character;
 
-        $this->view->projects = Model_Project::getInstance($this->redis)
-            ->find($this->character->getPlaceType(), $this->character->getPlaceId());
+        $this->view->projects = Model_ProjectManager::getInstance(
+            null, $this->redis)
+                ->find($this->character->getPlaceType(), $this->character->getPlaceId());
 
         foreach ($this->view->projects as &$p) {
             $p['owner'] = $this->chnames->getName($this->character->getId(), $p['owner_id']);
             if (!$p['owner'] && $p['owner_id'] == $this->character->getId()) {
                 $p['owner'] = $this->character->getName();
             }
-            $p['name'] = Model_Project::getInstance($this->redis)
-                    ->findOneById($p['id'])
-                    ->getName();
+            $p['name']=$this->dict->getString($p['name']);
         }
         //print_r($projects);
     }
 
     public function action_info($id) {
-        $this->view->project = Model_Project::getInstance($this->redis)
-            ->findOneById($id)
-            ->toArray();
+        
+        $manager = Model_ProjectManager::getInstance(null, $this->redis)
+            ->findOneById($id);
+        $this->view->project = $manager->getProject()->toArray();
+
+        print_r($this->view->project);
     }
 
     public function action_join($id) {
-        $project = Model_Project::getInstance($this->redis)
-                ->findOneById($id);
-        $project->addParticipant($this->character, $this->game->getRawTime());
-        $this->character->save();
 
-        if ($project->getTypeId() == 'get_raw') {
-            $this->location->calculateUsedSlots();
-            $this->location->save();
+        //manager
+        $manager = Model_ProjectManager::getInstance(null, $this->redis)
+            ->findOneById($id);
+        $project = $manager->getProject();
+
+        $errors = $project->getProjectRequirements();
+
+        if (!$errors) {
+
+            $errors = $project->getUserRequirements($this->character);
+
+            if (!$errors) {
+
+                $manager->addParticipant($this->character, $this->game->getRawTime());
+                $manager->save();
+                //print_r($manager);
+
+                $this->character->setProjectId($project->getId());
+                $this->character->save();
+
+                if ($project->getTypeId() == 'GetRaw') {
+                    $this->location->calculateUsedSlots();
+                    $this->location->save();
+                }
+            }
         }
 
+        if ($errors) {
+            $session->set_flash('errors', json_encode($errors));
+        }
+        
         $this->request->redirect('events');
     }
 
     public function action_leave($id) {
 
-        $project = Model_Project::getInstance($this->redis)
+        $manager = Model_ProjectManager::getInstance(null, $this->redis)
             ->findOneById($id);
-        $project->removeParticipant($this->character, $this->game->getRawTime());
+        $project = $manager->getProject();
+
+        $manager->removeParticipant($this->character, $this->game->getRawTime());
+        $manager->save();
+
+        $this->character->setProjectId(null);
         $this->character->save();
 
-        if ($project->getTypeId() == 'get_raw') {
+        if ($project->getTypeId() == 'GetRaw') {
             $this->location->calculateUsedSlots();
             $this->location->save();
         }
@@ -78,9 +107,12 @@ class Controller_User_Project extends Controller_Base_Character {
 
         $time = ceil($_POST['amount'] / $res->getGatherBase() * Model_GameTime::DAY_LENGTH);
 
-        $project = Model_Project::getInstance($this->redis);
+        $project = Model_ProjectManager::getInstance(
+            Model_Project::getInstance(Model_Project::TYPE_GET_RAW, $this->redis)//;
+        );
 
         $data = array(
+            'name'=>$res->getType().' '.$res->getName('d'),
             'owner_id'=>$this->character->getId(),
             'amount'=>$_POST['amount'],
             'time'=>$time,
@@ -91,6 +123,9 @@ class Controller_User_Project extends Controller_Base_Character {
             'created_at'=>$this->game->getRawTime()
         );
         $project->set($data);
+        $project->save();
+
+        $this->location->addProject($project->getId(), true);
 
         $this->request->redirect('projects');
         

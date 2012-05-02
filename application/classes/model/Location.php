@@ -9,6 +9,7 @@ abstract class Model_Location {
     protected $res_slots;
     protected $used_slots;
     protected $resources = array();
+    protected $projects = array();
 
     protected $source;
 
@@ -38,6 +39,15 @@ abstract class Model_Location {
         );
     }
 
+    public function addProject($project_id, $save = false) {
+        if (!in_array($project_id, $this->projects)) {
+            $this->projects[] = $project_id;
+            if ($save) {
+                $this->saveProjects();
+            }
+        }
+    }
+
     public static function getInstance($source) {
         if ($source instanceof Predis_Client) {
             return new Model_Location_Redis($source);
@@ -48,6 +58,7 @@ abstract class Model_Location {
     abstract public function getAllHearableCharacters();
     abstract public function calculateUsedSlots();
     abstract public function save();
+    abstract public function saveProjects();
 
 }
 
