@@ -98,6 +98,8 @@ class Model_User_Redis extends Model_User {
         $this->source->sadd('global:emails', $post['email']);
         $this->source->set("users:{$this->id}:password", $post['pass']);
         $this->source->set("users:{$this->id}:email", $post['email']);
+        //adds a key to get user id after providing his email
+        $this->source->set("emails:{$_POST['email']}", $this->id);
 
         return $this;
     }

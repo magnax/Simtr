@@ -8,7 +8,9 @@ defined('SYSPATH') or die('No direct script access.');
 class Controller_Guest_Login extends Controller_Base_Guest {
 
     public function action_register() {
-
+        if ($this->session->get('err')) {
+            $this->view->err = $this->session->get_once('err');
+        }
     }
 
     public function action_registerform() {
@@ -16,6 +18,7 @@ class Controller_Guest_Login extends Controller_Base_Guest {
         //$session = Session::instance();
         if (!$this->session->get('continue') && ((Request::$method != 'POST') || !isset($_POST['confirm']) || ($_POST['confirm'] != 1))) {
 
+            $this->session->set('err', 'You must check that you read all terms and conditions');
             Request::instance()->redirect('register');
 
         }
@@ -23,8 +26,6 @@ class Controller_Guest_Login extends Controller_Base_Guest {
         if (!$this->session->get('continue')) {
             $this->session->set('continue', 1);
         }
-
-        //$this->view->err = ($this->session->get('err', null));
 
     }
 
