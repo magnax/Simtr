@@ -85,25 +85,25 @@ class Model_User_Redis extends Model_User {
     }
 
     public function save() {
+        
+        //new id if user is save for the first time
+        if (!$this->id) {
+            $this->id = $this->source->incr('global:IDUser');
+        }
         $this->source->set("users:{$this->id}", json_encode($this->toArray()));
-    }
-
-    public function createNew($post) {
-        $this->id = $this->source->incr('global:IDUser');
-
-        $this->email = $post['email'];
-        $this->register_date = date("Y-m-d H:i:s");
-        $this->characters = array();
-
-        $this->source->sadd('global:emails', $post['email']);
-        $this->source->set("users:{$this->id}:password", $post['pass']);
-        $this->source->set("users:{$this->id}:email", $post['email']);
+        $this->source->set("users:{$this->id}:password", $this->password);
+        $this->source->set("users:{$this->id}:email", $this->email);
         //adds a key to get user id after providing his email
-        $this->source->set("emails:{$_POST['email']}", $this->id);
-
-        return $this;
+        $this->source->set("emails:{$this->email}", $this->id);
+        $this->source->sadd('global:emails', $this->email);
+        
     }
     
+    public function isDuplicateEmail($email) {
+        return $this->source->sismember('global:emails', $email);
+    }
+
+
     public function getPasswordForUserId($id) {
         
         if ($this->source->exists("users:$id")) {

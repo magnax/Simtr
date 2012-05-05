@@ -12,6 +12,7 @@ abstract class Model_User {
      */
     protected $id;
     protected $email;
+    protected $password;
     protected $firstname;
     protected $lastname;
     protected $birthdate;
@@ -94,6 +95,16 @@ abstract class Model_User {
         );
     }
 
+    public function createNew($post) {
+        
+        $this->email = $post['email'];
+        $this->password = $post['pass'];
+        $this->register_date = date("Y-m-d H:i:s");
+        $this->characters = array();
+        
+        return $this;
+    }
+    
     public function update(array $data) {
         $this->firstname = $data['firstname'];
         $this->lastname = $data['lastname'];
@@ -102,7 +113,8 @@ abstract class Model_User {
     }
 
     public abstract function save();
-
+    public abstract function isDuplicateEmail($email);
+    
 }
 
 ?>

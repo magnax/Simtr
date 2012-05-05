@@ -8,9 +8,11 @@ defined('SYSPATH') or die('No direct script access.');
 class Controller_Guest_Login extends Controller_Base_Guest {
 
     public function action_register() {
+        
         if ($this->session->get('err')) {
             $this->view->err = $this->session->get_once('err');
         }
+        
     }
 
     public function action_registerform() {
@@ -30,46 +32,35 @@ class Controller_Guest_Login extends Controller_Base_Guest {
     }
 
     /**
-     * formularz logowania
+     * login form
      */
     public function action_loginform() {
 
-        $this->view->err = ($this->session->get('err', null));
+        if ($this->session->get('err')) {
+            $this->view->err = $this->session->get_once('err');
+        }
 
     }
 
-    /**
-     * 1. Czy mail istnieje (global:emails)
-     * 2. Utwórz nowe ID global:IDUser
-     * 3. Dodaj do global:emails
-     * 4. Utwórz users:$ID:password
-     * 5. Utwórz users:$ID:email
-     */
     public function action_checkuser() {
 
         if (!isset($_POST['email']) || !$_POST['email']) {
-           $this->redirectError('Nie podano adresu e-mail', 'registerform');
+           $this->redirectError('You must provide valid email', 'registerform');
         }
 
         if (!isset($_POST['pass']) || !$_POST['pass']) {
-           $this->redirectError('Nie podano hasła', 'registerform');
+           $this->redirectError('You must provide password', 'registerform');
         }
 
-        $email = $_POST['email'];
-        $password = $_POST['pass'];
+        $user = Model_User::getInstance($this->redis);
 
-        $email_exists = $this->redis->sismember('global:emails', $email);
-
-        if ($email_exists) {
-            $this->redirectError('Istnieje podany mail', 'registerform');
+        if ($user->isDuplicateEmail($_POST['email'])) {
+            $this->redirectError('This email already exists', 'registerform');
         }
 
-        $user = Model_User::getInstance($this->redis)
-            ->createNew($_POST);
+        $user->createNew($_POST);
 
         $user->save();
-        
-        //$this->redis->save();
 
         $this->view->IDUser = $user->getID();
 
@@ -77,21 +68,24 @@ class Controller_Guest_Login extends Controller_Base_Guest {
 
     public function action_checklogin() {
 
-        if (isset($_POST['iduser']) && isset($_POST['pass'])) {
-            $iduser = $_POST['iduser'];
-            $password = $_POST['pass'];
+        if (isset($_POST['iduser']) && $_POST['iduser'] && isset($_POST['pass']) && $_POST['pass']) {
+            
+            $user = Model_User::getInstance($this->redis);
+
+            $authkey = $user->login($_POST['iduser'], $_POST['pass']);
+
+            if ($authkey) {
+                $this->session->set('authkey', $authkey);
+                $this->request->redirect('u/menu');
+                return;
+            } else {
+                $this->redirectError('Incorrect ID or password', 'loginform');
+            }
+        } else {
+            $this->redirectError('ID and password must be provided', 'loginform');
         }
-
-        $user = Model_User::getInstance($this->redis);
-
-        $authkey = $user->login($iduser, $password);
-
-        if ($authkey) {
-            $this->session->set('authkey', $authkey);
-            $this->request->redirect('u/menu');
-        }
-
-        $this->redirectError('Nieprawidłowy ID lub hasło', 'loginform');
+        
+        
 
     }
 
