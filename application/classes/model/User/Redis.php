@@ -46,6 +46,8 @@ class Model_User_Redis extends Model_User {
             $authkey = md5($id.microtime());
             $this->source->set("users:$id:auth", $authkey);
             $this->source->set("auth:$authkey", $id);
+            $this->logged_in = true;
+            $this->authkey = $authkey;
             return $authkey;
         } else {
             return false;
@@ -86,7 +88,7 @@ class Model_User_Redis extends Model_User {
 
     public function save() {
         
-        //new id if user is save for the first time
+        //new id if user is saved for the first time
         if (!$this->id) {
             $this->id = $this->source->incr('global:IDUser');
         }
@@ -99,6 +101,21 @@ class Model_User_Redis extends Model_User {
         
     }
     
+    public function activate($id) {
+        $this->getUserData($id);
+        $this->setStatus(self::STATUS_ACTIVE);
+        $this->source->del("users:$id:activate_code");
+        $this->save();
+    }
+
+    public function setActivationCode($id, $code) {
+        $this->source->set("users:$id:activate_code", $code);
+    }
+
+    public function fetchActivationCode($id) {
+        return $this->source->get("users:$id:activate_code");
+    }
+
     public function isDuplicateEmail($email) {
         return $this->source->sismember('global:emails', $email);
     }

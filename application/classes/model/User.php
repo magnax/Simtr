@@ -1,7 +1,7 @@
 <?php
 
 /**
- * zalogowany użytkownik
+ * User class
  */
 abstract class Model_User {
 
@@ -16,7 +16,7 @@ abstract class Model_User {
     protected $firstname;
     protected $lastname;
     protected $birthdate;
-    protected $status;
+    protected $status = self::STATUS_INACTIVE;
     protected $register_date;
     protected $current_character_id;
     protected $current_location_id;
@@ -36,6 +36,8 @@ abstract class Model_User {
     public static function getInstance($source) {
         if ($source instanceof Predis_Client) {
             return new Model_User_Redis($source);
+        } else {
+            return null;
         }
     }
 
@@ -66,6 +68,10 @@ abstract class Model_User {
     public function getStatus() {
         return $this->status;
     }
+    
+    public function setStatus($status) {
+        $this->status = $status;
+    }
 
     public function getCurrentCharacter() {
         return $this->current_character_id;
@@ -87,6 +93,7 @@ abstract class Model_User {
         return array(
             'id'=>$this->id,
             'email'=>$this->email,
+            'status'=>$this->status,
             'firstname'=>$this->firstname,
             'lastname'=>$this->lastname,
             'birthdate'=>$this->birthdate,
@@ -114,6 +121,9 @@ abstract class Model_User {
 
     public abstract function save();
     public abstract function isDuplicateEmail($email);
+    public abstract function login($id, $password);
+    public abstract function logout();
+    public abstract function fetchActivationCode($id);
     
 }
 

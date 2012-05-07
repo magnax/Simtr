@@ -90,6 +90,13 @@ class Controller_Base_Base extends Controller_Template {
         Request::instance()->redirect($uri);
 
     }
+
+    public function redirectMessage($msg, $uri = '/') {
+
+        $this->session->set('msg', $msg);
+        Request::instance()->redirect($uri);
+
+    }
     
 }
 

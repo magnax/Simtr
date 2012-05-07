@@ -43,14 +43,4 @@ class SampleTest extends PHPUnit_Framework_TestCase {
         
     }
     
-    public function testEqual() {
-        
-        $this->assertEquals(2, (1+1));
-        
-    }
-    
-    public function tearDown() {
-        //unconnect db or sth.
-    }
-    
 }

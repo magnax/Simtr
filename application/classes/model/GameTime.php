@@ -19,9 +19,12 @@ class Model_GameTime {
     protected $s;
     private $raw_time;
 
-    public function  __construct() {
+    public function  __construct($daemon_path = null) {
 
-        $this->raw_time = self::getRawTime();
+        if (!$daemon_path) {
+            $daemon_path = self::PATH;
+        }
+        $this->raw_time = self::getRawTime($daemon_path);
         $t = $this->decodeRawTime($this->raw_time);
 
         $this->year = $t['y'];
@@ -33,15 +36,25 @@ class Model_GameTime {
 
     }
 
-    public static function getRawTime() {
-        $output = shell_exec(self::PATH.' say');
-        if (!$output) {
-            $output = time() - 1292300000;
-        } elseif (strpos($output, 'rror:')) {
-            throw new Exception('Not running!');
+    public static function getRawTime($daemon_path = null) {
+        
+        if (!$daemon_path) {
+            $daemon_path = self::PATH;
         }
-
-        return str_replace("\n", '', $output);
+        
+        $output = shell_exec($daemon_path.' say');
+        
+        if (strpos($output, 'Error:') !== false) {
+            throw new DaemonNotRunningException('Not running!');
+        }
+        
+        $output = intval(str_replace("\n", '', $output));
+        
+        if (is_integer($output) && $output) {
+            return $output;
+        } else {
+            throw new BadDaemonException('Bad daemon?');
+        }
     }
 
     public function getTime() {
@@ -53,7 +66,7 @@ class Model_GameTime {
     }
 
     public function getDateTime() {
-        return $this->date.'-'.$this->time;
+        return $this->getTime().' '.$this->getTime();
     }
 
     public static function decodeRawTime($raw_time) {
@@ -63,8 +76,7 @@ class Model_GameTime {
         $m = $r % 60;
         $r = ($r - $m) / 60;
         $h = $r % 24;
-        $r = ($r - $h) / 24;
-        $d = $r % 24;
+        $d = ($r - $h) / 24;
         $y = floor($d / 20);
         $f = $d % 20;
         return array(

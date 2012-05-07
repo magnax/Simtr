@@ -61,6 +61,9 @@ class Controller_Guest_Login extends Controller_Base_Guest {
         $user->createNew($_POST);
 
         $user->save();
+        
+        $activateCode = Text::random('distinct', 16);
+        $user->setActivationCode($user->getID(), $activateCode);
 
         $this->view->IDUser = $user->getID();
 
@@ -84,9 +87,28 @@ class Controller_Guest_Login extends Controller_Base_Guest {
         } else {
             $this->redirectError('ID and password must be provided', 'loginform');
         }
-        
-        
 
+    }
+    
+    public function action_activate() {
+        
+        $id = $_GET['id'];
+        $code = $_GET['code'];
+       
+        if (!$id || !is_numeric($id) || !$code || (strlen($code) != 16)) {
+            $this->redirectError('Bad request!');
+        }
+        
+        $user = Model_User::getInstance($this->redis);
+        $activateCode = $user->fetchActivationCode($id);
+
+        if ($code == $activateCode) {           
+            $user->activate($id);
+            $this->redirectMessage('Your account is now activated.', '/login');
+        } else {
+            $this->redirectError('Bad code!');
+        }
+        
     }
 
 }

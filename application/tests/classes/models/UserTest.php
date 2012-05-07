@@ -5,28 +5,36 @@ include_once APPPATH.'classes/model/User.php';
 class UserTest extends PHPUnit_Framework_TestCase {
     
     protected $user;
-    protected $redis;
+    private $redis = null;
+    private static $_redis = null;
 
-
-    public function setUp() {
-        
-        $this->redis = new Predis_Client(array(
+    public static function setUpBeforeClass() {
+        parent::setUpBeforeClass();
+        self::$_redis = new Predis_Client(array(
             'host'     => '127.0.0.1',
             'port'     => 6379,
             'database' => 1,
             'alias' => 'mn_test'
         ));
-
-        try {
-            $this->redis->flushdb();
-        } catch (Predis_CommunicationException $e) {
-            $this->redirectError('Redis server down?');
-        }
-        $this->user = Model_User::getInstance($this->redis);
+        
+        self::$_redis->flushdb();
         
     }
 
 
+    public function setUp() {
+        
+        $this->redis = self::$_redis;
+        
+        $this->user = Model_User::getInstance($this->redis);
+        
+    }
+
+    public function testIsInstanceOfUser() {
+        $this->assertNull(Model_User::getInstance(null));
+        $this->assertTrue(Model_User::getInstance($this->redis) instanceof Model_User_Redis);
+    }
+    
     public function testCreateAndSaveUser() {
         
         $post = array(
@@ -37,11 +45,14 @@ class UserTest extends PHPUnit_Framework_TestCase {
         $this->user->createNew($post);
         $this->assertEquals('test@test.com', $this->user->getEmail());
         $this->assertNull($this->user->getID());
+        $this->assertEquals(19, strlen($this->user->getRegisterDate()));
+        $this->assertEquals(Model_User::STATUS_INACTIVE, $this->user->getStatus());
+        $this->user->setStatus(Model_User::STATUS_ACTIVE);
+        $this->assertEquals(Model_User::STATUS_ACTIVE, $this->user->getStatus());
         
         $this->user->save();
         
         $this->assertEquals(1, $this->user->getID());
-        $this->assertEquals('test@test.com', $this->user->getEmail());
         $this->assertTrue($this->user->isDuplicateEmail('test@test.com'));
         $this->assertFalse($this->user->isDuplicateEmail('test1@test.com'));
         
@@ -49,16 +60,24 @@ class UserTest extends PHPUnit_Framework_TestCase {
     
     public function testLoginUser() {
         
-        $post = array(
-            'email'=>'test@test.com', 
-            'pass'=>'password'
+        $this->assertFalse($this->user->login(1, 'notcorrect'));
+        $this->assertEquals(32, strlen($this->user->login(1, 'password')));
+        $this->assertTrue($this->user->isLoggedIn());
+        
+    }
+    
+    public function testUpdateUser() {
+        
+        $newUserData = array(
+            'firstname'=>'Jan',
+            'lastname'=>'Kowalski',
+            'birthdate'=>'1956-09-20'
         );
         
-        $this->user->createNew($post);
-        $this->user->save();
+        $this->user->update($newUserData);
         
-        $this->assertEquals(32, strlen($this->user->login(1, 'password')));
-        $this->assertFalse($this->user->login(1, 'notcorrect'));
+        $this->assertEquals('Jan Kowalski', $this->user->getFullName());
+        $this->assertEquals(1956, $this->user->getBirthYear());
         
     }
     
