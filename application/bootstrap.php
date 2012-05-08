@@ -66,6 +66,7 @@ Kohana::$config->attach(new Kohana_Config_File);
  */
 Kohana::modules(array(
     'redis'         => APPPATH.'modules/predis',
+    'email'         => APPPATH.'modules/email',
     'unittest'      => MODPATH.'unittest',   // Unit testing
 	// 'orm'        => MODPATH.'orm',        // Object Relationship Mapping
 	// 'pagination' => MODPATH.'pagination', // Paging of results

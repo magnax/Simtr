@@ -46,7 +46,7 @@
                 Status:
             </td>
             <td>
-               <?php echo $user->getStatus(); ?>
+               <?php echo $user->getStatus() ? 'Active' : 'Inactive'; ?>
             </td>
         </tr>
     </table>

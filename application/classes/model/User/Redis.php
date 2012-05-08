@@ -4,8 +4,13 @@ class Model_User_Redis extends Model_User {
 
     public function setCurrentCharacter($id) {
 
-        $this->current_character_id = $id;
-        $this->source->set("users:{$this->id}:current_character", $id);
+        if (in_array($id, $this->characters)) {
+            $this->current_character_id = $id;
+            $this->source->set("users:{$this->id}:current_character", $id);
+            return true;
+        } else {
+            return false;
+        }
 
     }
 
@@ -28,6 +33,9 @@ class Model_User_Redis extends Model_User {
             if (isset($data['register_date'])) {
                 $this->register_date = $data['register_date'];
             }
+            if (isset($data['status'])) {
+                $this->status = $data['status'];
+            }
             if (isset($data['email'])) {
                 $this->email = $data['email'];
             }
@@ -36,6 +44,7 @@ class Model_User_Redis extends Model_User {
             }
 
             $this->current_character_id = $this->source->get("users:$id:current_character");
+            $this->password = $this->source->get("users:$id:password");
 
         }
 
@@ -100,7 +109,7 @@ class Model_User_Redis extends Model_User {
         $this->source->sadd('global:emails', $this->email);
         
     }
-    
+
     public function activate($id) {
         $this->getUserData($id);
         $this->setStatus(self::STATUS_ACTIVE);

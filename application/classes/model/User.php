@@ -69,6 +69,11 @@ abstract class Model_User {
         return $this->status;
     }
     
+    public function isActive() {
+        return ($this->status == self::STATUS_ACTIVE);
+    }
+
+
     public function setStatus($status) {
         $this->status = $status;
     }
@@ -108,6 +113,8 @@ abstract class Model_User {
         $this->password = $post['pass'];
         $this->register_date = date("Y-m-d H:i:s");
         $this->characters = array();
+        
+        $this->save();
         
         return $this;
     }

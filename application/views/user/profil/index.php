@@ -22,7 +22,7 @@
                 Data urodzenia:
             </td>
             <td>
-                <input type="text" name="birthdate" value="<?php echo date('Y-m-d', $user_data['birthdate']); ?>">
+                <input type="text" name="birthdate" value="<?php echo $user_data['birthdate'] ? date('Y-m-d', $user_data['birthdate']):''; ?>">
             </td>
         </tr>
 

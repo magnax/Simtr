@@ -64,6 +64,10 @@ class Controller_Base_Base extends Controller_Template {
         $this->template->err = $this->session->get('err');
         $this->session->delete('err');
         
+        //flash message
+        $this->template->msg = $this->session->get('msg');
+        $this->session->delete('msg');
+        
         /**
          * inicjalizacja i połączenie z Redisem
          */

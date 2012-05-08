@@ -58,9 +58,8 @@ class Controller_Guest_Login extends Controller_Base_Guest {
             $this->redirectError('This email already exists', 'registerform');
         }
 
-        $user->createNew($_POST);
-
-        $user->save();
+        //creates (and saves) new user
+        $user->createNew($_POST); 
         
         $activateCode = Text::random('distinct', 16);
         $user->setActivationCode($user->getID(), $activateCode);
@@ -101,16 +100,43 @@ class Controller_Guest_Login extends Controller_Base_Guest {
         
         $user = Model_User::getInstance($this->redis);
         $activateCode = $user->fetchActivationCode($id);
-
-        if ($code == $activateCode) {           
+        
+        if (!$activateCode) {
+            $user->getUserData($id);
+            if ($user->isActive()) {
+                $message = 'Account already activated';
+            } else {
+                //ups! user is not active and doesn't have activation code
+                $this->redirectError('Something went wrong with activation process');
+            }
+        } elseif ($code == $activateCode) {           
             $user->activate($id);
-            $this->redirectMessage('Your account is now activated.', '/login');
+            $message = 'Your account is now activated.';
         } else {
             $this->redirectError('Bad code!');
         }
         
+        //not redirected means activation ok or user already active
+        //check where to redirect
+        if ($user->tryLogIn($this->session->get('authkey'))) {
+            $this->redirectMessage($message, '/u/menu');
+        } else {
+            $this->redirectMessage($message, '/login');
+        }
+        
     }
 
+    public function action_mailme() {
+        //require Kohana::find_file('vendor/Swift-4.1.5', 'lib/swift_required');
+        $email = Email::factory()
+            ->subject(__('Message'))
+            ->to('magnax@gmail.com')
+            ->from('noreply@example.com', 'Example')
+            ->reply_to('magnax@gmail.com');
+        $email->message('Hello, I am test', 'text/html');
+        $email->send();
+    }
+    
 }
 
 ?>
