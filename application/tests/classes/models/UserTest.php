@@ -44,7 +44,7 @@ class UserTest extends PHPUnit_Framework_TestCase {
         
         $this->user->createNew($post);
         $this->assertEquals('test@test.com', $this->user->getEmail());
-        $this->assertNull($this->user->getID());
+        $this->assertEquals(1, $this->user->getID());
         $this->assertEquals(19, strlen($this->user->getRegisterDate()));
         $this->assertEquals(Model_User::STATUS_INACTIVE, $this->user->getStatus());
         $this->user->setStatus(Model_User::STATUS_ACTIVE);
@@ -52,7 +52,7 @@ class UserTest extends PHPUnit_Framework_TestCase {
         
         $this->user->save();
         
-        $this->assertEquals(1, $this->user->getID());
+        
         $this->assertTrue($this->user->isDuplicateEmail('test@test.com'));
         $this->assertFalse($this->user->isDuplicateEmail('test1@test.com'));
         

@@ -10,12 +10,18 @@ class Model_Location_Redis extends Model_Location {
 
             $data = json_decode($this->source->get("locations:$location_id"), true);
 
+            $this->x = $data['x'];
+            $this->y = $data['y'];
             $this->res_slots = $data['res_slots'];
             $this->used_slots = $data['used_slots'];
             $this->resources = $data['resources'];
             
-            $name = $this->source->get("characters:$character_id:lnames:$location_id");
-            $this->name = $name ? $name : 'Nienazwane miejsce';
+            if ($character_id) {
+                $name = $this->source->get("characters:$character_id:lnames:$location_id");
+                $this->name = $name ? $name : 'Nienazwane miejsce';
+            } else {
+                $this->name = $data['name'];
+            }
 
             return $this;
         } else {
@@ -166,6 +172,45 @@ class Model_Location_Redis extends Model_Location {
 
     }
 
+    public function getAllLocations($exclude = null) {
+        $all_locations = $this->source->smembers("global:locations");
+        
+        $returned = array();
+        
+        foreach ($all_locations as $location) {
+            if ($location != $exclude) {
+                $location_data = json_decode($this->source->get("locations:$location"), true);
+                $returned[$location] = $location.' ('.$location_data['x'].','.$location_data['x'].')';
+            }
+        }
+        
+        return $returned;
+    }
+
+    public function getExits() {
+         
+        $returned = array();
+         
+        $exits = $this->source->smembers("locations:{$this->id}:exits");
+        foreach ($exits as $e) {
+            
+            $road = Model_Road::getInstance($this->source)->findOneByID($e);
+            $returned[] = array(
+                'level'=>$road->getLevel(), 
+                'lid'=>$road->getDestinationLocationID(), 
+                'name'=>  Model_Location::getInstance($this->source)->findOneByID($road->getDestinationLocationID(), null)->getName(),
+                'distance'=>$road->getDistance(),
+                'direction'=>  Helper_Utils::getDirectionString($road->getDirection())
+            );
+         }
+         
+         return count($returned)? $returned : null;
+    }
+    
+    public function addExit($exit_id) {
+        $this->source->sadd("locations:{$this->id}:exits", $exit_id);
+    }
+    
 }
 
 ?>

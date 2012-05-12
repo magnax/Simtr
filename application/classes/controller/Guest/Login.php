@@ -63,6 +63,20 @@ class Controller_Guest_Login extends Controller_Base_Guest {
         
         $activateCode = Text::random('distinct', 16);
         $user->setActivationCode($user->getID(), $activateCode);
+        
+        //send activation code
+        $email = Email::factory()
+            ->subject(__('Activate your Simtr account'))
+            ->to($user->getEmail())
+            ->from('noreply@example.com', 'Simtr');
+        $email->message('Below is your activation code, click link or copy it and paste
+            in browser address field.<br><br>
+            <a href="http://simtr2.ubu/index.php/login/activate?id='.
+            $user->getID().'&code='.$activateCode.
+            '">http://simtr2.ubu/index.php/login/activate?id='.
+            $user->getID().'&code='.$activateCode.'</a>', 'text/html');
+        $email->send();
+        
 
         $this->view->IDUser = $user->getID();
 

@@ -4,9 +4,10 @@ class Controller_User_Location extends Controller_Base_Character {
 
     public function action_index() {
 
-        $l = Model_Location::getInstance($this->redis)->
-            findOneByID($this->character->location_id, $this->character->id)->
-                toArray();
+        $location = Model_Location::getInstance($this->redis)->
+            findOneByID($this->character->location_id, $this->character->id);
+        
+        $l = $location->toArray();
         
         $resources = array();
         foreach ($l['resources'] as $res) {
@@ -15,9 +16,11 @@ class Controller_User_Location extends Controller_Base_Character {
                 toArray();
             $resources[] = $r;
         }
-        $l['resources'] = $resources;
+        $l['resources'] = $resources;        
+        
+        $l['exits'] = $location->getExits($this->lnames);
+        
         $this->view->l = $l;
-
     }
 
     public function action_nameform($id) {

@@ -25,6 +25,22 @@ abstract class Model_Resource {
         return $this->type;
     }
     
+    public function getName() {
+        return $this->name;
+    }
+
+    public function setName($name) {
+        $this->name = $name;
+    }
+    
+    public function setType($type) {
+        $this->type = $type;
+    }
+    
+    public function setGatherBase($base) {
+        $this->gather_base = $base;
+    }
+    
     public function toArray() {
         return array(
             'id'=>$this->id,

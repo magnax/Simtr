@@ -28,7 +28,7 @@ class Controller_Base_Admin extends Controller_Template {
         $this->redis = new Predis_Client(array(
             'host'     => '127.0.0.1',
             'port'     => 6379,
-            'database' => 15,
+            'database' => 0,
             'alias' => 'mn'
         ));
 

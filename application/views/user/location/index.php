@@ -1,4 +1,16 @@
 <div class="title_bar">
+    <?php echo $l['name']; ?>: WYJŚCIA
+</div>
+<?php if ($l['exits']): ?>
+<?php foreach ($l['exits'] as $exit): ?>
+    <div>
+        <?php echo '[ikony] '.$exit['level'].' do '.$exit['lname'].' (kierunek: '.$exit['direction'].')'; ?>
+    </div>
+<?php endforeach; ?>
+<?php else: ?>
+    No exits from this location! You're trapped!
+<?php endif; ?>
+<div class="title_bar">
     <?php echo $l['name']; ?>: OPIS
 </div>
 <?php echo $l['used_slots']; ?> out of <?php echo $l['res_slots']; ?> resource slots are used<br />
