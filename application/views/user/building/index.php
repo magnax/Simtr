@@ -1,1 +1,0 @@
-<div class="title_bar">Budynki i pojazdy</div>
