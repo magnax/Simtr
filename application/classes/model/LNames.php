@@ -4,7 +4,11 @@ abstract class Model_LNames {
 
     protected $source;
 
+    //dictionary used to return names in different languages
     protected $dict;
+    
+    //character id 
+    protected $character_id = null;
 
     public function  __construct($source, $dict) {
         $this->source = $source;
@@ -19,8 +23,12 @@ abstract class Model_LNames {
 
     }
 
-    abstract function getName($id_character, $id_location);
-    abstract function setName($id_character, $id_location, $new_name);
+    public function setCharacter($character_id) {
+        $this->character_id = $character_id;
+    }
+
+    abstract function getName($id_location);
+    abstract function setName($id_location, $new_name);
 
 }
 

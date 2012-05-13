@@ -1,12 +1,5 @@
 Lokacja ID: <?php echo $location['id']; ?><br />
-<?php echo Form::open(); ?>
-x: <?php echo Form::input('x', isset($location['x'])?$location['x']:''); ?> y:
-<?php echo Form::input('y', isset($location['y'])?$location['y']:''); ?><br />
-Nazwa (wewn.): <?php echo Form::input('name', isset($location['name'])?$location['name']:''); ?><br />
-Liczba slotów: <?php echo Form::input('res_slots', isset($location['res_slots'])?$location['res_slots']:''); ?><br />
-
-<?php echo Form::submit('submit', 'Zapisz'); ?>
-<?php echo Form::close(); ?>
+<?php echo View::factory('admin/location/_form', array('location'=>$location))->render(); ?>
 <div>
     <h1>Surowce</h1>
     <?php if ($location['resources']): ?>
@@ -17,7 +10,7 @@ Liczba slotów: <?php echo Form::input('res_slots', isset($location['res_slots']
             </div>
         <?php endforeach; ?>
     <?php else: ?>
-        Brak dróg
+        Brak surowców
     <?php endif; ?>
      <?php echo html::anchor('admin/resource/add/'.$location['id'], 'Dodaj surowiec'); ?>
 </div>

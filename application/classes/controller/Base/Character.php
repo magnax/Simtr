@@ -30,6 +30,11 @@ class Controller_Base_Character extends Controller_Base_User {
             Model_Character::getInstance($this->redis)
                 ->fetchOne($this->user->getCurrentCharacter());
 
+        //set character id in lnames and chnames objects (to retrieve names for this
+        //character
+        $this->lnames->setCharacter($this->character->getId());
+        //$this->chnames->setCharacter($this->character->getId());
+        
         $this->character->countAge($this->game->getRawTime());
 
         $ch = $this->character->toArray();
@@ -45,8 +50,8 @@ class Controller_Base_Character extends Controller_Base_User {
             );
         }
 
-        $ch['location'] = $this->lnames->getName($ch['id'], $ch['location_id']);
-        $ch['spawn_location'] = $this->lnames->getName($ch['id'], $ch['spawn_location_id']);
+        $ch['location'] = $this->lnames->getName($ch['location_id']);
+        $ch['spawn_location'] = $this->lnames->getName($ch['spawn_location_id']);
         $kn = $this->chnames->getName($ch['id'], $ch['id']);
         $ch['known_as'] = $kn ? $kn : $ch['name'];
 

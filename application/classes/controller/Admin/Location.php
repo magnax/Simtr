@@ -21,29 +21,30 @@ class Controller_Admin_Location extends Controller_Base_Admin {
 
     public function action_edit($location_id) {
         
-        $location = json_decode($this->redis->get("locations:$location_id"), true);
+        $location = Model_Location::getInstance($this->redis)->findOneByID($location_id, 0);
         
         if (isset($_POST['submit'])) {
-            $location['x'] = $_POST['x'];
-            $location['y'] = $_POST['y'];
-            $location['name'] = $_POST['name'];
-            $location['res_slots'] = $_POST['res_slots'];
-            $this->redis->set("locations:$location_id", json_encode($location));
+            $location->update($_POST);
+            $location->save();
             //redirect to get rid of POST
             $this->request->redirect('admin/location/edit/'.$location_id);
         }
         
-        $l = Model_Location::getInstance($this->redis)->findOneByID($location_id, 0);
-        $location['exits'] = $l->getExits();
+        $this->view->location = $location->toArray();
+        $this->view->location['exits'] = $location->getExits();
+        $this->view->location['resources'] = $location->getResources();       
         
-        foreach ($location['resources'] as $res) {
-            $resource = Model_Resource::getInstance($this->redis)->findOneById($res, true);
-            $location_res[] = $resource;
+    }
+    
+    public function action_add() {
+        if (isset($_POST['submit'])) {
+            $location = Model_Location::getInstance($this->redis);
+            $location->update($_POST);
+            $location->save();
+            
+            //redirect to get rid of POST
+            $this->request->redirect('admin/location');
         }
-        
-        $location['resources'] = $location_res;
-        $this->view->location = $location;
-        
     }
     
 }

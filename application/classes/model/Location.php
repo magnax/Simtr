@@ -2,8 +2,8 @@
 
 abstract class Model_Location {
 
-    protected $PLACE_HEARABLE = array('loc', 'veh', 'shp');
-    
+    protected $PLACE_HEARABLE = array('loc', 'veh', 'shp');    
+
     protected $id;
     protected $x;
     protected $y;
@@ -53,6 +53,24 @@ abstract class Model_Location {
         return $this->used_slots;
     }
 
+    public function getResources() {
+        $res_array = array();
+        foreach ($this->resources as $res) {
+            $resource = Model_Resource::getInstance($this->source)->findOneById($res, true);
+            $res_array[] = $resource;
+        }
+        return $res_array;
+    }
+
+
+    public function update($post) {
+        $this->x = $post['x'];
+        $this->y = $post['y'];
+        $this->name = $post['name'];
+        $this->res_slots = $post['res_slots'];
+    }
+
+
     public function toArray() {
         return array(
             'id'=>$this->id,
@@ -79,7 +97,7 @@ abstract class Model_Location {
     abstract public function calculateUsedSlots();
     abstract public function save();
     abstract public function saveProjects();
-    abstract public function getExits();
+    abstract public function getExits($lnames);
 
 }
 

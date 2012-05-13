@@ -17,6 +17,14 @@ class Controller_Admin_Resource extends Controller_Base_Admin {
         $this->view->resource = $resource->toArray();
     }
     
+    /**
+     * Adds resource to location
+     * @param int $location_id 
+     */
+    public function action_add($location_id) {
+        
+    }
+    
 }
 
 ?>

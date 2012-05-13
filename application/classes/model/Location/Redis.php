@@ -102,9 +102,12 @@ class Model_Location_Redis extends Model_Location {
 
     public function save() {
 
-        $tmp_loc = $this->toArray();
+        if (!$this->id) {
+            $this->id = $this->source->incr("global:IDLocation");
+            $this->source->sadd("global:locations", $this->id);
+        }
 
-        $this->source->set("locations:{$this->id}", json_encode($tmp_loc));
+        $this->source->set("locations:{$this->id}", json_encode($this->toArray()));
 
     }
 
@@ -173,6 +176,7 @@ class Model_Location_Redis extends Model_Location {
     }
 
     public function getAllLocations($exclude = null) {
+        
         $all_locations = $this->source->smembers("global:locations");
         
         $returned = array();
@@ -187,18 +191,19 @@ class Model_Location_Redis extends Model_Location {
         return $returned;
     }
 
-    public function getExits() {
-         
-        $returned = array();
+    public function getExits($lnames = null) {
          
         $exits = $this->source->smembers("locations:{$this->id}:exits");
+        
+        $returned = array();
+         
         foreach ($exits as $e) {
             
             $road = Model_Road::getInstance($this->source)->findOneByID($e);
             $returned[] = array(
                 'level'=>$road->getLevel(), 
                 'lid'=>$road->getDestinationLocationID(), 
-                'name'=>  Model_Location::getInstance($this->source)->findOneByID($road->getDestinationLocationID(), null)->getName(),
+                'name'=>  $lnames ? $lnames->getName($road->getDestinationLocationID()) : Model_Location::getInstance($this->source)->findOneByID($road->getDestinationLocationID(), null)->getName(),
                 'distance'=>$road->getDistance(),
                 'direction'=>  Helper_Utils::getDirectionString($road->getDirection())
             );

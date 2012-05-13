@@ -4,7 +4,7 @@
 <?php if ($l['exits']): ?>
 <?php foreach ($l['exits'] as $exit): ?>
     <div>
-        <?php echo '[ikony] '.$exit['level'].' do '.$exit['lname'].' (kierunek: '.$exit['direction'].')'; ?>
+        <?php echo '[ikony] '.$exit['level'].' do '.html::anchor('u/location/nameform/'.$exit['lid'], $exit['name']).' (kierunek: '.$exit['direction'].')'; ?>
     </div>
 <?php endforeach; ?>
 <?php else: ?>
