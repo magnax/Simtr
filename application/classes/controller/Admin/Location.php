@@ -32,7 +32,7 @@ class Controller_Admin_Location extends Controller_Base_Admin {
         
         $this->view->location = $location->toArray();
         $this->view->location['exits'] = $location->getExits();
-        $this->view->location['resources'] = $location->getResources();       
+        $this->view->location['resources'] = $location->getFullResources();       
         
     }
     

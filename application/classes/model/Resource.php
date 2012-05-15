@@ -5,11 +5,18 @@ abstract class Model_Resource {
     protected $id;
     protected $name;
     protected $type;
+    
     /**
      * podstawowa ilość zbierana na dzień
      * @var integer
      */
     protected $gather_base;
+    
+    /**
+     * raw resource?
+     * @var boolean 
+     */
+    protected $is_raw;
 
     protected $source;
 
@@ -29,6 +36,10 @@ abstract class Model_Resource {
         return $this->name;
     }
 
+    public function isRaw() {
+        return $this->is_raw;
+    }
+    
     public function setName($name) {
         $this->name = $name;
     }
@@ -46,8 +57,16 @@ abstract class Model_Resource {
             'id'=>$this->id,
             'name'=>$this->name,
             'type'=>$this->type,
-            'gather_base'=>$this->gather_base
+            'gather_base'=>$this->gather_base,
+            'is_raw'=>$this->is_raw
         );
+    }
+    
+    public function update($post) {
+        $this->name = $post['name'];
+        $this->type = $post['type'];
+        $this->gather_base = $post['gather_base'];
+        $this->is_raw = isset($post['is_raw']) && $post['is_raw'];
     }
 
     public static function getInstance($source) {
@@ -57,6 +76,9 @@ abstract class Model_Resource {
     }
 
     abstract public function findOneById($id);
+    abstract public function findAll($name_only, $raw);
+    abstract public function getDictionaryName($type);
+    abstract public function save();
 
 }
 

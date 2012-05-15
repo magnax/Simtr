@@ -10,6 +10,7 @@
 </style>
 <div id="menu">
     <?php echo html::anchor('admin/menu', 'Menu'); ?>
-    <?php echo html::anchor('admin/location', 'Locations'); ?>
+    <?php echo html::anchor('admin/location', 'Locations'); ?> 
+    <?php echo html::anchor('admin/resource', 'Resources'); ?>
 </div>
 <?php echo $content; ?>

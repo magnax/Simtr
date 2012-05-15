@@ -54,6 +54,10 @@ abstract class Model_Location {
     }
 
     public function getResources() {
+        return $this->resources;
+    }
+
+    public function getFullResources() {
         $res_array = array();
         foreach ($this->resources as $res) {
             $resource = Model_Resource::getInstance($this->source)->findOneById($res, true);
