@@ -9,6 +9,7 @@ class Model_Event {
     const GET_RAW_END = 'GetRawEnd';
     const SPAWN = 'Spawn';
     const GIVE_RAW = 'GiveRaw';
+    const POINT_EXIT = 'PointExit';
 
     /**
      * wspólne właściwości

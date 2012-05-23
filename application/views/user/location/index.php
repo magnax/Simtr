@@ -4,7 +4,9 @@
 <?php if ($l['exits']): ?>
 <?php foreach ($l['exits'] as $exit): ?>
     <div>
-        <?php echo '[ikony] '.$exit['level'].' do '.html::anchor('u/location/nameform/'.$exit['lid'], $exit['name']).' (kierunek: '.$exit['direction'].')'; ?>
+        <?php echo html::anchor('u/point/e/'.$exit['id'], '[wskaż]'); ?> 
+        [idź] [buduj] 
+        <?php echo $exit['level'].' do '.html::anchor('u/location/nameform/'.$exit['lid'], $exit['name']).' (kierunek: '.$exit['direction'].')'; ?>
     </div>
 <?php endforeach; ?>
 <?php else: ?>

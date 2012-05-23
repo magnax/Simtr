@@ -34,6 +34,10 @@ abstract class Model_EventSender {
         $this->_event->setText($t);
     }
 
+    public function setExit($exit_id) {
+        $this->_event->setExit($exit_id);
+    }
+    
     abstract public function send();
 
 }

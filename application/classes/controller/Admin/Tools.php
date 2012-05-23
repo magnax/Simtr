@@ -13,6 +13,13 @@ class Controller_Admin_Tools extends Controller_Base_Admin {
             fetchAll($filter = Model_Item::TOOL);
     }
     
+    /**
+     * add new tool 
+     */
+    public function action_add() {
+        
+    }
+    
 }
 
 ?>

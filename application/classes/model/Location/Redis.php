@@ -191,7 +191,7 @@ class Model_Location_Redis extends Model_Location {
         return $returned;
     }
 
-    public function getExits($lnames = null) {
+    public function getExits($lnames = null, $dict = null) {
          
         $exits = $this->source->smembers("locations:{$this->id}:exits");
         
@@ -201,7 +201,8 @@ class Model_Location_Redis extends Model_Location {
             
             $road = Model_Road::getInstance($this->source)->findOneByID($e);
             $returned[] = array(
-                'level'=>$road->getLevel(), 
+                'id' => $e,
+                'level' => $dict ? $dict->getString($road->getLevelString()) : $road->getLevelString(), 
                 'lid'=>$road->getDestinationLocationID(), 
                 'name'=>  $lnames ? $lnames->getName($road->getDestinationLocationID()) : Model_Location::getInstance($this->source)->findOneByID($road->getDestinationLocationID(), null)->getName(),
                 'distance'=>$road->getDistance(),

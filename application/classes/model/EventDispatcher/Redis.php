@@ -26,6 +26,10 @@ class Model_EventDispatcher_Redis extends Model_EventDispatcher {
                     ->findOneById($e[$a])
                     ->getName('d');
                 $a = $res;
+            } elseif ($a == 'exit_id') {
+                $res = Model_Road::getInstance($this->source)
+                    ->findOneByID($e[$a]);
+                $a = $res->getLevelString().' ('.$e[$a].')';
             } else {
                 $a = $e[$a];
             }

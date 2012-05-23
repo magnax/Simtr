@@ -4,9 +4,8 @@ class Controller_User_Menu extends Controller_Base_User {
 
     public function action_index() {
 
-        $dict = Model_Dict::getInstance($this->redis, 'pl');
-        $lnames = Model_LNames::getInstance($this->redis, $dict);
-
+        $lnames = Model_LNames::getInstance($this->redis, $this->dict);
+        
         $characters = $this->user->getCharacters();
 
         $this->view->characters = array();
@@ -15,8 +14,9 @@ class Controller_User_Menu extends Controller_Base_User {
             $char = Model_Character::getInstance($this->redis)
                 ->fetchOne($ch)
                 ->toArray();
-            $char['location'] = $lnames->getName($char['id'], $char['location_id']);
-            $char['sex'] = $dict->getString($char['sex']);
+            $lnames->setCharacter($char['id']);
+            $char['location'] = $lnames->getName($char['location_id']);
+            $char['sex'] = $this->dict->getString($char['sex']);
             if ($char['project_id']) {
                 $char['project'] = 'P '.Model_ProjectManager::getInstance(null, $this->redis)
                     ->findOneByID($char['project_id'])

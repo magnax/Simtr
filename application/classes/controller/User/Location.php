@@ -18,7 +18,7 @@ class Controller_User_Location extends Controller_Base_Character {
         }
         $l['resources'] = $resources;        
         
-        $l['exits'] = $location->getExits($this->lnames);
+        $l['exits'] = $location->getExits($this->lnames, $this->dict);
         
         $this->view->l = $l;
     }

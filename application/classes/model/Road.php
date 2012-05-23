@@ -30,6 +30,12 @@ abstract class Model_Road {
         return $this->level;
     }
     
+    public function getLevelString() {
+        $levels = $this->getLevels();
+        return $levels[$this->level];
+    }
+
+
     public function getDistance() {
         return $this->distance;
     }
