@@ -1,6 +1,6 @@
 <?php
  
-require_once 'PHPUnit/Framework.php';
+//require_once 'PHPUnit/Framework.php';
  
 ini_set('display_errors', 'On');
  

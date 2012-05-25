@@ -1,3 +1,130 @@
-<h1>Simtr</h1>
+Simtr
 
-Coming soon...
+1. Instalacja VirtualBoxa
+2. Instalacja Ubuntu 11.04 (lub 10.10)
+2a. Instalacja "mc" (Midnight Commander)
+
+    apt-get install mc
+
+2b. Ustawienie sieci (stałe IP)
+    /etc/network/interfaces:
+
+    iface eth0 inet static
+    address 192.168.1.6
+    netmask 255.255.255.0
+    gateway 192.168.1.1
+
+    /etc/init.d/networking restart
+
+3. Apache
+
+    apt-get install apache2
+
+    /etc/apache2/httpd.conf:
+
+    ServerName localhost
+
+    /etc/init.d/apache2 restart
+
+    sprawdź http://192.168.1.6
+
+4. PHP5 + apache lib
+
+    apt-get install php5 libapache2-mod-php5
+    /etc/init.d/apache2 restart
+
+    /var/www/test.php:
+
+    <?php phpinfo(); ?>
+
+    sprawdź http://192.168.1.6/test.php
+
+5. Redis
+
+    apt-get install redis-server
+
+    Sprawdź: redis-cli
+
+6. Git
+
+    apt-get install git
+
+7. Unzip
+
+    apt-get install unzip
+
+8. Kohana
+
+    wget http://dev.kohanaframework.org/attachments/download/1596/kohana-3.0.7.1.zip
+    mkdir /usr/share/php-devel
+    unzip kohana-3.0.7.1.zip -d /usr/share/php-devel
+    cd /usr/share/php-devel
+    mv kohana/ kohana-3.0.7.1
+
+9. Utworzenie foldera projektu, klon repozytorium
+
+    mkdir /var/www/simtr.ubu
+    cd /var/www/simtr.ubu
+    git clone git://github.com/magnax/Simtr.git .
+
+10. Ustawienie serwera wirtualnego Apache
+
+    /etc/apache2/sites-available/simtr.ubu:
+
+    <VirtualHost *:80>
+        ServerAlias simtr.ubu
+        DocumentRoot /var/www/simtr.ubu
+        DirectoryIndex index.php
+    </VirtualHost>
+
+    ln -s /etc/apache2/sites-available/simtr.ubu /etc/apache2/sites-enable/001-simtr.ubu
+
+    /etc/init.d/apache2 restart
+
+11. Ustawienie domeny projektu w Windows
+
+    C:\Windows\system32\drivers\etc\hosts:
+
+    dopisać:
+
+    192.168.1.6     simtr.ubu
+
+9a. Utworzenie folderów /application/logs i /application/cache z prawami zapisu
+
+    mkdir application/cache
+    chmod 0777 application/cache
+    mkdir application/logs
+    chmod 0777 application/logs
+
+12. Install PEAR 
+
+    apt-get install php-pear
+
+13. Install SwiftMailer (from PEAR) http://swiftmailer.org/docs/installing.html
+
+    pear channel-discover pear.swiftmailer.org
+    pear install swift/swift
+
+14. Install PHPUnit (from PEAR) http://www.phpunit.de/manual/3.6/en/installation.html
+
+    wersja 3.5
+
+    pear upgrade PEAR
+    pear channel-discover pear.symfony-project.com
+    pear channel-discover pear.phpunit.de
+    pear install pear.symfony-project.com/YAML-1.0.2
+    pear install phpunit/PHPUnit_Selenium-1.0.1
+    pear install phpunit/PHPUnit_MockObject-1.0.3
+    pear install phpunit/PHP_Timer-1.0.0
+    pear install phpunit/File_Iterator-1.2.3
+    pear channel-discover components.ez.no
+    pear install channel://components.ez.no/ConsoleTools-1.6
+    pear install phpunit/PHP_CodeCoverage-1.0.2
+    pear install phpunit/Text_Template-1.0.0
+    pear install phpunit/DbUnit-1.0.3
+    pear install phpunit/PHPUnit-3.5.15
+    
+
+
+    
+    
