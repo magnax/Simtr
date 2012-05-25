@@ -1,5 +1,4 @@
-/nbproject/private/
-/.git-rewrite/application/modules/email/config/email.php
+/nbproject/
 /application/logs/
 /application/cache/
 /application/modules/email/config/email.php
