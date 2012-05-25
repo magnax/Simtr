@@ -91,10 +91,8 @@ Simtr
 
 9a. Utworzenie folderów /application/logs i /application/cache z prawami zapisu
 
-    mkdir application/cache
-    chmod 0777 application/cache
-    mkdir application/logs
-    chmod 0777 application/logs
+    mkdir application/cache application/logs
+    chmod 0777 application/cache application/logs
 
 12. Install PEAR 
 
@@ -124,6 +122,11 @@ Simtr
     pear install phpunit/DbUnit-1.0.3
     pear install phpunit/PHPUnit-3.5.15
     
+15. Uruchomienie demonów
+
+a. demon czasu
+
+b. demony przeliczania projektów
 
 
     

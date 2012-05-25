@@ -53,7 +53,7 @@ class Model_GameTime {
         if (is_integer($output) && $output) {
             return $output;
         } else {
-            throw new BadDaemonException('Bad daemon?');
+            throw new BadDaemonException('Bad daemon? Should be installed in '.self::PATH);
         }
     }
 

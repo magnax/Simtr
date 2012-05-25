@@ -2,6 +2,7 @@
 import sys
 import time
 from datetime import datetime
+from os.path import exists
 
 from daemon import Daemon
 
@@ -10,6 +11,16 @@ simtr_dir = '/usr/local/lib/simtr/'
 counter_file =  simtr_dir + 'counter'
 time_file = simtr_dir + 'ctime'
 pid_file = simtr_dir + '.d.py.pid'
+
+#check if files exist and create if not
+if not exists(counter_file):
+  f = file(counter_file, 'w')
+  f.write('0')
+  f.close()
+
+if not exists(time_file):
+  f = file(time_file, 'w')
+  f.close()
 
 class MyDaemon(Daemon):
   def say(self):
