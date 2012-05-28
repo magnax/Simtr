@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mkdir application/cache application/logs
+chmod 0777 application/cache application/logs

@@ -1,12 +1,20 @@
 Simtr
 
+Obraz VirtualBox z kompletnym projektem można będzie pobrać.
+Wielkość to około 370MB po spakowaniu, link do pobrania znajduje się na blogu:
+http://simtr.magnax.pl/index.php/2012/05/27/srodowisko-pracy/
+
+Kroki dla samodzielnej instalacji:
+
 1. Instalacja VirtualBoxa
-2. Instalacja Ubuntu 11.04 (lub 10.10)
-2a. Instalacja "mc" (Midnight Commander)
+
+2. Instalacja Ubuntu 10.10 (ew. 11.04)
+
+3. Instalacja "mc" (Midnight Commander)
 
     apt-get install mc
 
-2b. Ustawienie sieci (stałe IP)
+4. Ustawienie sieci (stałe IP)
     /etc/network/interfaces:
 
     iface eth0 inet static
@@ -16,7 +24,7 @@ Simtr
 
     /etc/init.d/networking restart
 
-3. Apache
+5. Apache
 
     apt-get install apache2
 
@@ -28,7 +36,7 @@ Simtr
 
     sprawdź http://192.168.1.6
 
-4. PHP5 + apache lib
+6. PHP5 + apache lib
 
     apt-get install php5 libapache2-mod-php5
     /etc/init.d/apache2 restart
@@ -39,21 +47,21 @@ Simtr
 
     sprawdź http://192.168.1.6/test.php
 
-5. Redis
+7. Redis
 
     apt-get install redis-server
 
     Sprawdź: redis-cli
 
-6. Git
+8. Git
 
     apt-get install git
 
-7. Unzip
+9. Unzip
 
     apt-get install unzip
 
-8. Kohana
+10. Kohana
 
     wget http://dev.kohanaframework.org/attachments/download/1596/kohana-3.0.7.1.zip
     mkdir /usr/share/php-devel
@@ -61,13 +69,13 @@ Simtr
     cd /usr/share/php-devel
     mv kohana/ kohana-3.0.7.1
 
-9. Utworzenie foldera projektu, klon repozytorium
+11. Utworzenie foldera projektu, klon repozytorium
 
     mkdir /var/www/simtr.ubu
     cd /var/www/simtr.ubu
     git clone git://github.com/magnax/Simtr.git .
 
-10. Ustawienie serwera wirtualnego Apache
+12. Ustawienie serwera wirtualnego Apache
 
     /etc/apache2/sites-available/simtr.ubu:
 
@@ -81,7 +89,7 @@ Simtr
 
     /etc/init.d/apache2 restart
 
-11. Ustawienie domeny projektu w Windows
+13. Ustawienie domeny projektu w Windows
 
     C:\Windows\system32\drivers\etc\hosts:
 
@@ -89,21 +97,27 @@ Simtr
 
     192.168.1.6     simtr.ubu
 
-9a. Utworzenie folderów /application/logs i /application/cache z prawami zapisu
+14. Utworzenie folderów /application/logs i /application/cache z prawami zapisu
 
     mkdir application/cache application/logs
     chmod 0777 application/cache application/logs
 
-12. Install PEAR 
+15. Edycja konfiguracji:
+
+    application/modules/email/email.php - dane serwera SMTP
+    
+16. Wczytanie przykładowych danych do bazy
+
+17. Install PEAR 
 
     apt-get install php-pear
 
-13. Install SwiftMailer (from PEAR) http://swiftmailer.org/docs/installing.html
+18. Install SwiftMailer (from PEAR) http://swiftmailer.org/docs/installing.html
 
     pear channel-discover pear.swiftmailer.org
     pear install swift/swift
 
-14. Install PHPUnit (from PEAR) http://www.phpunit.de/manual/3.6/en/installation.html
+19. Install PHPUnit (from PEAR) http://www.phpunit.de/manual/3.6/en/installation.html
 
     wersja 3.5
 
@@ -122,9 +136,13 @@ Simtr
     pear install phpunit/DbUnit-1.0.3
     pear install phpunit/PHPUnit-3.5.15
     
-15. Uruchomienie demonów
+20. Uruchomienie demonów
 
 a. demon czasu
+
+    mkdir /usr/local/lib/simtr
+    cp simtrd/d.py simtrd/daemon.pyc /usr/local/lib/simtr
+    chmod 0666 /usr/local/lib/simtr/d.py
 
 b. demony przeliczania projektów
 
