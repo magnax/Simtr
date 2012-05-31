@@ -16,6 +16,10 @@ class Model_Event {
      */
     protected $date;
     protected $type;
+    
+    //sender may remains null if event is send by the system
+    protected $sender = null;
+    
     protected $recipients = array();
 
     protected $source;
@@ -27,17 +31,20 @@ class Model_Event {
     }
 
     public static function getInstance($type, $date, $source) {
-        //if ($source instanceof Predis_Client) {
+
             $src = 'Model_Event_'.$type;
-            //$src = 'Model_Event_'.$type.'_Redis';
             return new $src($type, $date, $source);
-        //}
+
     }
 
     public function getSource() {
         return $this->source;
     }
-
+    
+    public function setSender($ch) {
+        $this->sender = $ch;
+    }
+    
     public function addRecipients(array $recipients) {
         $this->recipients = $recipients;
     }
@@ -47,10 +54,13 @@ class Model_Event {
     }
 
     public function toArray() {
+        
         return array(
-            'date'=>$this->date,
-            'type'=>$this->type
+            'date' => $this->date,
+            'type' => $this->type,
+            'sndr' => $this->sender
         );
+        
     }
 
 }

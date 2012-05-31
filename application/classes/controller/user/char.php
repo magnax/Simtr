@@ -18,7 +18,7 @@ class Controller_User_Char extends Controller_Base_Character {
         $this->request->redirect('events');
         
     }
-
+    
     public function action_talkto() {
 
         if (isset($_POST['text']) && $_POST['text']) {

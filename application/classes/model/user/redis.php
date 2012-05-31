@@ -14,6 +14,15 @@ class Model_User_Redis extends Model_User {
 
     }
 
+    //przypisuje nowo utworzoną postać do konta użytkownika
+    public function appendCharacter($id) {
+        
+        $this->source->sadd("users:{$this->id}:characters", $id);
+        //pobierz z powrotem wszystkie postacie
+        $this->characters[] = $this->source->smembers("users:{$this->id}:characters");
+        
+    }
+    
     public function getUserData($id) {
 
         if ($this->source) {
@@ -40,7 +49,7 @@ class Model_User_Redis extends Model_User {
                 $this->email = $data['email'];
             }
             if (isset($data['characters'])) {
-                $this->characters = $data['characters'];
+                $this->characters = $this->characters[] = $this->source->smembers("users:{$this->id}:characters");
             }
 
             $this->current_character_id = $this->source->get("users:$id:current_character");

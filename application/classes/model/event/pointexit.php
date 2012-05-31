@@ -28,7 +28,6 @@ class Model_Event_PointExit extends Model_Event {
         $arr = parent::toArray();
 
         $arr['exit_id'] = $this->exit_id;
-        $arr['sndr'] = $this->sender;
 
         return $arr;
 

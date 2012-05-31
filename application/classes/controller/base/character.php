@@ -35,7 +35,7 @@ class Controller_Base_Character extends Controller_Base_User {
         $this->lnames->setCharacter($this->character->getId());
         //$this->chnames->setCharacter($this->character->getId());
         
-        $this->character->countAge($this->game->getRawTime());
+        
 
         $ch = $this->character->toArray();
 
@@ -49,7 +49,7 @@ class Controller_Base_Character extends Controller_Base_User {
                 'percent'=>$project->getPercent(1)
             );
         }
-
+        $ch['age'] = $this->character->countAge($this->game->getRawTime());
         $ch['location'] = $this->lnames->getName($ch['location_id']);
         $ch['spawn_location'] = $this->lnames->getName($ch['spawn_location_id']);
         $kn = $this->chnames->getName($ch['id'], $ch['id']);

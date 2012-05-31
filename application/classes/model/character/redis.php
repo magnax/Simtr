@@ -2,24 +2,12 @@
 
 class Model_Character_Redis extends Model_Character {
 
-    public function createNew($time, $id_location) {
+    public function save() {
 
         if (!$this->id) {
             $this->id = $this->source->incr("global:IDCharacter");
         }
-        $this->spawn_date = $time;
-        $this->spawn_location_id = $id_location;
-        $this->location_id = $id_location;
-        $this->eq_weight = 0;
-        $this->place_type = 'loc';
-        $this->place_id = $id_location;
-
-    }
-
-    public function save() {
-
         $tmp_char = $this->toArray();
-        unset($tmp_char['age']);
         
         $this->source->set("characters:{$this->id}", json_encode($tmp_char));
 

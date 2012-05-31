@@ -68,7 +68,7 @@ abstract class Model_Character {
     }
 
     public function getName() {
-        return $this->name;
+        return ($this->name);
     }
 
     public function getSex() {
@@ -115,21 +115,41 @@ abstract class Model_Character {
     }
 
     public function toArray() {
+        
         return array(
-            'id'=>$this->id,
-            'name'=>$this->name,
-            'age'=>$this->countAge(),
-            'spawn_date'=>$this->spawn_date,
-            'sex'=>$this->sex,
-            'location_id'=>$this->location_id,
-            'spawn_location_id'=>$this->spawn_location_id,
-            'eq_weight'=>$this->eq_weight,
-            'project_id'=>$this->project_id,
-            'place_type'=>$this->place_type,
-            'place_id'=>$this->place_id,
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'name' => $this->name,
+            'spawn_date' => $this->spawn_date,
+            'sex' => $this->sex,
+            'location_id' => $this->location_id,
+            'spawn_location_id' => $this->spawn_location_id,
+            'eq_weight' => $this->eq_weight,
+            'project_id' => $this->project_id,
+            'place_type' => $this->place_type,
+            'place_id' => $this->place_id,
         );
+        
     }
 
+    public function createNew($data) {
+
+        $this->spawn_date = $data['spawn_date'];
+        $this->spawn_location_id = $data['location_id'];
+        $this->location_id = $data['location_id'];
+        $this->eq_weight = 0;
+        $this->place_type = 'loc';
+        $this->place_id = $data['location_id'];
+        $this->name = $data['name'];
+        $this->sex = $data['sex'];
+        $this->user_id = $data['user_id'];
+        
+        $this->save();
+        
+        return $this;
+
+    }
+    
     abstract public function save();
     abstract public function fetchOne($id);
     abstract public function getInfo(array $characters);

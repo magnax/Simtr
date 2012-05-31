@@ -89,10 +89,6 @@ abstract class Model_User {
     public function getCharacters() {
         return $this->characters;
     }
-
-    public function appendCharacter($id) {
-        $this->characters[] = $id;
-    }
     
     public function toArray() {
         return array(
@@ -126,6 +122,7 @@ abstract class Model_User {
         $this->save();
     }
 
+    public abstract function appendCharacter($id);
     public abstract function save();
     public abstract function isDuplicateEmail($email);
     public abstract function login($id, $password);

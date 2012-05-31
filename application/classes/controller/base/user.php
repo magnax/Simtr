@@ -18,6 +18,12 @@ class Controller_Base_User extends Controller_Base_Base {
      * @var Object
      */
     protected $dict = null;
+    
+    /**
+     * Location Names object
+     * @var Object
+     */
+    protected $lnames = null;
 
     public function before() {
 
@@ -25,6 +31,9 @@ class Controller_Base_User extends Controller_Base_Base {
 
         //init translations
         $this->dict = Model_Dict::getInstance($this->redis);
+        
+        //init location names
+        $this->lnames = Model_LNames::getInstance($this->redis, $this->dict);
         
         $this->user = Model_User::getInstance($this->redis);
         if (!$this->user->tryLogIn($this->session->get('authkey'))) {

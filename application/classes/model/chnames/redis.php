@@ -14,11 +14,9 @@ class Model_ChNames_Redis extends Model_ChNames {
                 } else {
                     $name = $ch->getName();
                 }
-            } else {
-                $name = $this->dict->getString('nieznany');
             }
         }
-        return $name;
+        return $name ? $name : $this->dict->getString('nieznany');
     }
 
     function setName($id_character, $id_character1, $new_name) {
