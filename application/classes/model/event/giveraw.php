@@ -19,13 +19,6 @@ class Model_Event_GiveRaw extends Model_Event {
      * @var <type> int
      */
     protected $amount;
-
-    /**
-     * postać przekazująca surowiec
-     *
-     * @var <type>
-     */
-    protected $sender;
     
     /**
      * postać odbierająca surowiec
@@ -39,10 +32,6 @@ class Model_Event_GiveRaw extends Model_Event {
         $this->amount = $amount;
     }
 
-    public function setSender($ch) {
-        $this->sender = $ch;
-    }
-
     public function setRecipient($ch) {
         $this->recipient = $ch;
     }
@@ -53,13 +42,42 @@ class Model_Event_GiveRaw extends Model_Event {
 
         $arr['res_id'] = $this->res_id;
         $arr['amount'] = $this->amount;
-        $arr['sndr'] = $this->sender;
         $arr['rcpt'] = $this->recipient;
 
         return $arr;
 
     }
-
+    
+    public function dispatchArgs($event_data, $args, $character_id) {
+        
+        $dict = Model_Dict::getInstance($this->source);
+        $chname = Model_ChNames::getInstance($this->source, $dict);
+        
+        $res = Model_Resource::getInstance($this->source)
+            ->findOneById($event_data['res_id'])
+            ->getDictionaryName('d');
+        
+        $returned = array();
+        
+        if (in_array('sndr', $args)) {
+            $returned['sndr'] = html::anchor('u/char/nameform/'.$event_data['sndr'], 
+                $chname->getName($character_id, $event_data['sndr']));
+        }
+        
+        if (in_array('amount', $args)) {
+            $returned['amount'] = $event_data['amount'];
+        }
+        
+        $returned['res_id'] = $res;
+        
+        if (in_array('rcpt', $args)) {
+            $returned['rcpt'] = html::anchor('u/char/nameform/'.$event_data['rcpt'], 
+                $chname->getName($character_id, $event_data['rcpt']));
+        }
+        return $returned;
+        
+    }
+    
     public function send() {}
 
 }

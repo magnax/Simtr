@@ -48,9 +48,7 @@ class Model_User_Redis extends Model_User {
             if (isset($data['email'])) {
                 $this->email = $data['email'];
             }
-            if (isset($data['characters'])) {
-                $this->characters = $this->characters[] = $this->source->smembers("users:{$this->id}:characters");
-            }
+            $this->characters = $this->source->smembers("users:{$this->id}:characters");
 
             $this->current_character_id = $this->source->get("users:$id:current_character");
             $this->password = $this->source->get("users:$id:password");

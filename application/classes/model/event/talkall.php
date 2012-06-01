@@ -6,14 +6,9 @@ class Model_Event_TalkAll extends Model_Event {
      * właściwości specyficzne dla zdarzenia TALK_ALL
      */
     protected $text;
-    protected $sender;
 
     public function setText($t) {
         $this->text = $t;
-    }
-
-    public function setSender($ch) {
-        $this->sender = $ch;
     }
 
     public function toArray() {
@@ -21,12 +16,29 @@ class Model_Event_TalkAll extends Model_Event {
         $arr = parent::toArray();
 
         $arr['text'] = $this->text;
-        $arr['sndr'] = $this->sender;
 
         return $arr;
 
     }
 
+    public function dispatchArgs($event_data, $args, $character_id) {
+        
+        $dict = Model_Dict::getInstance($this->source);
+        $chname = Model_ChNames::getInstance($this->source, $dict);
+        
+        $returned = array();
+        
+        if (in_array('sndr', $args)) {
+            $returned['sndr'] = html::anchor('u/char/nameform/'.$event_data['sndr'], 
+                $chname->getName($character_id, $event_data['sndr']));
+        }
+        
+        $returned['text'] = $event_data['text'];
+        
+        return $returned;
+        
+    }
+    
     public function send() {}
     
 }

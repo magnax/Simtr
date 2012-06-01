@@ -19,15 +19,10 @@ class Model_Event_PutRaw extends Model_Event {
      * @var <type> int
      */
     protected $amount;
-    protected $sender;
 
     public function setResource($res_id, $amount) {
         $this->res_id = $res_id;
         $this->amount = $amount;
-    }
-
-    public function setSender($ch) {
-        $this->sender = $ch;
     }
 
     public function toArray() {
@@ -41,6 +36,32 @@ class Model_Event_PutRaw extends Model_Event {
         return $arr;
 
     }
+
+    public function dispatchArgs($event_data, $args, $character_id) {
+        
+        $dict = Model_Dict::getInstance($this->source);
+        $chname = Model_ChNames::getInstance($this->source, $dict);
+        
+        $res = Model_Resource::getInstance($this->source)
+            ->findOneById($event_data['res_id'])
+            ->getDictionaryName('d');
+        
+        $returned = array();
+        
+        if (in_array('sndr', $args)) {
+            $returned['sndr'] = html::anchor('u/char/nameform/'.$event_data['sndr'], 
+                $chname->getName($character_id, $event_data['sndr']));
+        }
+        
+        if (in_array('amount', $args)) {
+            $returned['amount'] = $event_data['amount'];
+        }
+        
+        $returned['res_id'] = $res;
+        
+        return $returned;
+        
+    }    
     
     public function send() {}
 
