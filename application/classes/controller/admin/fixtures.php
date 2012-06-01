@@ -24,7 +24,7 @@ class Controller_Admin_Fixtures extends Controller_Base_Admin {
                 include APPPATH.'config/fixtures/'.$rediskey.'.php';
                 if (isset($data)) {
                     foreach ($data as $key => $val) {
-                        if ($this->redis->set("$rediskey:$key", json_encode($val, true))) {
+                        if ($this->redis->set("$rediskey:$key", json_encode($val))) {
                             $loaded++;
                         }
                     }

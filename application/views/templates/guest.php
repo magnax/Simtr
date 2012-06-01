@@ -16,5 +16,6 @@
         </div>
         <?php echo $content; ?>
         </div>
+        <?php include Kohana::find_file('views', 'common/footer') ?>
     </body>
 </html>

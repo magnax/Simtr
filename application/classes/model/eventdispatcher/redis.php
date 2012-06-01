@@ -4,10 +4,10 @@ class Model_EventDispatcher_Redis extends Model_EventDispatcher {
 
     public function formatEvent($id_event) {
 
-        //get and decode event, display format and params
+        //get and decode event
         $event = json_decode($this->source->get("events:$id_event"), true);
-        $format = $this->source->get("global:event_tpl:{$event['type']}:$person");
-        $args = $this->source->lrange("global:event_tpl:{$event['type']}:$person:params", 0, -1);
+        
+        //print_r($event); exit;
         
         //print_r($event);echo $id_event.'<br><br>';
 
@@ -20,6 +20,9 @@ class Model_EventDispatcher_Redis extends Model_EventDispatcher {
             $person = 3;
         }
         
+        //get display format and params
+        $format = $this->source->get("global:event_tpl:{$event['type']}:$person");
+        $args = $this->source->lrange("global:event_tpl:{$event['type']}:$person:params", 0, -1);
         //delegate further dispatching to proper event model
         $event_object = Model_Event::getInstance($event['type'], NULL, $this->source);
         $args = $event_object->dispatchArgs($event, $args, $this->id_character);
@@ -38,7 +41,7 @@ class Model_EventDispatcher_Redis extends Model_EventDispatcher {
 
         return array(
             'date'=>$event['date'],
-            'text'=>$event['text']
+            'text'=>'('.$id_event.') '.$event['text']
         );
 
     }

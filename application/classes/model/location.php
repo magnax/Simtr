@@ -12,6 +12,7 @@ abstract class Model_Location {
      * @var string 
      */
     protected $name;
+    protected $type;
     protected $res_slots;
     protected $used_slots;
     protected $resources = array();
@@ -45,6 +46,10 @@ abstract class Model_Location {
         return $this->name;
     }
 
+    public function getType() {
+        return $this->type;
+    }
+    
     public function getResSlots() {
         return $this->res_slots;
     }
@@ -81,6 +86,7 @@ abstract class Model_Location {
             'x'=>$this->x,
             'y'=>$this->y,
             'name'=>$this->name,
+            'type'=>$this->type,
             'res_slots'=>$this->res_slots,
             'used_slots'=>$this->used_slots,
             'resources'=>$this->resources
@@ -101,7 +107,7 @@ abstract class Model_Location {
     abstract public function calculateUsedSlots();
     abstract public function save();
     abstract public function saveProjects();
-    abstract public function getExits($lnames);
+    abstract public function getExits($lnames = null, $dict = null);
 
 }
 

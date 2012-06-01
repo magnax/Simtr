@@ -105,6 +105,19 @@ $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
 $this->redis->rpush("$key:$person:params", 'rcpt');$loaded++;
 
+//TalkAll
+$key = "global:event_tpl:TalkAll";
+$person = 1;
+$this->redis->set("$key:$person", 'Mówisz: "%s"');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'text');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", '%s mówi: "%s"');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
+$this->redis->rpush("$key:$person:params", 'text');$loaded++;
+
 //PointExit
 $key = "global:event_tpl:PointExit";
 $person = 1;

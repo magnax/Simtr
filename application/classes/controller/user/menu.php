@@ -98,6 +98,7 @@ class Controller_User_Menu extends Controller_Base_User {
         //recipients to lista obiektów klasy Character
         $event->addRecipients($location->getAllVisibleCharacters('loc'));
         $event->setSender($character->getId());
+        $event->setLocationType($location->getType());
         $event->send();
 
         $this->request->redirect('u/menu');

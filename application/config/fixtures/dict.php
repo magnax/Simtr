@@ -38,6 +38,14 @@ unset($strings);
 $this->redis->set("dict:pl:weapons", 'Broń');$loaded++;
 $this->redis->set("dict:pl:grab_wood", 'Zbieranie drewna');$loaded++;
 $this->redis->set("dict:pl:stick", 'Kij');$loaded++;
+
+/**
+ * Translations for location type 
+ */
 $this->redis->set("dict:pl:desert", "pustynia");$loaded++;
+$this->redis->set("dict:pl:grass", "łąka");$loaded++;
+$this->redis->set("dict:pl:mountains", "góry");$loaded++;
+$this->redis->set("dict:pl:forest", "las");$loaded++;
+$this->redis->set("dict:pl:hills", "wzgórza");$loaded++;
 
 ?>
