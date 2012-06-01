@@ -58,7 +58,7 @@ class Model_GameTime {
     }
 
     public function getTime() {
-        return $this->h.':'.(($this->m < 10) ? '0'.$this->m : $this->m).':'.(($this->s < 10) ? '0'.$this->s : $this->s);
+        return sprintf("%02d:%02d:%02d", $this->h, $this->m, $this->s);
     }
 
     public function getDate() {
