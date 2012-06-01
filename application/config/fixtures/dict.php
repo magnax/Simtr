@@ -38,5 +38,6 @@ unset($strings);
 $this->redis->set("dict:pl:weapons", 'Broń');$loaded++;
 $this->redis->set("dict:pl:grab_wood", 'Zbieranie drewna');$loaded++;
 $this->redis->set("dict:pl:stick", 'Kij');$loaded++;
+$this->redis->set("dict:pl:desert", "pustynia");$loaded++;
 
 ?>

@@ -51,9 +51,9 @@ $this->redis->lpush("$key:$person:params", 'amount');$loaded++;
 //Spawn - utworzenie nowej postaci
 $key = "global:event_tpl:Spawn";
 $person = 1;
-$this->redis->set("$key:$person", 'Znajdujesz się w miejscu X');$loaded++;
-//$this->redis->del("$key:$person:params");
-//$this->redis->lpush("$key:$person:params", 'name');$loaded++;
+$this->redis->set("$key:$person", 'Znajdujesz się w miejscu wyglądającym jak %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->lpush("$key:$person:params", 'loc_type');$loaded++;
 //$this->redis->lpush("$key:$person:params", 'res_id');$loaded++;
 //$this->redis->lpush("$key:$person:params", 'amount');$loaded++;
 
@@ -104,5 +104,19 @@ $this->redis->set("$key:$person", 'Widzisz jak %s mówi do %s');$loaded++;
 $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
 $this->redis->rpush("$key:$person:params", 'rcpt');$loaded++;
+
+//PointExit
+$key = "global:event_tpl:PointExit";
+$person = 1;
+$this->redis->set("$key:$person", 'Wskazujesz drogę: %s do %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'exit_id');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Widzisz jak %s wskazuje drogę: %s do %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
+$this->redis->rpush("$key:$person:params", 'exit_id');$loaded++;
+
 
 ?>
