@@ -83,7 +83,7 @@
             <?php echo html::anchor('user/location/objects', 'Obiekty'); ?>
         </li>
         <li>
-            <?php echo html::anchor('user/projects', 'Projekty'); ?>
+            <?php echo html::anchor('user/project', 'Projekty'); ?>
         </li>
     </ul>
 </div>

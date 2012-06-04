@@ -47,8 +47,8 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
             $user_data = json_decode($this->redis->get("characters:$user"), true);
             $this->view->users[] = array(
                 'id' => $user,
-                'name' => $user_data['name'],
-                'sex' => $user_data['sex'],
+                'name' => isset($user_data['name']) ? $user_data['name'] : '---',
+                'sex' => isset($user_data['sex']) ? $user_data['sex'] : '---',
             );
         }
         

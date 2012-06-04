@@ -40,7 +40,7 @@ class Controller_Base_User extends Controller_Base_Base {
             $this->redirectError('Wygasła sesja użytkownika', 'guest/login/loginform');
         }
         $this->user->refreshActive();
-
+        
         $this->template->user = $this->user;
         
     }

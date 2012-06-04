@@ -43,7 +43,8 @@ class Controller_Base_Base extends Controller_Template {
             $this->redirectError($e->getMessage());
         }
 
-        $this->template->game = $this->game;
+        $this->template->raw_time = $this->game->raw_time;
+        $this->template->current_time = $this->game->getTime();
         
         $page = ($this->request->directory ? $this->request->directory.'/' : '')
             . $this->request->controller.'/'.$this->request->action;
@@ -84,7 +85,7 @@ class Controller_Base_Base extends Controller_Template {
         
     }
 
-    public function redirectError($err, $uri = 'error') {
+    public function redirectError($err, $uri = 'base/error') {
 
         $this->session->set('err', $err);
         Request::instance()->redirect($uri);

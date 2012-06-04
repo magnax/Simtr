@@ -50,7 +50,7 @@
             </td>
         </tr>
     </table>
-    <form action="<?php echo url::site('u/profil'); ?>" method="GET">
+    <form action="<?php echo url::site('user/profil'); ?>" method="GET">
         <input type="submit" value="Zmień">
     </form>
 </div>
