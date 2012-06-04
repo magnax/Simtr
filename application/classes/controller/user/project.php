@@ -66,7 +66,7 @@ class Controller_User_Project extends Controller_Base_Character {
             $session->set_flash('errors', json_encode($errors));
         }
         
-        $this->request->redirect('events');
+        $this->request->redirect('user/event');
     }
 
     public function action_leave($id) {
@@ -86,7 +86,7 @@ class Controller_User_Project extends Controller_Base_Character {
             $this->location->save();
         }
         
-        $this->request->redirect('events');
+        $this->request->redirect('user/event');
 
     }
 
@@ -127,7 +127,7 @@ class Controller_User_Project extends Controller_Base_Character {
 
         $this->location->addProject($project->getId(), true);
 
-        $this->request->redirect('projects');
+        $this->request->redirect('user/project');
         
     }
 

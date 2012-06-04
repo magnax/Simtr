@@ -79,12 +79,11 @@ require_once 'Predis.php';                     // Include database class
 $redis = new Predis_Client(array(
     'host'     => '127.0.0.1',
     'port'     => 6379,
-    'database' => 15,
-    'alias' => 'mn'
+    'database' => 0
 ));
 
 try {
-    $redis->select('mn');
+    $redis->dbsize();
 } catch (Predis_CommunicationException $e) {
     System_Daemon::notice('Serwer Redis nie uruchomiony');
 }
@@ -117,6 +116,7 @@ while(!System_Daemon::isDying() && $runningOK) {
     if (count($projects_ids)) {
         array_walk($projects_ids, 'strip');
         foreach ($projects_ids as $project_id) {
+            System_Daemon::info('Uaktualniam: '.$project_id);
             $project = json_decode($redis->get("projects:$project_id"), true);
 
             $elapsed = 0;

@@ -37,7 +37,7 @@ class Controller_Base_User extends Controller_Base_Base {
         
         $this->user = Model_User::getInstance($this->redis);
         if (!$this->user->tryLogIn($this->session->get('authkey'))) {
-            $this->redirectError('Wygasła sesja użytkownika', 'loginform');
+            $this->redirectError('Wygasła sesja użytkownika', 'guest/login/loginform');
         }
         $this->user->refreshActive();
 
