@@ -34,6 +34,7 @@ abstract class Model_User {
     }
 
     public static function getInstance($source) {
+        //if ($source instanceof Redisent) {
         if ($source instanceof Predis_Client) {
             return new Model_User_Redis($source);
         } else {

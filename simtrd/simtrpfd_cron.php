@@ -1,87 +1,20 @@
-#!/usr/bin/php -q
 <?php
 
 /**
- * Demon rozliczający zakończone projekty
+ * Skrypt rozliczający zakończone projekty
  */
 
-//version of this file
-define('VER', '0.0.3');
-
-// Allowed arguments & their defaults
-$runmode = array(
-    'no-daemon' => false,
-    'help' => false,
-    'write-initd' => false,
-);
-
-// Scan command line attributes for allowed arguments
-foreach ($argv as $k=>$arg) {
-    if (substr($arg, 0, 2) == '--' && isset($runmode[substr($arg, 2)])) {
-        $runmode[substr($arg, 2)] = true;
-    }
-}
-
-// Help mode. Shows allowed argumentents and quit directly
-if ($runmode['help'] == true) {
-    echo 'Usage: '.$argv[0].' [runmode]' . "\n";
-    echo 'Available runmodes:' . "\n";
-    foreach ($runmode as $runmod=>$val) {
-        echo ' --'.$runmod . "\n";
-    }
-    die();
-}
-
-require_once "System/Daemon.php";                 // Include the Class
 
 define ('PATH', '/usr/local/lib/simtr/d.py');
-define ('SLEEP_TIME', 10);
+//define ('PATH', 'python /home/magnax/domains/magnax.pl/public_html/game/simtrd/d.py');
 
 error_reporting(E_ALL);
 
-$options = array(
-    'appName' => 'simtrd-pf',
-    'appDir' => dirname(__FILE__),
-    'appDescription' => 'Rozlicza zakonczone projekty',
-    'authorName' => 'Magnus Nox',
-    'authorEmail' => 'magnax@gmail.com',
-    'sysMaxExecutionTime' => '0',
-    'sysMaxInputTime' => '0',
-    'sysMemoryLimit' => '1024M',
-    'appRunAsGID' => 0,
-    'appRunAsUID' => 0,
-    'logLocation' => '/usr/local/lib/simtr/simtrd-pf.log',
-    'appPidLocation' => '/usr/local/lib/simtr/simtrd-pf/.simtrd-pf.pid',
-);
-
-System_Daemon::setOptions($options);
-
-if (!$runmode['no-daemon']) {
-    // Spawn Daemon
-    System_Daemon::start();
-}
-
-// With the runmode --write-initd, this program can automatically write a
-// system startup file called: 'init.d'
-// This will make sure your daemon will be started on reboot
-if (!$runmode['write-initd']) {
-    System_Daemon::info('not writing an init.d script this time');
-} else {
-    if (($initd_location = System_Daemon::writeAutoRun()) === false) {
-        System_Daemon::notice('unable to write init.d script');
-    } else {
-        System_Daemon::info(
-            VER.' sucessfully written startup script: %s',
-            $initd_location
-        );
-    }
-}
-
-$runningOK = true;
-$cnt = 1;
-
 //redis init:
 require_once 'Predis.php';                     // Include database class
+
+//$redis = new Predis_Client('redis://magnax:4cd3a93c90d60288117ec4cadf8c0aaa@50.30.35.9:2693/?password=4cd3a93c90d60288117ec4cadf8c0aaa');
+
 $redis = new Predis_Client(array(
     'host'     => '127.0.0.1',
     'port'     => 6379,
@@ -90,9 +23,9 @@ $redis = new Predis_Client(array(
 
 try {
     $redis->dbsize();
-} catch (Predis_CommunicationException $e) {
-    System_Daemon::notice('Serwer Redis nie uruchomiony');
-    $runningOK = FALSE;
+} catch (Exception $e) {
+    echo('Serwer Redis nie uruchomiony');
+    return false;
 }
 
 function getTime() {
@@ -133,8 +66,8 @@ $places = array(
 );
 
 define('EQ_MAX', 15000);
+define('CRLF', "\n");
 
-while(!System_Daemon::isDying() && $runningOK) {
 
     $time = getTime();
 
@@ -143,12 +76,10 @@ while(!System_Daemon::isDying() && $runningOK) {
     $projects_ids = $redis->keys('finished_projects:*');
 
     if (count($projects_ids)) {
-        
+        echo count($projects_ids).CRLF;
         array_walk($projects_ids, 'strip');
         foreach ($projects_ids as $project_id) {
-            
-            System_Daemon::info(microtime(true).': rozliczam: '.$project_id);
-            
+            echo $project_id.CRLF;
             $project = json_decode($redis->get("projects:$project_id"), true);
             $owner = json_decode($redis->get("characters:{$project['owner_id']}"), true);
 
@@ -180,9 +111,9 @@ while(!System_Daemon::isDying() && $runningOK) {
             } else {
                 $raws[$project['resource_id']] = $project['amount'];
             }
+            echo json_encode($raws).CRLF;
 
             $redis->set($key, json_encode($raws));
-            System_Daemon::info('Raws: '.json_encode($raws));
 
             //zwolnij wszystkich pracowników
             $workers = json_decode($redis->get("projects:$project_id:workers"), true);
@@ -206,14 +137,18 @@ while(!System_Daemon::isDying() && $runningOK) {
                 $redis->set("locations:{$project['place_id']}", json_encode($location));
             }
             
+            //usunąć projekt z zakończonych
             $redis->del("finished_projects:$project_id");
-            $loc_projects = $redis->smembers("$loc_type_string:{$project['place_id']}:projects");
-            $redis->del("$loc_type_string:{$project['place_id']}:projects");
-            foreach ($loc_projects as $p) {
-                if ($p != $project_id) {
-                    $redis->sadd("$loc_type_string:{$project['place_id']}:projects", $p);
-                }
-            }
+            
+            //usunąć projekt z projektów w danej lokacji
+            $redis->srem("$loc_type_string:{$project['place_id']}:projects", $project_id);
+//            $loc_projects = $redis->smembers("$loc_type_string:{$project['place_id']}:projects");
+//            $redis->del("$loc_type_string:{$project['place_id']}:projects");
+//            foreach ($loc_projects as $p) {
+//                if ($p != $project_id) {
+//                    $redis->sadd("$loc_type_string:{$project['place_id']}:projects", $p);
+//                }
+//            }
 
             $resource = json_decode($redis->get("resources:{$project['res_id']}"), true);
             //dopisać event:
@@ -246,15 +181,5 @@ while(!System_Daemon::isDying() && $runningOK) {
 
     $end_time = microtime(true);
 
-    //notice tylko jeśli były projekty
-    if (count($projects_ids)) {
-        System_Daemon::info('Count: '.count($projects_ids).'; time: '.($end_time-$start_time));
-    }
-
-    System_Daemon::iterate(SLEEP_TIME);
-
-}
-
-System_Daemon::stop();
 
 ?>

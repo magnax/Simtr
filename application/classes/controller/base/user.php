@@ -54,13 +54,13 @@ class Controller_Base_User extends Controller_Base_Base {
     public function action_set($id) {
         
         if (!$this->user->isActive()) {
-            $this->redirectError('Cannot play on inactive account', '/u/menu');
+            $this->redirectError('Cannot play on inactive account', 'user/menu');
         }
 
         if ($this->user->setCurrentCharacter($id)) {
-            $this->request->redirect('events');
+            $this->request->redirect('user/event');
         } else {
-            $this->redirectError('Cannot view events of other player', '/u/menu');
+            $this->redirectError('Cannot view events of other player', 'user/menu');
         }
 
     }

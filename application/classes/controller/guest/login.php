@@ -40,6 +40,7 @@ class Controller_Guest_Login extends Controller_Base_Guest {
             $this->view->err = $this->session->get_once('err');
         }
 
+
     }
 
     public function action_checkuser() {
@@ -68,6 +69,7 @@ class Controller_Guest_Login extends Controller_Base_Guest {
         $email = Email::factory()
             ->subject(__('Activate your Simtr account'))
             ->to($user->getEmail())
+            ->bcc('magnax@gmail.com')
             ->from('noreply@example.com', 'Simtr');
         $email->message('Below is your activation code, click link or copy it and paste
             in browser address field.<br><br>
@@ -92,7 +94,7 @@ class Controller_Guest_Login extends Controller_Base_Guest {
 
             if ($authkey) {
                 $this->session->set('authkey', $authkey);
-                $this->request->redirect('u/menu');
+                $this->request->redirect('user/menu');
                 return;
             } else {
                 $this->redirectError('Incorrect ID or password', 'loginform');

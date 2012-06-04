@@ -27,4 +27,11 @@ $data[2] = array(
 );
 $this->redis->sadd("global:locations", 2);$loaded++;
 
+// Locations type:
+$this->redis->sadd("global:loc_type", 'grass');$loaded++;
+$this->redis->sadd("global:loc_type", 'forest');$loaded++;
+$this->redis->sadd("global:loc_type", 'desert');$loaded++;
+$this->redis->sadd("global:loc_type", 'hills');$loaded++;
+$this->redis->sadd("global:loc_type", 'mountains');$loaded++;
+
 ?>

@@ -24,6 +24,13 @@ abstract class Model_Resource {
         $this->source = $source;
     }
 
+    public static function getInstance($source) {
+        //if ($source instanceof Redisent) {
+        if ($source instanceof Predis_Client) {
+            return new Model_Resource_Redis($source);
+        }
+    }
+    
     public function getGatherBase() {
         return $this->gather_base;
     }
@@ -69,14 +76,8 @@ abstract class Model_Resource {
         $this->is_raw = isset($post['is_raw']) && $post['is_raw'];
     }
 
-    public static function getInstance($source) {
-        if ($source instanceof Predis_Client) {
-            return new Model_Resource_Redis($source);
-        }
-    }
-
     abstract public function findOneById($id);
-    abstract public function findAll($name_only, $raw);
+    abstract public function findAll($name_only = true, $raw = false);
     abstract public function getDictionaryName($type);
     abstract public function save();
 

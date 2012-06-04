@@ -23,7 +23,18 @@ abstract class Model_Character {
     /**
      * współczynniki
      */
+    
+     //jedzenie (0-100)
      protected $food;
+     
+     //żywotność (max. 800-1200) (punkty = 0 => śmierć)
+     protected $vitality;
+     
+     //siła (0.6 ... 1.8)
+     protected $strength;
+     
+     //walka (0.8 ... 1.2)
+     protected $fighting;
 
      /**
       * kolekcje
@@ -37,10 +48,24 @@ abstract class Model_Character {
      */
     protected $source;
     
-    //private $spawn_day;
+    //memorized characters names
+    public $chnames;
+    
+    private $raw_time;
 
-    public function  __construct($source) {
+        //private $spawn_day;
+
+    public function  __construct($source, $chnames) {
         $this->source = $source;
+        $this->chnames = $chnames;
+        $this->raw_time = $this->chnames ? $this->chnames->getRawTime() : 0;
+    }
+    
+    public static function getInstance($source, $chnames) {
+        //if ($source instanceof Redisent) {
+        if ($source instanceof Predis_Client) {
+            return new Model_Character_Redis($source, $chnames);
+        }
     }
     
     public function setIDUser($id) {
@@ -104,14 +129,10 @@ abstract class Model_Character {
         return $this->{$name};
     }
 
-    public static function getInstance($source) {
-        if ($source instanceof Predis_Client) {
-            return new Model_Character_Redis($source);
-        }
-    }
+
 
     public function countAge() {
-        return self::START_AGE + Model_GameTime::formatDateTime(Model_GameTime::getRawTime() - $this->spawn_date, 'y');
+        return self::START_AGE + Model_GameTime::formatDateTime($this->raw_time - $this->spawn_date, 'y');
     }
 
     public function toArray() {
@@ -128,6 +149,9 @@ abstract class Model_Character {
             'project_id' => $this->project_id,
             'place_type' => $this->place_type,
             'place_id' => $this->place_id,
+            'vitality' => $this->vitality,
+            'strength' => $this->strength,
+            'fighting' => $this->fighting
         );
         
     }

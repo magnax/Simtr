@@ -14,6 +14,7 @@ abstract class Model_Dict {
 
     public static function getInstance($source, $lang = 'pl') {
 
+        //if ($source instanceof Redisent) {
         if ($source instanceof Predis_Client) {
             return new Model_Dict_Redis($source, $lang);
         }

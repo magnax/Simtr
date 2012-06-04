@@ -28,6 +28,7 @@ abstract class Model_ProductionSpec {
     }
 
     public static function getInstance($source, $dict) {
+        //if ($source instanceof Redisent) {
         if ($source instanceof Predis_Client) {
             return new Model_ProductionSpec_Redis($source, $dict);
         }

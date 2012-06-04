@@ -32,7 +32,12 @@ class Controller_Admin_Location extends Controller_Base_Admin {
         
         $this->view->location = $location->toArray();
         $this->view->location['exits'] = $location->getExits();
-        $this->view->location['resources'] = $location->getFullResources();       
+        $this->view->location['resources'] = $location->getFullResources(); 
+        $types = $this->redis->smembers("global:loc_type");
+        $this->view->types = array('--'=>'--');
+        foreach ($types as $t) {
+            $this->view->types[$t] = $t;
+        }
         
     }
     

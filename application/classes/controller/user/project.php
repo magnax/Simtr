@@ -15,7 +15,7 @@ class Controller_User_Project extends Controller_Base_Character {
                 ->find($this->character->getPlaceType(), $this->character->getPlaceId());
 
         foreach ($this->view->projects as &$p) {
-            $p['owner'] = $this->chnames->getName($this->character->getId(), $p['owner_id']);
+            $p['owner'] = $this->character->chnames->getName($this->character->getId(), $p['owner_id']);
             if (!$p['owner'] && $p['owner_id'] == $this->character->getId()) {
                 $p['owner'] = $this->character->getName();
             }

@@ -16,7 +16,7 @@ class Controller_User_Point extends Controller_Base_Character {
         //generate event & message
         $event = Model_EventSender::getInstance(
             Model_Event::getInstance(
-                Model_Event::POINT_EXIT, $this->game->getRawTime(), $this->redis
+                Model_Event::POINT_EXIT, $this->game->raw_time, $this->redis
             )
         );
 
@@ -24,11 +24,11 @@ class Controller_User_Point extends Controller_Base_Character {
         //recipients to lista obiektów klasy Character
         //$event->setRecipient($recipient->getId());
         $event->setSender($this->character->getId());
-        $event->addRecipients($this->location->getAllHearableCharacters());
+        $event->addRecipients($this->location->getAllHearableCharacters($this->character->chnames));
         $event->send();
         
         //redirect to events page
-        $this->request->redirect('events');
+        $this->request->redirect('user/event');
         
     }
     

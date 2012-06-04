@@ -6,6 +6,8 @@ class Model_GameTime {
      * path to game time deamon
      */
     const PATH = '/usr/local/lib/simtr/d.py';
+    //on server: 
+    //const PATH = 'python /home/magnax/domains/magnax.pl/public_html/game/simtrd/d.py';
 
     /**
      * day length in seconds
@@ -17,7 +19,9 @@ class Model_GameTime {
     protected $h;
     protected $m;
     protected $s;
-    private $raw_time;
+    
+    //current time
+    public $raw_time;
 
     public function  __construct($daemon_path = null) {
 
@@ -51,10 +55,14 @@ class Model_GameTime {
         $output = intval(str_replace("\n", '', $output));
         
         if (is_integer($output) && $output) {
+            $trace = debug_backtrace();
+            $name = $trace[2]['function'];
+            echo empty($name) ? 'global' : $name.'<br>';
             return $output;
         } else {
             throw new BadDaemonException('Bad daemon? Should be installed in '.self::PATH);
         }
+        
     }
 
     public function getTime() {

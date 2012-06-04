@@ -11,7 +11,7 @@ abstract class Model_Buildmenu {
     }
     
     public static function getInstance($source, $dict) {
-        if ($source instanceof Predis_Client) {
+        if ($source instanceof Redisent) {
             return new Model_Buildmenu_Redis($source, $dict);
         }
     }

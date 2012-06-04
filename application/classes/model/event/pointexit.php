@@ -27,10 +27,9 @@ class Model_Event_PointExit extends Model_Event {
 
     }
 
-    public function dispatchArgs($event_data, $args, $character_id) {
+    public function dispatchArgs($event_data, $args, $character_id, $chname) {
     
         $dict = Model_Dict::getInstance($this->source);
-        $chname = Model_ChNames::getInstance($this->source, $dict);
         
         $lname = Model_LNames::getInstance($this->source, $dict);
         $lname->setCharacter($character_id);
@@ -40,12 +39,12 @@ class Model_Event_PointExit extends Model_Event {
         $returned = array();
         
         if (in_array('sndr', $args)) {
-            $returned['sndr'] = html::anchor('u/char/nameform/'.$event_data['sndr'], 
+            $returned['sndr'] = html::anchor('user/char/nameform/'.$event_data['sndr'], 
                 $chname->getName($character_id, $event_data['sndr']));
         }
         $returned['exit_id'] = $dict->getString($res->getLevelString());
         
-        $returned['loc_id'] = html::anchor('u/location/nameform/'.$res->getDestinationLocationID(), 
+        $returned['loc_id'] = html::anchor('user/location/nameform/'.$res->getDestinationLocationID(), 
             $lname->getName($res->getDestinationLocationID()));
         
         return $returned;

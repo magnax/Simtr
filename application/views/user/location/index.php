@@ -4,9 +4,9 @@
 <?php if ($l['exits']): ?>
 <?php foreach ($l['exits'] as $exit): ?>
     <div>
-        <?php echo html::anchor('u/point/e/'.$exit['id'], '[wskaż]'); ?> 
+        <?php echo html::anchor('user/point/e/'.$exit['id'], '[wskaż]'); ?> 
         [idź] [buduj] 
-        <?php echo $exit['level'].' do '.html::anchor('u/location/nameform/'.$exit['lid'], $exit['name']).' (kierunek: '.$exit['direction'].')'; ?>
+        <?php echo $exit['level'].' do '.html::anchor('user/location/nameform/'.$exit['lid'], $exit['name']).' (kierunek: '.$exit['direction'].')'; ?>
     </div>
 <?php endforeach; ?>
 <?php else: ?>
@@ -17,6 +17,6 @@
 </div>
 <?php echo $l['used_slots']; ?> out of <?php echo $l['res_slots']; ?> resource slots are used<br />
 <?php foreach ($l['resources'] as $res): ?>
-    <?php echo html::anchor('u/project/get_raw/'.$res['id'], '[zbieraj]'); ?>
+    <?php echo html::anchor('user/project/get_raw/'.$res['id'], '[zbieraj]'); ?>
     <?php echo $res['name']; ?> (<?php echo $res['id']; ?>)<br />
 <?php endforeach; ?>

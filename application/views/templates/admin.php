@@ -13,6 +13,7 @@
     <?php echo html::anchor('admin/location', 'Locations'); ?> 
     <?php echo html::anchor('admin/resource', 'Resources'); ?>
     Manufacturing [<?php echo html::anchor('admin/tools', 'Tools'); ?>]
-    <?php echo html::anchor('admin/fixtures/menu', 'Fixtures menu'); ?> 
+    <?php echo html::anchor('admin/fixtures/menu', 'Fixtures menu'); ?>
+    <?php echo html::anchor('admin/characters/menu', 'Characters menu'); ?> 
 </div>
 <?php echo $content; ?>

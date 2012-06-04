@@ -13,6 +13,7 @@ abstract class Model_Item {
     }
     
     public static function getInstance($source) {
+        //if ($source instanceof Redisent) {
         if ($source instanceof Predis_Client) {
             return new Model_Redis_Item($source);
         }

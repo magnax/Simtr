@@ -8,7 +8,7 @@
                Nazwa:
             </td>
             <td>
-               <?php echo html::anchor('u/char/nameform/'.$character['id'], $character['known_as']); ?>
+               <?php echo html::anchor('user/char/nameform/'.$character['id'], $character['known_as']); ?>
             </td>
         </tr>
         <tr>
@@ -24,7 +24,7 @@
                 Przebudzenie:
             </td>
             <td>
-                <?php echo $character['spawn_day']; ?> w <?php echo html::anchor('u/location/nameform/'.$character['spawn_location_id'], $character['spawn_location']); ?>
+                <?php echo $character['spawn_day']; ?> w <?php echo html::anchor('user/location/nameform/'.$character['spawn_location_id'], $character['spawn_location']); ?>
             </td>
         </tr>
         <tr>
@@ -40,7 +40,7 @@
                 Miejsce:
             </td>
             <td>
-               <?php echo html::anchor('u/location/nameform/'.$character['location_id'], $character['location']); ?>
+               <?php echo html::anchor('user/location/nameform/'.$character['location_id'], $character['location']); ?>
             </td>
         </tr>
         <tr>
@@ -50,34 +50,40 @@
             <td>
                 <?php if (isset($character['project_id'])) : ?>
                     (<?php echo $character['myproject']['name']; ?> <?php echo $character['myproject']['percent']; ?>%)
-                    <?php echo html::anchor('u/project/leave/'.$character['project_id'], '[Porzuć]'); ?>
+                    <?php echo html::anchor('user/project/leave/'.$character['project_id'], '[Porzuć]'); ?>
                 <?php endif; ?>
             </td>
         </tr>
     </table>
 </div>
+<div id="user_status">
+    Food: 100, Vitality: <?php echo $character['vitality']; ?>
+</div>
+<div id="user_skills">
+    Strength: <?php echo $character['strength']; ?>, Fighting: <?php echo $character['fighting']; ?>
+</div>
 <div id="actions">
     <ul>
         <li>
-            <?php echo html::anchor('events', 'Zdarzenia'); ?>
+            <?php echo html::anchor('user/event', 'Zdarzenia'); ?>
         </li>
         <li>
-            <?php echo html::anchor('inventory', 'Inwentarz'); ?>
+            <?php echo html::anchor('user/inventory', 'Inwentarz'); ?>
         </li>
         <li>
-            <?php echo html::anchor('location', 'Miejsce'); ?>
+            <?php echo html::anchor('user/location', 'Miejsce'); ?>
         </li>
         <li>
-            <?php echo html::anchor('buildings', 'Budynki i pojazdy'); ?>
+            <?php echo html::anchor('user/buildings', 'Budynki i pojazdy'); ?>
         </li>
         <li>
-            <?php echo html::anchor('people', 'Ludzie'); ?>
+            <?php echo html::anchor('user/people', 'Ludzie'); ?>
         </li>
         <li>
-            <?php echo html::anchor('objects', 'Obiekty'); ?>
+            <?php echo html::anchor('user/location/objects', 'Obiekty'); ?>
         </li>
         <li>
-            <?php echo html::anchor('projects', 'Projekty'); ?>
+            <?php echo html::anchor('user/projects', 'Projekty'); ?>
         </li>
     </ul>
 </div>

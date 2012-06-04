@@ -4,14 +4,14 @@ class Controller_User_Menu extends Controller_Base_User {
 
     public function action_index() {
         
-        $chnames = Model_ChNames::getInstance($this->redis, $this->dict);
+        $chnames = Model_ChNames::getInstance($this->redis, $this->dict, $this->game->raw_time);
         
         $characters = $this->user->getCharacters();
 
         $this->view->characters = array();
         
         foreach($characters as $ch) {
-            $char = Model_Character::getInstance($this->redis)
+            $char = Model_Character::getInstance($this->redis, $chnames)
                 ->fetchOne($ch)
                 ->toArray();
             $this->lnames->setCharacter($char['id']);
@@ -105,6 +105,26 @@ class Controller_User_Menu extends Controller_Base_User {
 
     }
 
+    /**
+     * ustawia bieżącą postać - wszystkie akcje będą dotyczyły właśnie
+     * tej postaci
+     *
+     * @param <type> $id IDCharacter
+     */
+    public function action_set($id) {
+        
+        if (!$this->user->isActive()) {
+            $this->redirectError('Cannot play on inactive account', 'user/menu');
+        }
+
+        if ($this->user->setCurrentCharacter($id)) {
+            $this->request->redirect('user/event');
+        } else {
+            $this->redirectError('Cannot view events of other player', 'user/menu');
+        }
+
+    }
+    
 }
 
 ?>

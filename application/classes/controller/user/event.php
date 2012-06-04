@@ -7,7 +7,18 @@ class Controller_User_Event extends Controller_Base_Character {
 
     public function action_index() {
         
+        // Be sure to only profile if it's enabled
+        if (Kohana::$profiling === TRUE) {
+            // Start a new benchmark
+            $benchmark = Profiler::start('Character Controller', __FUNCTION__);
+        }
+
         $events = $this->character->getEvents();
+
+        if (isset($benchmark)) {
+            // Stop the benchmark
+            Profiler::stop($benchmark);
+        }
 
         $this->view->events = $events;
 
@@ -18,19 +29,19 @@ class Controller_User_Event extends Controller_Base_Character {
             
             $event = Model_EventSender::getInstance(
                 Model_Event::getInstance(
-                    Model_Event::TALK_ALL, $this->game->getRawTime(), $this->redis
+                    Model_Event::TALK_ALL, $this->game->raw_time, $this->redis
                 )
             );
             $event->setText($_POST['text']);
             //recipients to lista obiektów klasy Character
-            $event->addRecipients($this->location->getAllHearableCharacters());
+            $event->addRecipients($this->location->getAllHearableCharacters(false, $this->character->chnames));
             $event->setSender($this->character->getId());
 
             $event->send();
 
         }
 
-        $this->request->redirect('events');
+        $this->request->redirect('user/event');
     }
 
     public function action_put_raw($id) {
@@ -55,11 +66,11 @@ class Controller_User_Event extends Controller_Base_Character {
         );
         $event->setResource($_POST['res_id'], $_POST['amount']);
         //recipients to lista obiektów klasy Character
-        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType()));
+        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType(), $this->character->chnames));
         $event->setSender($this->character->getId());
         $event->send();
 
-        $this->request->redirect('events');
+        $this->request->redirect('user/event');
         
     }
 
@@ -85,22 +96,22 @@ class Controller_User_Event extends Controller_Base_Character {
         );
         $event->setResource($_POST['res_id'], $_POST['amount']);
         //recipients to lista obiektów klasy Character
-        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType()));
+        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType(), $this->character->chnames));
         $event->setSender($this->character->getId());
         $event->send();
 
-        $this->request->redirect('events');
+        $this->request->redirect('user/event');
         
     }
 
     public function action_give_raw($id) {
         $raws = $this->character->getRaws();
         $all_characters = $this->location
-            ->getAllHearableCharacters(true);
+            ->getAllHearableCharacters(true, $this->character->chnames);
         $this->view->all_characters = array();
         foreach ($all_characters as $char) {
             if ($char['id'] != $this->character->getId()) {
-                $this->view->all_characters[$char['id']] = $this->chnames->getName($this->character->getId(), $char['id']);
+                $this->view->all_characters[$char['id']] = $this->character->chnames->getName($this->character->getId(), $char['id']);
             }
         }
         $this->view->res = $raws[$id];
@@ -109,7 +120,7 @@ class Controller_User_Event extends Controller_Base_Character {
 
     public function action_give() {
 
-        $dest_character = Model_Character::getInstance($this->redis)
+        $dest_character = Model_Character::getInstance($this->redis, $this->character->chnames)
             ->fetchOne($_POST['character_id']);
         $this->character->putRaw($_POST['res_id'], $_POST['amount']);
         $dest_character->addRaw($_POST['res_id'], $_POST['amount']);
@@ -117,17 +128,17 @@ class Controller_User_Event extends Controller_Base_Character {
         //wysłanie eventu
         $event = Model_EventSender::getInstance(
             Model_Event::getInstance(
-                Model_Event::GIVE_RAW, $this->game->getRawTime(), $this->redis
+                Model_Event::GIVE_RAW, $this->game->raw_time, $this->redis
             )
         );
         $event->setResource($_POST['res_id'], $_POST['amount']);
         //recipients to lista obiektów klasy Character
-        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType()));
+        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType(), $this->character->chnames));
         $event->setSender($this->character->getId());
         $event->setRecipient($dest_character->getId());
         $event->send();
 
-        $this->request->redirect('events');
+        $this->request->redirect('user/event');
 
     }
 

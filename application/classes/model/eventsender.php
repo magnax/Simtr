@@ -9,6 +9,7 @@ abstract class Model_EventSender {
     }
 
     public static function getInstance(Model_Event $event) {
+        //if ($event->getSource() instanceof Redisent) {
         if ($event->getSource() instanceof Predis_Client) {
             return new Model_EventSender_Redis($event);
         }

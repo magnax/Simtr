@@ -1,2 +1,2 @@
-<?php echo html::anchor('u/menu', 'Strona gracza'); ?> |
-<?php echo html::anchor('logout', 'Wyloguj się'); ?>
+<?php echo html::anchor('user/menu', 'Strona gracza'); ?> |
+<?php echo html::anchor('guest/login/logout', 'Wyloguj się'); ?>

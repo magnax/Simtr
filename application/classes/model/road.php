@@ -17,6 +17,7 @@ abstract class Model_Road {
     }
     
     public static function getInstance($source) {
+        //if ($source instanceof Redisent) {
         if ($source instanceof Predis_Client) {
             return new Model_Road_Redis($source);
         }

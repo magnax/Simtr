@@ -8,34 +8,23 @@ class Controller_Base_Character extends Controller_Base_User {
 
     protected $character;
     protected $location;
-    protected $lnames;
-    protected $chnames;
-    protected $dict;
+    //protected $chnames;
     protected $myproject;
 
     public function before() {
         parent::before();
 
-        //init translations
-        $this->dict = Model_Dict::getInstance($this->redis);
-
-        //init lNames:
-        $this->lnames = Model_LNames::getInstance($this->redis, $this->dict);
-
         //init characters names
-        $this->chnames = Model_ChNames::getInstance($this->redis, $this->dict);
-
+        $chnames = Model_ChNames::getInstance($this->redis, $this->dict, $this->game->raw_time);
 
         $this->character = 
-            Model_Character::getInstance($this->redis)
+            Model_Character::getInstance($this->redis, $chnames)
                 ->fetchOne($this->user->getCurrentCharacter());
 
         //set character id in lnames and chnames objects (to retrieve names for this
         //character
         $this->lnames->setCharacter($this->character->getId());
         //$this->chnames->setCharacter($this->character->getId());
-        
-        
 
         $ch = $this->character->toArray();
 
@@ -49,10 +38,10 @@ class Controller_Base_Character extends Controller_Base_User {
                 'percent'=>$project->getPercent(1)
             );
         }
-        $ch['age'] = $this->character->countAge($this->game->getRawTime());
+        $ch['age'] = $this->character->countAge($this->game->raw_time);
         $ch['location'] = $this->lnames->getName($ch['location_id']);
         $ch['spawn_location'] = $this->lnames->getName($ch['spawn_location_id']);
-        $kn = $this->chnames->getName($ch['id'], $ch['id']);
+        $kn = $chnames->getName($ch['id'], $ch['id']);
         $ch['known_as'] = $kn ? $kn : $ch['name'];
 
         $this->template->character = $ch;

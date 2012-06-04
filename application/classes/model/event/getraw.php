@@ -36,10 +36,9 @@ class Model_Event_GetRaw extends Model_Event {
 
     }
 
-    public function dispatchArgs($event_data, $args, $character_id) {
+    public function dispatchArgs($event_data, $args, $character_id, $chname) {
         
         $dict = Model_Dict::getInstance($this->source);
-        $chname = Model_ChNames::getInstance($this->source, $dict);
         
         $res = Model_Resource::getInstance($this->source)
             ->findOneById($event_data['res_id'])
@@ -48,7 +47,7 @@ class Model_Event_GetRaw extends Model_Event {
         $returned = array();
         
         if (in_array('sndr', $args)) {
-            $returned['sndr'] = html::anchor('u/char/nameform/'.$event_data['sndr'], 
+            $returned['sndr'] = html::anchor('user/char/nameform/'.$event_data['sndr'], 
                 $chname->getName($character_id, $event_data['sndr']));
         }
         

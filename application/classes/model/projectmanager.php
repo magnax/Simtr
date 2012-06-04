@@ -14,6 +14,7 @@ abstract class Model_ProjectManager {
         if ($project && ($project instanceof Model_Project)) {
             $source = $project->getSource();
         }
+        //if ($source instanceof Redisent) {
         if ($source instanceof Predis_Client) {
             return new Model_ProjectManager_Redis($project, $source);
         }

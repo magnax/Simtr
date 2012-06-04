@@ -9,6 +9,6 @@
 </div>
 <div id="main_menu">
     <?php echo html::anchor('register', 'New user'); ?><br />
-    <?php echo html::anchor('login', 'Login'); ?><br />
+    <?php echo html::anchor('guest/login/loginform', 'Login'); ?><br />
     <?php echo html::anchor('login/mailme', 'Send me test mail'); ?><br />
 </div>

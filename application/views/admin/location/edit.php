@@ -1,5 +1,5 @@
 Lokacja ID: <?php echo $location['id']; ?><br />
-<?php echo View::factory('admin/location/_form', array('location'=>$location))->render(); ?>
+<?php echo View::factory('admin/location/_form', array('location'=>$location, 'types'=>$types))->render(); ?>
 <div>
     <h1>Surowce</h1>
     <?php if ($location['resources']): ?>

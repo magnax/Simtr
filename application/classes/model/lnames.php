@@ -17,6 +17,7 @@ abstract class Model_LNames {
 
     public static function getInstance($source, $dict) {
 
+        //if ($source instanceof Redisent) {
         if ($source instanceof Predis_Client) {
             return new Model_LNames_Redis($source, $dict);
         }

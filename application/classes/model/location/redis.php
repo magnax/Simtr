@@ -12,6 +12,7 @@ class Model_Location_Redis extends Model_Location {
 
             $this->x = $data['x'];
             $this->y = $data['y'];
+            $this->type = $data['type'];
             $this->res_slots = $data['res_slots'];
             $this->used_slots = $data['used_slots'];
             $this->resources = $data['resources'];
@@ -40,14 +41,14 @@ class Model_Location_Redis extends Model_Location {
 
     }
 
-    public function getAllHearableCharacters($as_array = false) {
+    public function getAllHearableCharacters($as_array = false, $chname) {
 
         $all_chars_id = $this->getAllCharactersId();
 
         $hearable_chars = array();
 
         foreach ($all_chars_id as $char_id) {
-            $tmp_char = Model_Character::getInstance($this->source)
+            $tmp_char = Model_Character::getInstance($this->source, $chname)
                     ->fetchOne($char_id)
                     ->toArray();
             if (in_array($tmp_char['place_type'], $this->PLACE_HEARABLE)) {
@@ -68,14 +69,14 @@ class Model_Location_Redis extends Model_Location {
      * zwraca listę ID postaci znajdujących się w tym samym typie lokacji
      * @return <type> 
      */
-    public function getAllVisibleCharacters($place_type) {
+    public function getAllVisibleCharacters($place_type, $chname) {
 
         $all_chars_id = $this->getAllCharactersId();
 
         $hearable_chars = array();
 
         foreach ($all_chars_id as $char_id) {
-            $tmp_char = Model_Character::getInstance($this->source)
+            $tmp_char = Model_Character::getInstance($this->source, $chname)
                     ->fetchOne($char_id)
                     ->toArray();
             if ($tmp_char['place_type'] == $place_type) {

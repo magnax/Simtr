@@ -70,13 +70,9 @@ class Controller_Base_Base extends Controller_Template {
         
         /**
          * inicjalizacja i połączenie z Redisem
+         * parametry połączenia w application/config/database.php
          */
-        $this->redis = new Predis_Client(array(
-            'host'     => '127.0.0.1',
-            'port'     => 6379,
-            'database' => 0,
-            'alias' => 'mn'
-        ));
+        $this->redis = new Predis_Client(Kohana::config('database.dsn'));
 
         try {
             $this->redis->dbsize();

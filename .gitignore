@@ -2,3 +2,5 @@
 /application/logs/
 /application/cache/
 /application/modules/email/config/email.php
+/application/config/database_magnax_pl.php
+/application/config/database.php

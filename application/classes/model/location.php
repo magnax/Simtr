@@ -25,6 +25,7 @@ abstract class Model_Location {
     }
     
     public static function getInstance($source) {
+        //if ($source instanceof Redisent) {
         if ($source instanceof Predis_Client) {
             return new Model_Location_Redis($source);
         }
@@ -76,6 +77,7 @@ abstract class Model_Location {
         $this->x = $post['x'];
         $this->y = $post['y'];
         $this->name = $post['name'];
+        $this->type = $post['type'];
         $this->res_slots = $post['res_slots'];
     }
 
@@ -103,7 +105,7 @@ abstract class Model_Location {
     }
 
     abstract public function findOneByID($location_id, $character_id);
-    abstract public function getAllHearableCharacters();
+    abstract public function getAllHearableCharacters($as_array = false, $chname);
     abstract public function calculateUsedSlots();
     abstract public function save();
     abstract public function saveProjects();

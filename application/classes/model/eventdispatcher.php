@@ -15,6 +15,7 @@ abstract class Model_EventDispatcher {
     }
 
     public static function getInstance($source) {
+        //if ($source instanceof Redisent) {
         if ($source instanceof Predis_Client) {
             return new Model_EventDispatcher_Redis($source);
         }

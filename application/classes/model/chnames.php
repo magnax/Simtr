@@ -28,18 +28,27 @@ abstract class Model_ChNames {
     protected $source;
 
     protected $dict;
+    
+    //current time (for counting age of other characters
+    protected $raw_time;
 
-    public function  __construct($source, $dict) {
+    public function  __construct($source, $dict, $raw_time) {
         $this->source = $source;
         $this->dict = $dict;
+        $this->raw_time = $raw_time;
     }
 
-    public static function getInstance($source, $dict) {
+    public static function getInstance($source, $dict, $raw_time) {
 
+        //if ($source instanceof Redisent) {
         if ($source instanceof Predis_Client) {
-            return new Model_ChNames_Redis($source, $dict);
+            return new Model_ChNames_Redis($source, $dict, $raw_time);
         }
 
+    }
+    
+    public function getRawTime() {
+        return $this->raw_time;
     }
 
     abstract function getName($id_character, $id_character1);
