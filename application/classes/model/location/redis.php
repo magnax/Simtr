@@ -2,29 +2,26 @@
 
 class Model_Location_Redis extends Model_Location {
 
-    public function findOneByID($location_id, $character_id) {
+    public function fetchOne($location_id, $as_array = false) {
 
-        if ($this->source->sismember('global:locations', $location_id)) {
+        $data = json_decode($this->source->get("locations:$location_id"), true);
+        
+        if ($data) {
 
+            if ($as_array) {
+                return $data;
+            }
+            
             $this->id = $location_id;
-
-            $data = json_decode($this->source->get("locations:$location_id"), true);
-
             $this->x = $data['x'];
             $this->y = $data['y'];
             $this->type = $data['type'];
             $this->res_slots = $data['res_slots'];
             $this->used_slots = $data['used_slots'];
             $this->resources = $data['resources'];
-            
-            if ($character_id) {
-                $name = $this->source->get("characters:$character_id:lnames:$location_id");
-                $this->name = $name ? $name : 'Nienazwane miejsce';
-            } else {
-                $this->name = $data['name'];
-            }
 
             return $this;
+            
         } else {
             return null;
         }
@@ -41,16 +38,15 @@ class Model_Location_Redis extends Model_Location {
 
     }
 
-    public function getAllHearableCharacters($as_array = false, $chname) {
+    public function getAllHearableCharacters($character, $as_array = false) {
 
         $all_chars_id = $this->getAllCharactersId();
 
         $hearable_chars = array();
 
         foreach ($all_chars_id as $char_id) {
-            $tmp_char = Model_Character::getInstance($this->source, $chname)
-                    ->fetchOne($char_id)
-                    ->toArray();
+            $tmp_char = Model_Character::getInstance($this->source)
+                    ->fetchOne($char_id, true);
             if (in_array($tmp_char['place_type'], $this->PLACE_HEARABLE)) {
                 if ($as_array) {
                     $hearable_chars[] = $tmp_char;
@@ -192,9 +188,11 @@ class Model_Location_Redis extends Model_Location {
         return $returned;
     }
 
-    public function getExits($lnames = null, $dict = null) {
+    public function getExits($character) {
          
         $exits = $this->source->smembers("locations:{$this->id}:exits");
+        
+        $dict = Model_Dict::getInstance($this->source);
         
         $returned = array();
          
@@ -205,7 +203,7 @@ class Model_Location_Redis extends Model_Location {
                 'id' => $e,
                 'level' => $dict ? $dict->getString($road->getLevelString()) : $road->getLevelString(), 
                 'lid'=>$road->getDestinationLocationID(), 
-                'name'=>  $lnames ? $lnames->getName($road->getDestinationLocationID()) : Model_Location::getInstance($this->source)->findOneByID($road->getDestinationLocationID(), null)->getName(),
+                'name'=> Model_LNames::getInstance($this->source)->getName($character->getID(), $road->getDestinationLocationID()),
                 'distance'=>$road->getDistance(),
                 'direction'=>  Helper_Utils::getDirectionString($road->getDirection())
             );

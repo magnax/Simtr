@@ -1,14 +1,16 @@
 <div id="translations">
     <?php include Kohana::find_file('views', 'common/lang_bar') ?>
 </div>
-<div id="title_bar">
+
+<div class="title_bar">
     Main menu
 </div>
+
+<div id="main_menu">
+    <?php echo html::anchor('/guest/login/register', 'Register new user'); ?><br />
+    <?php echo html::anchor('/guest/login', 'Login'); ?><br />
+</div>
+
 <div id="description">
     Welcome to Simtr 2.
-</div>
-<div id="main_menu">
-    <?php echo html::anchor('register', 'New user'); ?><br />
-    <?php echo html::anchor('guest/login/loginform', 'Login'); ?><br />
-    <?php echo html::anchor('login/mailme', 'Send me test mail'); ?><br />
 </div>

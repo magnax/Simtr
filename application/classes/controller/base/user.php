@@ -37,7 +37,7 @@ class Controller_Base_User extends Controller_Base_Base {
         
         $this->user = Model_User::getInstance($this->redis);
         if (!$this->user->tryLogIn($this->session->get('authkey'))) {
-            $this->redirectError('Wygasła sesja użytkownika', 'guest/login/loginform');
+            $this->redirectError('Wygasła sesja użytkownika', 'login');
         }
         $this->user->refreshActive();
         
@@ -61,6 +61,15 @@ class Controller_Base_User extends Controller_Base_Base {
             $this->request->redirect('user/event');
         } else {
             $this->redirectError('Cannot view events of other player', 'user/menu');
+        }
+
+    }
+    
+    public function action_logout() {
+
+        if ($this->user->logout()) {
+            $this->session->delete('authkey');
+            $this->request->redirect('/');
         }
 
     }

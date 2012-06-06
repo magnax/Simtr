@@ -4,32 +4,21 @@ abstract class Model_LNames {
 
     protected $source;
 
-    //dictionary used to return names in different languages
-    protected $dict;
-    
-    //character id 
-    protected $character_id = null;
-
-    public function  __construct($source, $dict) {
+    public function  __construct($source) {
         $this->source = $source;
-        $this->dict = $dict;
     }
 
-    public static function getInstance($source, $dict) {
+    public static function getInstance($source) {
 
         //if ($source instanceof Redisent) {
-        if ($source instanceof Predis_Client) {
-            return new Model_LNames_Redis($source, $dict);
+        if ($source instanceof Redis) {
+            return new Model_LNames_Redis($source);
         }
 
     }
 
-    public function setCharacter($character_id) {
-        $this->character_id = $character_id;
-    }
-
-    abstract function getName($id_location);
-    abstract function setName($id_location, $new_name);
+    abstract function getName($id_character, $id_location);
+    abstract function setName($id_character, $id_location, $new_name);
 
 }
 

@@ -15,7 +15,7 @@ abstract class Model_Location {
     protected $type;
     protected $res_slots;
     protected $used_slots;
-    protected $resources = array();
+    public $resources = array();
     protected $projects = array();
 
     protected $source;
@@ -26,7 +26,7 @@ abstract class Model_Location {
     
     public static function getInstance($source) {
         //if ($source instanceof Redisent) {
-        if ($source instanceof Predis_Client) {
+        if ($source instanceof Redis) {
             return new Model_Location_Redis($source);
         }
     }
@@ -104,12 +104,12 @@ abstract class Model_Location {
         }
     }
 
-    abstract public function findOneByID($location_id, $character_id);
+    abstract public function fetchOne($location_id);
     abstract public function getAllHearableCharacters($as_array = false, $chname);
     abstract public function calculateUsedSlots();
     abstract public function save();
     abstract public function saveProjects();
-    abstract public function getExits($lnames = null, $dict = null);
+    abstract public function getExits($character);
 
 }
 

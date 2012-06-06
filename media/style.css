@@ -41,6 +41,27 @@ body, td {
     text-align: center;
 }
 
+#main_menu {
+    padding: 20px;
+}
+
+.main_area {
+    width: 780px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px;
+}
+
+label, input {
+    margin: 10px;
+}
+
+#footer {
+    width: 780px;
+    margin: 30px auto;
+    text-align: center;
+}
+
 .title_bar {
     background-color: green;
     color: white;

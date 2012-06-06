@@ -27,25 +27,30 @@ class Model_Event_PointExit extends Model_Event {
 
     }
 
-    public function dispatchArgs($event_data, $args, $character_id, $chname) {
+    public function dispatchArgs($event_data, $args, $character) {
     
         $dict = Model_Dict::getInstance($this->source);
-        
-        $lname = Model_LNames::getInstance($this->source, $dict);
-        $lname->setCharacter($character_id);
         
         $res = Model_Road::getInstance($this->source)->findOneByID($event_data['exit_id']);
             
         $returned = array();
         
         if (in_array('sndr', $args)) {
-            $returned['sndr'] = html::anchor('user/char/nameform/'.$event_data['sndr'], 
-                $chname->getName($character_id, $event_data['sndr']));
+            $name = $character->getChname($event_data['sndr']);
+            if (!$name) {
+                $name = $character->getUnknownName($event_data['sndr']);
+                $name = Model_Dict::getInstance($this->source)->getString($name);
+            }
+            $returned['sndr'] = '<a href="/user/char/nameform/'.
+                $event_data['sndr'].'">'.$name.'</a>';
         }
         $returned['exit_id'] = $dict->getString($res->getLevelString());
         
-        $returned['loc_id'] = html::anchor('user/location/nameform/'.$res->getDestinationLocationID(), 
-            $lname->getName($res->getDestinationLocationID()));
+        $name = $character->getLname($res->getDestinationLocationID());
+        if (!$name) {
+            $name = Model_Dict::getInstance($this->source)->getString('unknown_location');
+        }
+        $returned['loc_id'] = html::anchor('user/location/nameform/'.$res->getDestinationLocationID(), $name);
         
         return $returned;
         

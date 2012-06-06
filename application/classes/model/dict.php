@@ -3,7 +3,6 @@
 abstract class Model_Dict {
 
     protected $lang = 'pl';
-    protected $default_lang = 'pl';
 
     protected $source;
 
@@ -15,7 +14,7 @@ abstract class Model_Dict {
     public static function getInstance($source, $lang = 'pl') {
 
         //if ($source instanceof Redisent) {
-        if ($source instanceof Predis_Client) {
+        if ($source instanceof Redis) {
             return new Model_Dict_Redis($source, $lang);
         }
 

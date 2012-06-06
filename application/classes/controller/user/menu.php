@@ -4,20 +4,23 @@ class Controller_User_Menu extends Controller_Base_User {
 
     public function action_index() {
         
-        $chnames = Model_ChNames::getInstance($this->redis, $this->dict, $this->game->raw_time);
-        
-        $characters = $this->user->getCharacters();
-
         $this->view->characters = array();
         
-        foreach($characters as $ch) {
-            $char = Model_Character::getInstance($this->redis, $chnames)
-                ->fetchOne($ch)
-                ->toArray();
-            $this->lnames->setCharacter($char['id']);
-            $char['name'] = $chnames->getName($char['id'], $char['id']);
-            $char['location'] = $this->lnames->getName($char['location_id']);
+        foreach($this->user->characters as $ch) {
+            //get character data as array
+            $char = Model_Character::getInstance($this->redis)
+                ->fetchOne($ch, true);
+
+            if ($character_name = Model_ChNames::getInstance($this->redis)
+                ->getName($char['id'], $char['id'])) {
+                $char['name'] =  $character_name;
+            }
+            
+            $location_name = Model_LNames::getInstance($this->redis)->getName($ch, $char['location_id']);
+            $char['location'] = $location_name ? $location_name : $this->dict->getString('unnamed_location');
+            
             $char['sex'] = $this->dict->getString($char['sex']);
+            
             if ($char['project_id']) {
                 $char['project'] = 'P '.Model_ProjectManager::getInstance(null, $this->redis)
                     ->findOneByID($char['project_id'])
@@ -30,15 +33,6 @@ class Controller_User_Menu extends Controller_Base_User {
         }
 
         $this->view->user = $this->user;
-
-    }
-
-    public function action_logout() {
-
-        if ($this->user->logout()) {
-            $this->session->delete('authkey');
-            $this->request->redirect('/');
-        }
 
     }
 

@@ -26,7 +26,7 @@ abstract class Model_Resource {
 
     public static function getInstance($source) {
         //if ($source instanceof Redisent) {
-        if ($source instanceof Predis_Client) {
+        if ($source instanceof Redis) {
             return new Model_Resource_Redis($source);
         }
     }

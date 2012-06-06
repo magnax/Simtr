@@ -13,20 +13,30 @@ class Model_Character_Redis extends Model_Character {
 
     }
 
-    public function fetchOne($id) {
+    public function fetchOne($id, $as_array = false) {
 
-        $char = new Model_Character_Redis($this->source, $this->chnames);
-        $tmp_char = $this->source->get("characters:$id");
-        if ($tmp_char) {
-            $tmp_char = json_decode($tmp_char, true);
+        $char = $this->source->get("characters:$id");
+        
+        if ($char) {
+            
+            $tmp_char = json_decode($char, true);
+            if ($as_array) {
+                return $tmp_char;
+            }
             //"hydration":
             foreach ($tmp_char as $key => $val) {
-                $char->{$key} = $val;
+                $this->{$key} = $val;
             }
 
-            return $char;
+            $this->getChnames();
+            $this->getLnames();
+            
+            return $this;
+            
         }
+        
         return null;
+        
     }
 
     public function getInfo(array $characters) {
@@ -45,10 +55,15 @@ class Model_Character_Redis extends Model_Character {
         
     }
 
-    public function getEvents() {
+    public function getEvents($page = 1) {
+        
+        //ile na stronę 
+        $pagesize = 20;
+        
         $size = $this->source->llen("characters:{$this->id}:events");
         if ($size) {
-            $events = $this->source->lrange("characters:{$this->id}:events", 0, $size);
+            $from = ($page - 1) * $pagesize;
+            $events = $this->source->lrange("characters:{$this->id}:events", $from, $from + $pagesize - 1);
         } else {
             return array();
         }
@@ -77,7 +92,7 @@ class Model_Character_Redis extends Model_Character {
             $args = $this->source->lrange("global:event_tpl:{$event['type']}:$person:params", 0, -1);
             //delegate further dispatching to proper event model
             $event_object = Model_Event::getInstance($event['type'], NULL, $this->source);
-            $args = $event_object->dispatchArgs($event, $args, $this->id, $this->chnames);
+            $args = $event_object->dispatchArgs($event, $args, $this);
 
             if (!$format) {
                 $event['text'] = 'coś nie tak...('.$id_event.')';
@@ -97,12 +112,35 @@ class Model_Character_Redis extends Model_Character {
             );
             
         }
-               
+        
+        //"pagination" ;) just info 
+        $return_events[] = array(
+            'date' => '',
+            'prev' => ($page > 1) ? $page - 1 : '',
+            'current' => $page,
+            'next' => ($from + $pagesize < $size) ? $page + 1 : '',
+        );
+        
         return $return_events;
     }
 
     public function calculateEqWeight() {
+        
+        $weight = 0;
+        
+        //raw resources:
+        $raws = json_decode($this->source->get("raws:{$this->id}"), true);
 
+        foreach ($raws as $k => $raw) {
+            $weight += $raw;
+        }
+
+        //items
+        
+        //keys
+        
+        return $weight;
+        
     }
 
     /**
@@ -134,10 +172,12 @@ class Model_Character_Redis extends Model_Character {
             if ($raws[$id] <= 0) {
                 unset($raws[$id]);
             }
-            $this->eq_weight -= $amount;
-            $this->save();
             
             $this->source->set("raws:{$this->id}", json_encode($raws));
+            
+            $this->eq_weight = $this->calculateEqWeight();
+            $this->save();
+            
         }
 
     }
@@ -155,11 +195,11 @@ class Model_Character_Redis extends Model_Character {
         } else {
             $raws[$id] = $amount;
         }
-
-        $this->eq_weight += $amount;
-        $this->save();
-
+        
         $this->source->set("raws:{$this->id}", json_encode($raws));
+        
+        $this->eq_weight = $this->calculateEqWeight();
+        $this->save();
 
     }
 
@@ -169,6 +209,39 @@ class Model_Character_Redis extends Model_Character {
 
     }
 
+    public function getChnames() {
+        $chnames = $this->source->keys("chnames:{$this->id}:*");
+        $returned = array();
+        foreach($chnames as $ch) {
+            $ch_key = explode(':', $ch);
+            $returned[$ch_key[2]] = $this->source->get("chnames:{$this->id}:{$ch_key[2]}");
+        }
+        return $returned;
+    }
+    
+    public function getLnames() {
+        $lnames = $this->source->keys("lnames:{$this->id}:*");
+        $returned = array();
+        foreach($lnames as $l) {
+            $lkey = explode(':', $l);
+            $returned[$lkey[2]] = $this->source->get("lnames:{$this->id}:{$lkey[2]}");
+        }
+        return $returned;
+    }
+    
+    public function getUnknownName($for_user_id) {
+        
+        $user_data = json_decode($this->source->get("characters:$for_user_id"),true);
+        $age = self::START_AGE + Model_GameTime::formatDateTime($this->raw_time - $user_data['spawn_date'], 'y');
+        if ($age >= 90) {
+            $str = 'old';
+        } else {
+            $str = floor($age / 10) * 10;
+        }
+        
+        return $user_data['sex'].':'.$str;
+        
+    }
 }
 
 ?>

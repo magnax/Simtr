@@ -39,12 +39,14 @@ class Controller_Base_Base extends Controller_Template {
         //sprawdzenie demona i odczytanie czasu
         try {
             $this->game = new Model_GameTime();
+            
         } catch (Exception $e) {
             $this->redirectError($e->getMessage());
         }
 
-        $this->template->raw_time = $this->game->raw_time;
         $this->template->current_time = $this->game->getTime();
+        $this->template->current_date = $this->game->getDate();
+            //Model_GameTime::formatDateTime($this->game->raw_time, 'y/f (d)');
         
         $page = ($this->request->directory ? $this->request->directory.'/' : '')
             . $this->request->controller.'/'.$this->request->action;
@@ -56,8 +58,6 @@ class Controller_Base_Base extends Controller_Template {
         }
 
         $this->view = $this->template->content;
-
-        
 
         /**
          * jeśli jest błąd
@@ -73,15 +73,15 @@ class Controller_Base_Base extends Controller_Template {
          * inicjalizacja i połączenie z Redisem
          * parametry połączenia w application/config/database.php
          */
-        $this->redis = new Predis_Client(Kohana::config('database.dsn'));
+        //$this->redis = new Predis_Client(Kohana::config('database.dsn'));
+        $this->redis = new Redis();
+        $this->redis->connect('127.0.0.1');
 
         try {
-            $this->redis->dbsize();
+            $this->template->active_count = count($this->redis->keys('active:*'));
         } catch (Predis_CommunicationException $e) {
             $this->redirectError('Server Redis nie uruchomiony');
         }
-
-        $this->template->active_count = count($this->redis->keys('active:*'));
         
     }
 

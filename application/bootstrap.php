@@ -67,8 +67,8 @@ Kohana::$config->attach(new Kohana_Config_File);
  * Enable modules. Modules are referenced by a relative or absolute path.
  */
 Kohana::modules(array(
-    'redis'         => APPPATH.'modules/predis',
-    'email'         => APPPATH.'modules/email',
+    //'redis'         => APPPATH.'modules/predis',
+    //'email'         => APPPATH.'modules/email',
     //'unittest'      => MODPATH.'unittest',   // Unit testing
     //'redisent'      => APPPATH.'modules/redisent',   // redisent library
 	// 'orm'        => MODPATH.'orm',        // Object Relationship Mapping
@@ -80,128 +80,25 @@ Kohana::modules(array(
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
  */
-//Route::set('build2', 'u/build/<id>') // menu budowania
-//	->defaults(array(
-//        'directory'  => 'user',
-//		'controller' => 'build',
-//		'action'     => 'index'
-//	));
-//Route::set('buildings', 'buildings') // strona 'budynki i pojazdy'
-//	->defaults(array(
-//        'directory'  => 'user',
-//		'controller' => 'building',
-//		'action'     => 'index'
-//	));
-//Route::set('people', 'people') // strona 'ludzie'
-//	->defaults(array(
-//        'directory'  => 'user',
-//		'controller' => 'people',
-//		'action'     => 'index'
-//	));
-//Route::set('objects', 'objects') // strona 'obiekty'
-//	->defaults(array(
-//        'directory'  => 'user',
-//		'controller' => 'location',
-//		'action'     => 'objects'
-//	));
-//Route::set('inventory', 'inventory(/<type>)') // strona 'inwentarz'
-//	->defaults(array(
-//        'directory'  => 'user',
-//		'controller' => 'inventory',
-//		'action'     => 'index',
-//        'type'       => 'raws'
-//	));
-//Route::set('projects', 'projects') // strona 'projekty'
-//	->defaults(array(
-//        'directory'  => 'user',
-//		'controller' => 'project',
-//		'action'     => 'index'
-//	));
-//Route::set('location', 'location') // strona 'miejsce'
-//	->defaults(array(
-//        'directory'  => 'user',
-//		'controller' => 'location',
-//		'action'     => 'index'
-//	));
-//Route::set('events', 'events') // strona zdarzeń bież. postaci
-//	->defaults(array(
-//        'directory'  => 'user',
-//		'controller' => 'event',
-//		'action'     => 'index'
-//	));
-//Route::set('logout', 'logout')
-//	->defaults(array(
-//        'directory'  => 'user',
-//		'controller' => 'menu',
-//		'action'     => 'logout'
-//	));
-//Route::set('login', 'login')
-//	->defaults(array(
-//        'directory'  => 'guest',
-//		'controller' => 'login',
-//		'action'     => 'loginform'
-//	));
-//Route::set('loginform', 'loginform')
-//	->defaults(array(
-//        'directory'  => 'guest',
-//		'controller' => 'login',
-//		'action'     => 'loginform'
-//	));
-//Route::set('checklogin', 'check_login')
-//	->defaults(array(
-//        'directory'  => 'guest',
-//		'controller' => 'login',
-//		'action'     => 'checklogin'
-//	));
-//Route::set('error', 'error')
-//	->defaults(array(
-//        'directory'  => 'base',
-//		'controller' => 'error',
-//		'action'     => 'index'
-//	));
-//Route::set('register', 'register')
-//	->defaults(array(
-//        'directory'  => 'guest',
-//		'controller' => 'login',
-//		'action'     => 'register',
-//	));
-//Route::set('registerform', 'registerform')
-//	->defaults(array(
-//        'directory'  => 'guest',
-//		'controller' => 'login',
-//		'action'     => 'registerform',
-//	));
-//Route::set('register_continue', 'register_continue')
-//	->defaults(array(
-//        'directory'  => 'guest',
-//		'controller' => 'login',
-//		'action'     => 'registerform',
-//	));
-//Route::set('check_user', 'check_user')
-//	->defaults(array(
-//        'directory'  => 'guest',
-//		'controller' => 'login',
-//		'action'     => 'checkuser',
-//	));
-//Route::set('character_default', 'char/<id>')
-//	->defaults(array(
-//        'directory'  => 'base',
-//		'controller' => 'user',
-//		'action'     => 'set'
-//	));
-//Route::set('user_default', 'u/<controller>(/<action>(/<id>))')
-//	->defaults(array(
-//        'directory'  => 'user',
-//		'controller' => 'menu',
-//		'action'     => 'index',
-//	));
-//Route::set('admin_default', 'admin/<controller>(/<action>(/<id>))')
-//	->defaults(array(
-//        'directory'  => 'admin',
-//		'controller' => 'menu',
-//		'action'     => 'index',
-//	));
-Route::set('default', '(<directory>/(<controller>(/<action>(/<id>))))', array('directory' => '.+?'))
+
+//default admin routes
+Route::set('admin', 'admin/(<controller>/(<action>/(<id>)))')
+	->defaults(array(
+        'directory'  => 'admin',
+		'controller' => 'menu',
+		'action'     => 'index'
+	));
+
+//default user routes
+Route::set('user_default', 'user(/<controller>(/<action>(/<id>)))')
+	->defaults(array(
+        'directory'  => 'user',
+		'controller' => 'menu',
+		'action'     => 'index'
+	));
+
+//default route
+Route::set('default', '(<controller>(/<action>(/<id>)))')
 	->defaults(array(
         'directory'  => 'guest',
 		'controller' => 'welcome',

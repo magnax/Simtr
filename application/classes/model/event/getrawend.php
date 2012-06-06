@@ -25,8 +25,8 @@ class Model_Event_GetRawEnd extends Model_Event {
         $this->amount = $amount;
     }
 
-    public function dispatchArgs($event_data, $args, $character_id, $chname) {
-        //return;
+    public function dispatchArgs($event_data, $args, $character) {
+
         $dict = Model_Dict::getInstance($this->source);
         
         $res = Model_Resource::getInstance($this->source)
@@ -45,8 +45,13 @@ class Model_Event_GetRawEnd extends Model_Event {
         }
         
         if (in_array('sndr', $args)) {
-            $returned['sndr'] = html::anchor('user/char/nameform/'.$event_data['sndr'], 
-                $chname->getName($character_id, $event_data['sndr']));
+            $name = $character->getChname($event_data['sndr']);
+            if (!$name) {
+                $name = $character->getUnknownName($event_data['sndr']);
+                $name = Model_Dict::getInstance($this->source)->getString($name);
+            }
+            $returned['sndr'] = '<a href="/user/char/nameform/'.
+                $event_data['sndr'].'">'.$name.'</a>';
         }
 
         return $returned;

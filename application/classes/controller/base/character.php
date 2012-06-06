@@ -8,24 +8,24 @@ class Controller_Base_Character extends Controller_Base_User {
 
     protected $character;
     protected $location;
-    //protected $chnames;
     protected $myproject;
 
     public function before() {
+        
         parent::before();
-
-        //init characters names
-        $chnames = Model_ChNames::getInstance($this->redis, $this->dict, $this->game->raw_time);
-
-        $this->character = 
-            Model_Character::getInstance($this->redis, $chnames)
-                ->fetchOne($this->user->getCurrentCharacter());
-
-        //set character id in lnames and chnames objects (to retrieve names for this
-        //character
-        $this->lnames->setCharacter($this->character->getId());
-        //$this->chnames->setCharacter($this->character->getId());
-
+        
+        //get character object with character and locations names
+        $this->character = Model_Character::getInstance($this->redis)
+            ->fetchOne($this->user->getCurrentCharacter());
+        
+        //nie jest konieczne, bo domyślny lang to 'pl' właśnie
+        $this->character->lang = 'pl';
+        $this->character->raw_time = $this->game->raw_time;
+        
+        //get location
+        $this->location = Model_Location::getInstance($this->redis)
+            ->fetchOne($this->character->location_id);
+        
         $ch = $this->character->toArray();
 
         $ch['spawn_day'] =
@@ -39,15 +39,15 @@ class Controller_Base_Character extends Controller_Base_User {
             );
         }
         $ch['age'] = $this->character->countAge($this->game->raw_time);
-        $ch['location'] = $this->lnames->getName($ch['location_id']);
-        $ch['spawn_location'] = $this->lnames->getName($ch['spawn_location_id']);
-        $kn = $chnames->getName($ch['id'], $ch['id']);
-        $ch['known_as'] = $kn ? $kn : $ch['name'];
+        $name = $this->character->getLname($ch['location_id']);
+        $ch['location'] = $name ? $name : Model_Dict::getInstance($this->redis)->getString('unknown_location');
+        $name = $this->character->getLname($ch['spawn_location_id']);
+        $ch['spawn_location'] = $name ? $name : Model_Dict::getInstance($this->redis)->getString('unknown_location');
+        $ch['known_as'] = $this->character->getChname($ch['id']);
 
         $this->template->character = $ch;
 
-        $this->location = Model_Location::getInstance($this->redis)
-            ->findOneByID($ch['location_id'], $ch['id']);
+        
 
     }
 

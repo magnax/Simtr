@@ -13,7 +13,7 @@ abstract class Model_Character {
     protected $spawn_location_id;
     protected $age;
     protected $user_id;
-    protected $location_id;
+    public $location_id;
     protected $eq_weight;
     protected $place_type;
     protected $place_id;
@@ -47,24 +47,27 @@ abstract class Model_Character {
      * źródło danych (Redis, RDBMS, other)
      */
     protected $source;
-    
+
+    protected $chnames;
+
     //memorized characters names
-    public $chnames;
+    public $character_names = null;
+    public $location_names = null;
     
-    private $raw_time;
+    public $raw_time;
+    
+    public $lang = 'pl';
 
-        //private $spawn_day;
+    //private $spawn_day;
 
-    public function  __construct($source, $chnames) {
+    public function  __construct($source) {
         $this->source = $source;
-        $this->chnames = $chnames;
-        $this->raw_time = $this->chnames ? $this->chnames->getRawTime() : 0;
     }
     
-    public static function getInstance($source, $chnames) {
+    public static function getInstance($source) {
         //if ($source instanceof Redisent) {
-        if ($source instanceof Predis_Client) {
-            return new Model_Character_Redis($source, $chnames);
+        if ($source instanceof Redis) {
+            return new Model_Character_Redis($source);
         }
     }
     
@@ -87,7 +90,7 @@ abstract class Model_Character {
     public function setProjectId($id) {
         $this->project_id = $id;
     }
-
+    
     public function getId() {
         return $this->id;
     }
@@ -104,8 +107,8 @@ abstract class Model_Character {
         return $this->spawn_date;
     }
 
-    public function countVisibleAge() {
-        $age = $this->countAge();
+    public function countVisibleAge($raw_time) {
+        $age = $this->countAge($raw_time);
         if ($age >= 90) {
             return 'old';
         } else {
@@ -131,8 +134,8 @@ abstract class Model_Character {
 
 
 
-    public function countAge() {
-        return self::START_AGE + Model_GameTime::formatDateTime($this->raw_time - $this->spawn_date, 'y');
+    public function countAge($raw_time) {
+        return self::START_AGE + Model_GameTime::formatDateTime($raw_time - $this->spawn_date, 'y');
     }
 
     public function toArray() {
@@ -174,10 +177,33 @@ abstract class Model_Character {
 
     }
     
+    public function getChname($for_user_id) {
+        if ($this->character_names && isset($this->character_names[$for_user_id])) {
+            return $this->character_names[$for_user_id];
+        } else {
+            if ($for_user_id == $this->id) {
+                return $this->name;
+            }
+        }
+        return null;
+    }
+
+    public function getLname($for_location_id) {
+        if ($this->location_names && isset($this->location_names[$for_location_id])) {
+            return $this->location_names[$for_location_id];
+        }
+        return null;
+    }
+
+
     abstract public function save();
     abstract public function fetchOne($id);
     abstract public function getInfo(array $characters);
     abstract public function getEvents();
+    //get all chnames for this user
+    abstract public function getChnames();
+    abstract public function getLnames();
+    abstract public function getUnknownName($for_user_id);
 
 }
 

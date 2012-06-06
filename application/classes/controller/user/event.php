@@ -5,15 +5,15 @@
  */
 class Controller_User_Event extends Controller_Base_Character {
 
-    public function action_index() {
-        
+    public function action_index($page = 1) {
+
         // Be sure to only profile if it's enabled
         if (Kohana::$profiling === TRUE) {
             // Start a new benchmark
             $benchmark = Profiler::start('Character Controller', __FUNCTION__);
         }
 
-        $events = $this->character->getEvents();
+        $events = $this->character->getEvents($page);
 
         if (isset($benchmark)) {
             // Stop the benchmark
@@ -91,7 +91,7 @@ class Controller_User_Event extends Controller_Base_Character {
         //wysłanie eventu
         $event = Model_EventSender::getInstance(
             Model_Event::getInstance(
-                Model_Event::GET_RAW, $this->game->getRawTime(), $this->redis
+                Model_Event::GET_RAW, $this->game->raw_time, $this->redis
             )
         );
         $event->setResource($_POST['res_id'], $_POST['amount']);
@@ -107,11 +107,15 @@ class Controller_User_Event extends Controller_Base_Character {
     public function action_give_raw($id) {
         $raws = $this->character->getRaws();
         $all_characters = $this->location
-            ->getAllHearableCharacters(true, $this->character->chnames);
+            ->getAllHearableCharacters($this->character, true);
         $this->view->all_characters = array();
         foreach ($all_characters as $char) {
             if ($char['id'] != $this->character->getId()) {
-                $this->view->all_characters[$char['id']] = $this->character->chnames->getName($this->character->getId(), $char['id']);
+                $name = $this->character->getChname($char['id']);
+                if (!$name) {
+                    $name = Model_Dict::getInstance($this->redis)->getString($this->character->getUnknownName($char['id']));
+                }
+                $this->view->all_characters[$char['id']] = $name;
             }
         }
         $this->view->res = $raws[$id];

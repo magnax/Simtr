@@ -22,7 +22,7 @@ abstract class Model_User {
     protected $current_location_id;
     protected $authkey;
 
-    protected $characters = array(); //zbiór postaci
+    public $characters = array(); //zbiór postaci
     /**
      * pola wewnętrzne klasy
      */
@@ -35,7 +35,7 @@ abstract class Model_User {
 
     public static function getInstance($source) {
         //if ($source instanceof Redisent) {
-        if ($source instanceof Predis_Client) {
+        if ($source instanceof Redis) {
             return new Model_User_Redis($source);
         } else {
             return null;

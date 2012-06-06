@@ -7,6 +7,47 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class Controller_Guest_Login extends Controller_Base_Guest {
 
+    //default login action - shows login form or validate/login user if POST
+    public function action_index() {
+        
+        //initialize form validation
+        $post = Validate::factory($_POST);
+        
+        //filters for fields
+        $post->filter(TRUE, 'trim');
+        $post->filter('email', 'strtolower');
+        
+        //labels
+        $post->label('email', 'User e-mail');
+        $post->label('pass', 'Password');
+        
+        //rules for fields
+        $post->rule('email', 'not_empty');
+        $post->rule('email', 'email');
+        $post->rule('pass', 'not_empty');
+        $post->rule('login', 'not_empty');
+        
+        if ($post->check()) {
+            
+            $user = Model_User::getInstance($this->redis);
+
+            $authkey = $user->login($_POST['email'], $_POST['pass']);
+
+            if ($authkey) {
+                $this->session->set('authkey', $authkey);
+                $this->request->redirect('user/menu');
+                return;
+            } else {
+                $post->error('login', 'incorrect');
+            }
+            
+        }
+        
+        $this->view->errors = $post->errors('forms/login');
+
+    }
+
+
     public function action_register() {
         
         if ($this->session->get('err')) {
@@ -21,7 +62,7 @@ class Controller_Guest_Login extends Controller_Base_Guest {
         if (!$this->session->get('continue') && ((Request::$method != 'POST') || !isset($_POST['confirm']) || ($_POST['confirm'] != 1))) {
 
             $this->session->set('err', 'You must check that you read all terms and conditions');
-            Request::instance()->redirect('register');
+            Request::instance()->redirect('guest/login/register');
 
         }
 
@@ -135,9 +176,9 @@ class Controller_Guest_Login extends Controller_Base_Guest {
         //not redirected means activation ok or user already active
         //check where to redirect
         if ($user->tryLogIn($this->session->get('authkey'))) {
-            $this->redirectMessage($message, '/u/menu');
+            $this->redirectMessage($message, '/user/menu');
         } else {
-            $this->redirectMessage($message, '/login');
+            $this->redirectMessage($message, '/guest/login/loginform');
         }
         
     }

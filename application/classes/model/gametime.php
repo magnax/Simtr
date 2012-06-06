@@ -16,6 +16,7 @@ class Model_GameTime {
 
     protected $year;
     protected $day;
+    protected $day_of_year;
     protected $h;
     protected $m;
     protected $s;
@@ -55,9 +56,6 @@ class Model_GameTime {
         $output = intval(str_replace("\n", '', $output));
         
         if (is_integer($output) && $output) {
-            $trace = debug_backtrace();
-            $name = $trace[2]['function'];
-            echo empty($name) ? 'global' : $name.'<br>';
             return $output;
         } else {
             throw new BadDaemonException('Bad daemon? Should be installed in '.self::PATH);
@@ -70,7 +68,7 @@ class Model_GameTime {
     }
 
     public function getDate() {
-        return $this->year.'-'.$this->day;
+        return $this->year.'/'.$this->day.' ('.$this->day_of_year.')';
     }
 
     public function getDateTime() {

@@ -57,17 +57,23 @@ class Model_User_Redis extends Model_User {
 
     }
 
-    public function login($id, $password) {
-        if ($this->source->get("users:$id:password") == $password) {
-            $authkey = md5($id.microtime());
-            $this->source->set("users:$id:auth", $authkey);
-            $this->source->set("auth:$authkey", $id);
-            $this->logged_in = true;
-            $this->authkey = $authkey;
-            return $authkey;
-        } else {
-            return false;
+    public function login($email, $password) {
+        
+        //get user id
+        $id = $this->source->get("emails:$email");
+        if ($id) {
+            if ($this->source->get("users:$id:password") == $password) {
+                $authkey = md5($id.microtime());
+                $this->source->set("users:$id:auth", $authkey);
+                $this->source->set("auth:$authkey", $id);
+                $this->logged_in = true;
+                $this->authkey = $authkey;
+                return $authkey;
+            }
         }
+        
+        return null;
+        
     }
 
     public function tryLogIn($authkey = null) {
