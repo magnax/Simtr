@@ -103,6 +103,7 @@ class Model_Character_Redis extends Model_Character {
                 }
                 if (!$event['text']) {
                     $event['text'] = 'ERROR: <b>'.$format.'</b> L.arg.:'.count($args).' Person:'.$person. ' Event: '.$id_event;
+                    
                 }
             }
 
@@ -182,6 +183,14 @@ class Model_Character_Redis extends Model_Character {
 
     }
 
+    public function addItem($item_id) {
+        $this->source->sadd("char_items:{$this->id}", $item_id);
+    }
+    
+    public function putItem($item_id) {
+        $this->source->srem("char_items:{$this->id}", $item_id);
+    }
+
     public function addRaw($id, $amount) {
 
         $raws = json_decode($this->source->get("raws:{$this->id}"), true);
@@ -209,6 +218,34 @@ class Model_Character_Redis extends Model_Character {
 
     }
 
+    public function getItems() {
+        
+        $returned_items = array();
+        $dict = Model_Dict::getInstance($this->source);
+        $lang = $dict->getLang();
+        
+        $items_ids = $this->source->smembers("char_items:{$this->id}");
+        foreach ($items_ids as $item_id) {
+            $item = json_decode($this->source->get("global:items:$item_id"), true);
+            $itemtype = json_decode($this->source->get("itemtype:{$item['type']}"), true);
+            $itemkind = $this->source->get("kind:$lang:{$itemtype['name']}");
+            if (!$itemkind) {
+                $itemkind = 'm';
+            }
+            $state = Model_ItemType::getInstance($this->source)
+                ->getState($item['points'] / $itemtype['points']).":$itemkind";
+            
+            $returned_items[] = array(
+                'id' => $item_id,
+                'name' => Model_Dict::getInstance($this->source)->getString($state) .
+                ' ' .
+                Model_Dict::getInstance($this->source)->getString($itemtype['name']),
+            );
+        }
+        return $returned_items;
+    }
+
+
     public function getChnames() {
         $chnames = $this->source->keys("chnames:{$this->id}:*");
         $returned = array();
@@ -217,6 +254,10 @@ class Model_Character_Redis extends Model_Character {
             $returned[$ch_key[2]] = $this->source->get("chnames:{$this->id}:{$ch_key[2]}");
         }
         return $returned;
+    }
+    
+    public function fetchChnames() {
+        $this->character_names = $this->getChnames();
     }
     
     public function getLnames() {
@@ -241,6 +282,15 @@ class Model_Character_Redis extends Model_Character {
         
         return $user_data['sex'].':'.$str;
         
+    }
+    
+    //returns list of available weapons from character inventory
+    public function getWeaponsList() {
+        
+        return array(
+            '0' => 'pięści',
+        );
+            
     }
 }
 

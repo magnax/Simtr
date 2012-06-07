@@ -24,7 +24,7 @@ class Controller_User_Point extends Controller_Base_Character {
         //recipients to lista obiektów klasy Character
         //$event->setRecipient($recipient->getId());
         $event->setSender($this->character->getId());
-        $event->addRecipients($this->location->getAllHearableCharacters($this->character->chnames));
+        $event->addRecipients($this->location->getAllHearableCharacters($this->character));
         $event->send();
         
         //redirect to events page

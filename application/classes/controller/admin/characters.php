@@ -12,13 +12,14 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
             $user = json_decode($this->redis->get("characters:$user_id"), true);
             //vitality 800-1200
             $user['vitality'] = rand(800, 1200);
+            $user['life'] = $user['vitality'];
             //strength 0.6 - 1.8
             $user['strength'] = rand(6, 18)/10;
             //fighting skill 0.8 - 1.2
             $user['fighting'] = rand(8, 12)/10;
             $this->redis->set("characters:$user_id", json_encode($user));
         }
-        print_r($users_ids);
+        Request::instance()->redirect('/admin/characters/menu');
     }
 
 
@@ -74,6 +75,7 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
         if (isset($_POST['save'])) {
             
             $user['name'] = $_POST['name'];
+            $user['life'] = $_POST['life'];
             $this->redis->set("characters:$user_id", json_encode($user));
             $this->request->redirect('/admin/characters/all');
             
@@ -92,13 +94,45 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
             }
         }
         
+        //items:
+        $this->view->items = array();
+        
+        $items = $this->redis->smembers("char_items:$user_id");
+        if ($items) {
+            foreach ($items as $item) {
+                $item_data = json_decode($this->redis->get("global:items:$item"), true);
+                $itemtype = json_decode($this->redis->get("itemtype:{$item_data['type']}"), true);
+                $this->view->items[] = array(
+                    'id' => $item_data['id'],
+                    'type' => $itemtype['name'],
+                    'points' => $item_data['points'],
+                );
+            }
+        }
+        
         $this->view->user = $user;
+        
+        $itemtype = array();
+        
+        //typy przedmiotów do listy
+        $ids_itemtypes = $this->redis->keys("itemtype:*");
+        
+        foreach ($ids_itemtypes as $type) {
+            $arr = explode(':', $type);
+            $id = $arr[1];
+            if ($id != 0 && $id != 1) {
+                $itemtype_data = json_decode($this->redis->get("itemtype:$id"), true);
+                $itemtype[$id] = $itemtype_data['name']. ' ('.$itemtype_data['points'].')';
+            }
+        }
+        
+        $this->view->itemtypes = $itemtype;
         
     }
     
-    public function action_addraw($user_id) {
+    public function action_addraw($character_id) {
         
-        $raws = $this->redis->get("raws:$user_id");
+        $raws = $this->redis->get("raws:$character_id");
         
         if ($raws) {
             $raws = json_decode($raws, true);
@@ -111,11 +145,25 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
             $raws[$_POST['id']] = $_POST['amount'];
         }
         
-        $this->redis->set("raws:$user_id", json_encode($raws));
+        $this->redis->set("raws:$character_id", json_encode($raws));
        
-        $this->request->redirect('/admin/characters/edit/'.$user_id);
+        $this->request->redirect('/admin/characters/edit/'.$character_id);
         
     }
+    
+    public function action_additem($character_id) {
+        
+        $item = array();
+        $item['id'] = $this->redis->incr("global:IDItem");
+        $item['type'] = $_POST['type'];
+        $item['points'] = $_POST['points'];
+        
+        $this->redis->set("global:items:{$item['id']}", json_encode($item));
+        $this->redis->sadd("char_items:$character_id", $item['id']);
+        
+        $this->request->redirect('/admin/characters/edit/'.$character_id);
+    }
+    
 }
 
 ?>

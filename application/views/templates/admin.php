@@ -15,5 +15,6 @@
     Manufacturing [<?php echo html::anchor('admin/tools', 'Tools'); ?>]
     <?php echo html::anchor('admin/fixtures/menu', 'Fixtures menu'); ?>
     <?php echo html::anchor('admin/characters/menu', 'Characters menu'); ?> 
+    <?php echo html::anchor('admin/itemtypes/menu', 'Item types'); ?> 
 </div>
 <?php echo $content; ?>

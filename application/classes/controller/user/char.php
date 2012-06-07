@@ -7,14 +7,20 @@
 class Controller_User_Char extends Controller_Base_Character {
 
     public function action_nameform($id) {
-        $character = Model_Character::getInstance($this->redis, $this->character->chnames)->fetchOne($id);
+        $character = Model_Character::getInstance($this->redis)->fetchOne($id, true);
         $this->view->character_id = $id;
-        $this->view->name = $this->character->chnames->getName($this->character->getId(), $id);
+        $name = $this->character->getChname($id);
+        if (!$name) {
+            $name = Model_Dict::getInstance($this->redis)->getString($this->character->getUnknownName($id));
+        }
+        $this->view->name = $name;
     }
 
     public function action_namechange() {
 
-        $this->character->chnames->setName($this->character->getId(), $_POST['character_id'], $_POST['name']);
+        Model_ChNames::getInstance($this->redis)->setName($this->character->getId(), $_POST['character_id'], $_POST['name']);
+        $this->character->fetchChnames();
+
         $this->request->redirect('user/event');
         
     }

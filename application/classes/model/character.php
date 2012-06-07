@@ -27,14 +27,17 @@ abstract class Model_Character {
      //jedzenie (0-100)
      protected $food;
      
-     //żywotność (max. 800-1200) (punkty = 0 => śmierć)
+     //żywotność (800-1200) 
      protected $vitality;
      
+     //życie (aktualny stan, max. vitality) (punkty = 0 => śmierć)
+     protected $life;
+
      //siła (0.6 ... 1.8)
      protected $strength;
      
      //walka (0.8 ... 1.2)
-     protected $fighting;
+     public $fighting;
 
      /**
       * kolekcje
@@ -153,6 +156,7 @@ abstract class Model_Character {
             'place_type' => $this->place_type,
             'place_id' => $this->place_id,
             'vitality' => $this->vitality,
+            'life' => $this->life,
             'strength' => $this->strength,
             'fighting' => $this->fighting
         );
@@ -195,6 +199,14 @@ abstract class Model_Character {
         return null;
     }
 
+    public function isDying() {
+        return ($this->life <= 0);
+    }
+
+    public function setDamage($points) {
+        $this->life -= $points;
+        $this->save();
+    }
 
     abstract public function save();
     abstract public function fetchOne($id);

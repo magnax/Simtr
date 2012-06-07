@@ -43,8 +43,32 @@ class Controller_User_Location extends Controller_Base_Character {
 
     public function action_objects() {
         $this->view->raws = $this->location->getRaws();
+        $this->view->items = $this->location->getItems();
     }
 
+    public function action_getitem($item_id) {
+        
+        /**
+         * @todo check if user has this item 
+         */
+        $this->location->putItem($item_id);
+        $this->character->addItem($item_id);
+        //generate event
+        $event = Model_EventSender::getInstance(
+            Model_Event::getInstance(
+                Model_Event::GET_ITEM, $this->game->raw_time, $this->redis
+            )
+        );
+
+        $event->setSender($this->character->getId());
+        $event->setItem($item_id);
+
+        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType()));
+        $event->send();
+        
+        $this->request->redirect('user/event');
+    }
+    
 }
 
 ?>

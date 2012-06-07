@@ -21,6 +21,7 @@ class Controller_Base_Character extends Controller_Base_User {
         //nie jest konieczne, bo domyślny lang to 'pl' właśnie
         $this->character->lang = 'pl';
         $this->character->raw_time = $this->game->raw_time;
+        $this->character->fetchChnames();
         
         //get location
         $this->location = Model_Location::getInstance($this->redis)

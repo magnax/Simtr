@@ -5,11 +5,14 @@ class Model_Event {
     const TALK_ALL = 'TalkAll';
     const TALK_TO = 'TalkTo';
     const PUT_RAW = 'PutRaw';
+    const PUT_ITEM = 'PutItem';
+    const GET_ITEM = 'GetItem';
     const GET_RAW = 'GetRaw';
     const GET_RAW_END = 'GetRawEnd';
     const SPAWN = 'Spawn';
     const GIVE_RAW = 'GiveRaw';
     const POINT_EXIT = 'PointExit';
+    const HIT_PERSON = 'HitPerson';
 
     /**
      * wspólne właściwości

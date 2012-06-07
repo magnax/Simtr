@@ -1,6 +1,6 @@
 <div class="title_bar">Inwentarz</div>
 <div id="inventory_menu">
-    <?php echo html::anchor('user/inventory', 'Surowce'); ?> |
+    <?php echo html::anchor('user/inventory/raws', 'Surowce'); ?> |
     <?php echo html::anchor('user/inventory/items', 'Przedmioty'); ?> |
     <?php echo html::anchor('user/inventory/keys', 'Klucze'); ?> |
     <?php echo html::anchor('user/inventory/notes', 'Notatki'); ?> |

@@ -12,3 +12,4 @@ Obecna nazwa: <?php echo $name; ?>
     Nowa nazwa: <input type="text" name="name" value="<?php echo $name; ?>"><br />
     <input type="submit" value="Zmień">
 </form>
+<p><?php echo html::anchor('user/people/hit/'.$character_id, '[Atakuj]'); ?></p>

@@ -65,14 +65,14 @@ class Model_Location_Redis extends Model_Location {
      * zwraca listę ID postaci znajdujących się w tym samym typie lokacji
      * @return <type> 
      */
-    public function getAllVisibleCharacters($place_type, $chname) {
+    public function getAllVisibleCharacters($place_type) {
 
         $all_chars_id = $this->getAllCharactersId();
 
         $hearable_chars = array();
 
         foreach ($all_chars_id as $char_id) {
-            $tmp_char = Model_Character::getInstance($this->source, $chname)
+            $tmp_char = Model_Character::getInstance($this->source)
                     ->fetchOne($char_id)
                     ->toArray();
             if ($tmp_char['place_type'] == $place_type) {
@@ -156,6 +156,14 @@ class Model_Location_Redis extends Model_Location {
         }
     }
 
+    public function addItem($item_id) {
+        $this->source->sadd("loc_items:{$this->id}", $item_id);
+    }
+
+    public function putItem($item_id) {
+        $this->source->srem("loc_items:{$this->id}", $item_id);
+    }
+
     public function putRaw($id, $amount) {
 
         $raws = $this->getRaws();
@@ -172,6 +180,34 @@ class Model_Location_Redis extends Model_Location {
 
     }
 
+    public function getItems() {
+        
+        $returned_items = array();
+        $dict = Model_Dict::getInstance($this->source);
+        $lang = $dict->getLang();
+        
+        //na razie loc_items, potem przerobić na odpowiedni typ lokacji (loc, veh, shp itp.
+        $items_ids = $this->source->smembers("loc_items:{$this->id}");
+        foreach ($items_ids as $item_id) {
+            $item = json_decode($this->source->get("global:items:$item_id"), true);
+            $itemtype = json_decode($this->source->get("itemtype:{$item['type']}"), true);
+            $itemkind = $this->source->get("kind:$lang:{$itemtype['name']}");
+            if (!$itemkind) {
+                $itemkind = 'm';
+            }
+            $state = Model_ItemType::getInstance($this->source)
+                ->getState($item['points'] / $itemtype['points']).":$itemkind";
+            
+            $returned_items[] = array(
+                'id' => $item_id,
+                'name' => Model_Dict::getInstance($this->source)->getString($state) .
+                ' ' .
+                Model_Dict::getInstance($this->source)->getString($itemtype['name']),
+            );
+        }
+        return $returned_items;
+    }
+    
     public function getAllLocations($exclude = null) {
         
         $all_locations = $this->source->smembers("global:locations");

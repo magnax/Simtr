@@ -39,6 +39,30 @@ abstract class Model_EventSender {
         $this->_event->setExit($exit_id);
     }
     
+    public function setSkill($skill) {
+        $this->_event->setSkill($skill);
+    }
+
+    public function setWeaponTypeID($id) {
+        $this->_event->setWeaponTypeID($id);
+    }
+    
+    public function setDamage($amount) {
+        $this->_event->setDamage($amount);
+    }
+    
+    public function setShieldTypeID($id) {
+        $this->_event->setShieldTypeID($id);
+    }
+    
+    public function setShield($id) {
+        $this->_event->setShield($id);
+    }
+    
+    public function setItem($item_id) {
+        $this->_event->setItem($item_id);
+    }
+    
     public function setLocationType($type) {
         $this->_event->setLocationType($type);
     }

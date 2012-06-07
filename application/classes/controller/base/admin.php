@@ -26,7 +26,8 @@ class Controller_Base_Admin extends Controller_Template {
          * inicjalizacja i połączenie z Redisem
          * parametry połączenia w application/config/database.php
          */
-        $this->redis = new Predis_Client(Kohana::config('database.dsn'));
+        $this->redis = new Redis();
+        $this->redis->connect('127.0.0.1:6379');
 
         try {
             $this->redis->dbsize();

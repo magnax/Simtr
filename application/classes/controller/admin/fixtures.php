@@ -5,7 +5,7 @@ class Controller_Admin_Fixtures extends Controller_Base_Admin {
     private $redis_keys = array(
         'characters', 'resources', 'event_tpl',
         'dict', 'locations', 'buildmenu',
-        'productionspec'
+        'productionspec', 'itemtype',
     );
 
     public function action_menu() {

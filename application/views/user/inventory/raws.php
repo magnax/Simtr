@@ -1,3 +1,4 @@
+<?php echo View::factory('user/inventory/index')->render(); ?>
 <div class="list">
     Surowce: <br />
     <?php foreach ($raws as $r): ?>

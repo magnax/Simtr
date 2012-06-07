@@ -82,7 +82,7 @@ Kohana::modules(array(
  */
 
 //default admin routes
-Route::set('admin', 'admin/(<controller>/(<action>/(<id>)))')
+Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))')
 	->defaults(array(
         'directory'  => 'admin',
 		'controller' => 'menu',

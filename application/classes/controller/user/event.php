@@ -34,7 +34,7 @@ class Controller_User_Event extends Controller_Base_Character {
             );
             $event->setText($_POST['text']);
             //recipients to lista obiektów klasy Character
-            $event->addRecipients($this->location->getAllHearableCharacters(false, $this->character->chnames));
+            $event->addRecipients($this->location->getAllHearableCharacters($this->character));
             $event->setSender($this->character->getId());
 
             $event->send();
@@ -66,7 +66,7 @@ class Controller_User_Event extends Controller_Base_Character {
         );
         $event->setResource($_POST['res_id'], $_POST['amount']);
         //recipients to lista obiektów klasy Character
-        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType(), $this->character->chnames));
+        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType()));
         $event->setSender($this->character->getId());
         $event->send();
 
@@ -96,7 +96,7 @@ class Controller_User_Event extends Controller_Base_Character {
         );
         $event->setResource($_POST['res_id'], $_POST['amount']);
         //recipients to lista obiektów klasy Character
-        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType(), $this->character->chnames));
+        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType()));
         $event->setSender($this->character->getId());
         $event->send();
 
@@ -137,7 +137,7 @@ class Controller_User_Event extends Controller_Base_Character {
         );
         $event->setResource($_POST['res_id'], $_POST['amount']);
         //recipients to lista obiektów klasy Character
-        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType(), $this->character->chnames));
+        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType()));
         $event->setSender($this->character->getId());
         $event->setRecipient($dest_character->getId());
         $event->send();

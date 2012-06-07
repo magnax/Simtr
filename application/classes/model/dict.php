@@ -20,6 +20,10 @@ abstract class Model_Dict {
 
     }
 
+    public function getLang() {
+        return $this->lang;
+    }
+
     abstract function getString($str);
 
 }

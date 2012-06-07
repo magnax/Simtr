@@ -48,4 +48,38 @@ $this->redis->set("dict:pl:mountains", "góry");$loaded++;
 $this->redis->set("dict:pl:forest", "las");$loaded++;
 $this->redis->set("dict:pl:hills", "wzgórza");$loaded++;
 
+//skills
+$this->redis->set("dict:pl:fight0.8", "niezręcznie");$loaded++;
+$this->redis->set("dict:pl:fight0.9", "po amatorsku");$loaded++;
+$this->redis->set("dict:pl:fight1", "przeciętnie");$loaded++;
+$this->redis->set("dict:pl:fight1.1", "umiejętnie");$loaded++;
+$this->redis->set("dict:pl:fight1.2", "po mistrzowsku");$loaded++;
+
+//items
+$this->redis->set("dict:pl:(none)", "(brak)");$loaded++;
+$this->redis->set("dict:pl:bare_fist", "gołe pięści");$loaded++;
+$this->redis->set("dict:pl:bone_knife", "kościany nóż");$loaded++;
+$this->redis->set("dict:pl:small_bone_shield", "mała kościana tarcza");$loaded++;
+
+//no cóż... w języku polskim rodzaj jest ważny ;)
+$this->redis->set("kind:pl:bone_knife", "m");$loaded++;
+$this->redis->set("kind:pl:small_bone_shield", "f");$loaded++;
+
+//item state
+$this->redis->set("dict:pl:brand_new:m", "całkiem nowy");$loaded++;
+$this->redis->set("dict:pl:brand_new:f", "całkiem nowa");$loaded++;
+$this->redis->set("dict:pl:brand_new:n", "całkiem nowe");$loaded++;
+$this->redis->set("dict:pl:new:m", "nowy");$loaded++;
+$this->redis->set("dict:pl:new:f", "nowa");$loaded++;
+$this->redis->set("dict:pl:new:n", "nowe");$loaded++;
+$this->redis->set("dict:pl:used:m", "używany");$loaded++;
+$this->redis->set("dict:pl:used:f", "używana");$loaded++;
+$this->redis->set("dict:pl:used:n", "używane");$loaded++;
+$this->redis->set("dict:pl:often_used:m", "często używany");$loaded++;
+$this->redis->set("dict:pl:often_used:f", "często używana");$loaded++;
+$this->redis->set("dict:pl:often_used:n", "często używane");$loaded++;
+$this->redis->set("dict:pl:crumbling:m", "zużyty");$loaded++;
+$this->redis->set("dict:pl:crumbling:f", "zużyta");$loaded++;
+$this->redis->set("dict:pl:crumbling:n", "zużyte");$loaded++;
+
 ?>

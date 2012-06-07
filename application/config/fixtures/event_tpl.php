@@ -131,5 +131,62 @@ $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
 $this->redis->rpush("$key:$person:params", 'exit_id');$loaded++;
 
+//HitPerson
+$key = "global:event_tpl:HitPerson";
+$person = 1;
+$this->redis->set("$key:$person", 'Atakujesz %s %s, używając %s, ofiara traci %d punktów życia');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'skill');$loaded++;
+$this->redis->rpush("$key:$person:params", 'rcpt');$loaded++;
+$this->redis->rpush("$key:$person:params", 'wpid');$loaded++;
+$this->redis->rpush("$key:$person:params", 'dmg');$loaded++;
+
+$person = 2;
+$this->redis->set("$key:$person", '%s %s atakuje Cię, używając %s. Tracisz %d punktów życia, %s pochłania %d obrażeń');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
+$this->redis->rpush("$key:$person:params", 'skill');$loaded++;
+$this->redis->rpush("$key:$person:params", 'wpid');$loaded++;
+$this->redis->rpush("$key:$person:params", 'dmg');$loaded++;
+$this->redis->rpush("$key:$person:params", 'shid');$loaded++;
+$this->redis->rpush("$key:$person:params", 'shd');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Widzisz jak %s %s atakuje %s, używając %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
+$this->redis->rpush("$key:$person:params", 'skill');$loaded++;
+$this->redis->rpush("$key:$person:params", 'rcpt');$loaded++;
+$this->redis->rpush("$key:$person:params", 'wpid');$loaded++;
+
+//PutItem
+$key = "global:event_tpl:PutItem";
+$person = 1;
+$this->redis->set("$key:$person", 'Odkładasz %s %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'stt');$loaded++;
+$this->redis->rpush("$key:$person:params", 'itemid');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Widzisz jak %s odkłada %s %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
+$this->redis->rpush("$key:$person:params", 'stt');$loaded++;
+$this->redis->rpush("$key:$person:params", 'itemid');$loaded++;
+
+//GetItem
+$key = "global:event_tpl:GetItem";
+$person = 1;
+$this->redis->set("$key:$person", 'Podnosisz %s %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'stt');$loaded++;
+$this->redis->rpush("$key:$person:params", 'itemid');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Widzisz jak %s bierze %s %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
+$this->redis->rpush("$key:$person:params", 'stt');$loaded++;
+$this->redis->rpush("$key:$person:params", 'itemid');$loaded++;
 
 ?>
