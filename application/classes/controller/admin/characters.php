@@ -1,4 +1,14 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
+
+/**
+ * Administering characters
+ * 
+ * @method action_menu displays main character menu
+ * @method action_random_skills randomizing some characters attributes
+ * 
+ * 
+ * 
+ */
 
 class Controller_Admin_Characters extends Controller_Base_Admin {
     
@@ -6,20 +16,35 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
         
     }
     
+    /**
+     * randomizing some characters parameters
+     */
     public function action_random_skills() {
+        
         $users_ids = $this->redis->smembers("global:characters");
+        
         foreach ($users_ids as $user_id) {
+            
+            //read character
             $user = json_decode($this->redis->get("characters:$user_id"), true);
+            
             //vitality 800-1200
             $user['vitality'] = rand(800, 1200);
+            //current life set to character vitality
             $user['life'] = $user['vitality'];
             //strength 0.6 - 1.8
-            $user['strength'] = rand(6, 18)/10;
+            $user['strength'] = rand(6, 18) / 10;
             //fighting skill 0.8 - 1.2
-            $user['fighting'] = rand(8, 12)/10;
+            $user['fighting'] = rand(8, 12) / 10;
+            
+            //save character
             $this->redis->set("characters:$user_id", json_encode($user));
+            
         }
-        Request::instance()->redirect('/admin/characters/menu');
+        
+        //redirect to characters menu
+        $this->request->redirect('/admin/characters/menu');
+        
     }
 
 
@@ -36,7 +61,10 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
             }
             $this->redis->sadd('global:characters', $n[1]);
         }
-        Request::instance()->redirect('/admin/characters/menu');
+        
+        //redirect to characters menu
+        $this->request->redirect('/admin/characters/menu');
+        
     }
     
     public function action_all() {

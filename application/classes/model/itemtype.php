@@ -1,9 +1,12 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 abstract class Model_ItemType {
     
     protected $source;
     
+    protected $attack;
+
+
     public function __construct($source) {
         $this->source = $source;
     }
@@ -22,6 +25,11 @@ abstract class Model_ItemType {
         else return 'crumbling';
     }
 
+    public function getAttack() {
+        return $this->attack;
+    }
+
+    abstract public function fetchOne($itemtype_id, $as_array = false);
     abstract public function getName($item_id);
     
 }

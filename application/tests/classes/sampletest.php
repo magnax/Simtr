@@ -10,16 +10,13 @@ class SampleTest extends PHPUnit_Framework_TestCase {
     
     protected function setUp() {
         
-        $this->redis = new Predis_Client(array(
-            'host'     => '127.0.0.1',
-            'port'     => 6379,
-            'database' => 1,
-            'alias' => 'mn_test'
-        ));
+        $this->redis = new Redis();
+        $this->redis->connect('127.0.0.1:6379');
+        $this->redis->select(1);
 
         try {
             $this->redis->flushdb();
-        } catch (Predis_CommunicationException $e) {
+        } catch (RedisException $e) {
             $this->redirectError('Redis server down?');
         }
         

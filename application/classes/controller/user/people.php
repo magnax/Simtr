@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_User_People extends Controller_Base_Character {
 
@@ -41,8 +41,14 @@ class Controller_User_People extends Controller_Base_Character {
             $victim = Model_Character::getInstance($this->redis)
                 ->fetchOne($character_id);
             
+            //get attack strength of weapon
+            $weapon_attack = Model_ItemType::getInstance($this->redis)
+                ->fetchOne($_POST['weapon'])
+                ->getAttack();
+            
             //damage calculate
-            $damage = floor(10 * ($_POST['strength']/100));
+            //@todo: get char. strength and fighting skill into calculation
+            $damage = floor($weapon_attack * ($_POST['strength']/100));
             
             //set victim damage (or generate death event if vitality <= 0
             $victim->setDamage($damage);
@@ -64,7 +70,7 @@ class Controller_User_People extends Controller_Base_Character {
             
             //set fighting skill
             $event->setSkill($this->character->fighting);
-            $event->setWeaponTypeID(1);
+            $event->setWeaponTypeID($_POST['weapon']);
             
             $event->setDamage($damage);
             $event->setShieldTypeID(0);
@@ -76,7 +82,15 @@ class Controller_User_People extends Controller_Base_Character {
             $this->request->redirect('/user/event');
         }
         
-        $this->view->weapons = $this->character->getWeaponsList();
+        $this->view->weapons = array();
+            
+        $weapons_list = $this->character->getWeaponsList();
+        foreach ($weapons_list as $w) {
+            $this->view->weapons[$w] = Model_Dict::getInstance($this->redis)
+                ->getString(Model_ItemType::getInstance($this->redis)
+                    ->getName($w));
+        }
+        
         $this->view->strengths = array(
             '0' => 'bez siły',
             '30' => 'słabo',

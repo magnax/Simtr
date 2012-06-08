@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class Model_Character_Redis extends Model_Character {
 
@@ -287,9 +287,31 @@ class Model_Character_Redis extends Model_Character {
     //returns list of available weapons from character inventory
     public function getWeaponsList() {
         
-        return array(
-            '0' => 'pięści',
+        $items = $this->source->smembers("char_items:{$this->id}");
+        
+        $weapon_list = array(
+            
         );
+        
+        foreach ($items as $item_id) {
+            $item = json_decode($this->source->get("global:items:$item_id"), true);
+            $type = $item['type'];
+            $item_type = json_decode($this->source->get("itemtype:$type"), true);
+            if ($item_type['attack'] && !in_array($type, array_keys($weapon_list))) {
+                $weapon_list[$type] = $item_type['attack'];
+            }
+        }
+        $weapon_list[1] = 10;
+        asort($weapon_list);
+        
+        $returned = array();
+        
+        foreach (array_keys($weapon_list) as $w) {
+            $returned[] = $w;
+        }
+        //print_r($returned);
+        
+        return $returned;
             
     }
 }

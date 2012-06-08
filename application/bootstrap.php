@@ -50,7 +50,10 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
  * - boolean  caching     enable or disable internal caching                 FALSE
  */
 Kohana::init(array(
-    'base_url' => '/', 'caching' => true, 'profile' => true,
+    'base_url' => '/', 
+    'caching' => true, 
+    'profile' => true, 
+    'index_file' => 'index.php',
 ));
 
 /**
@@ -69,7 +72,7 @@ Kohana::$config->attach(new Kohana_Config_File);
 Kohana::modules(array(
     //'redis'         => APPPATH.'modules/predis',
     //'email'         => APPPATH.'modules/email',
-    //'unittest'      => MODPATH.'unittest',   // Unit testing
+    'unittest'      => MODPATH.'unittest',   // Unit testing
     //'redisent'      => APPPATH.'modules/redisent',   // redisent library
 	// 'orm'        => MODPATH.'orm',        // Object Relationship Mapping
 	// 'pagination' => MODPATH.'pagination', // Paging of results
@@ -109,7 +112,11 @@ Route::set('default', '(<controller>(/<action>(/<id>)))')
  * Execute the main request. A source of the URI can be passed, eg: $_SERVER['PATH_INFO'].
  * If no source is specified, the URI will be automatically detected.
  */
-echo Request::instance()
-	->execute()
-	->send_headers()
-	->response;
+if ( ! defined('SUPPRESS_REQUEST')) {
+    
+    echo Request::instance()
+        ->execute()
+        ->send_headers()
+        ->response;
+    
+}

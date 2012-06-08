@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Guest_Error extends Controller_Template {
 
