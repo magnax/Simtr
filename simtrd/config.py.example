@@ -1,0 +1,9 @@
+# 
+# This is example config file for time daemon
+# 
+# rename it to config.py and edit
+#
+
+config = {
+    'dir': '/home/your_user_name/path/simtrd/'
+}

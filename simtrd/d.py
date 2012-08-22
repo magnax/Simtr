@@ -4,10 +4,13 @@ import time
 from datetime import datetime
 from os.path import exists
 
+#config file import
+from config import config
+
 from daemon import Daemon
 
 #files:
-simtr_dir = '/usr/local/lib/simtr/'
+simtr_dir = config['dir']
 counter_file =  simtr_dir + 'counter'
 time_file = simtr_dir + 'ctime'
 pid_file = simtr_dir + '.d.py.pid'
