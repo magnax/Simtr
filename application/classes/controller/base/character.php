@@ -24,7 +24,7 @@ class Controller_Base_Character extends Controller_Base_User {
         $this->character->fetchChnames();
         
         //get location
-        $this->location = Model_Location::getInstance($this->redis)
+        $this->location = Model_LocationFactory::getInstance($this->redis)
             ->fetchOne($this->character->location_id);
         
         $ch = $this->character->toArray();

@@ -36,9 +36,11 @@ class Controller_Base_Base extends Controller_Template {
          */
         $this->session = Session::instance();
 
+        echo Kohana::config('general.paths.time_daemon_path');
+
         //sprawdzenie demona i odczytanie czasu
         try {
-            $this->game = new Model_GameTime();
+            $this->game = new Model_GameTime(Kohana::config('general.paths.time_daemon_path'));
             
         } catch (Exception $e) {
             $this->redirectError($e->getMessage());

@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access');
 
-include_once APPPATH.'classes/model/GameTime.php';
+//include_once APPPATH.'classes/model/GameTime.php';
 
 class GameTimeTest extends PHPUnit_Framework_TestCase {
   

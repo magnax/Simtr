@@ -10,6 +10,13 @@ class Controller_Admin_Menu extends Controller_Base_Admin {
         $this->template->content = new View('admin/menu/index');
 
     }
+    
+    //dump all keys in database
+    public function action_keys() {
+        $keys = $this->redis->keys("*");
+        asort($keys);
+        $this->view->keys = $keys;
+    }
 
 }
 

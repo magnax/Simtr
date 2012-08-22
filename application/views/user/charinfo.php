@@ -74,7 +74,7 @@
             <?php echo html::anchor('user/location', 'Miejsce'); ?>
         </li>
         <li>
-            <?php echo html::anchor('user/buildings', 'Budynki i pojazdy'); ?>
+            <?php echo html::anchor('user/building', 'Budynki i pojazdy'); ?>
         </li>
         <li>
             <?php echo html::anchor('user/people', 'Ludzie'); ?>

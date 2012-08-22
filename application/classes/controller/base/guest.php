@@ -15,7 +15,7 @@ class Controller_Base_Guest extends Controller_Template {
 
         //sprawdzenie demona i odczytanie czasu
         try {
-            $this->game = new Model_GameTime();
+            $this->game = new Model_GameTime(Kohana::config('general.paths.time_daemon_path'));
         } catch (Exception $e) {
             $this->redirectError($e->getMessage());
         }
@@ -39,12 +39,12 @@ class Controller_Base_Guest extends Controller_Template {
          * parametry połączenia w application/config/database.php
          */
         //$this->redis = new Predis_Client(Kohana::config('database.dsn'));
-        $this->redis = new Redis();
-        $this->redis->connect('127.0.0.1');
+        $this->redis = new Redisent(Kohana::config('database.dsn'));
+        //$this->redis->connect('127.0.0.1');
 
         try {
             $this->template->active_count = count($this->redis->keys('active:*'));
-        } catch (Predis_CommunicationException $e) {
+        } catch (RedisException $e) {
             $this->redirectError('Server Redis nie uruchomiony');
         }
         

@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class Model_Location_Redis extends Model_Location {
 
@@ -12,13 +12,10 @@ class Model_Location_Redis extends Model_Location {
                 return $data;
             }
             
-            $this->id = $location_id;
-            $this->x = $data['x'];
-            $this->y = $data['y'];
-            $this->type = $data['type'];
-            $this->res_slots = $data['res_slots'];
-            $this->used_slots = $data['used_slots'];
-            $this->resources = $data['resources'];
+            //hydration
+            foreach ($data as $k=>$v) {
+                $this->$k = $v;
+            }
 
             return $this;
             
@@ -224,32 +221,20 @@ class Model_Location_Redis extends Model_Location {
         return $returned;
     }
 
-    public function getExits($character) {
-         
-        $exits = $this->source->smembers("locations:{$this->id}:exits");
-        
-        $dict = Model_Dict::getInstance($this->source);
-        
-        $returned = array();
-         
-        foreach ($exits as $e) {
-            
-            $road = Model_Road::getInstance($this->source)->findOneByID($e);
-            $returned[] = array(
-                'id' => $e,
-                'level' => $dict ? $dict->getString($road->getLevelString()) : $road->getLevelString(), 
-                'lid'=>$road->getDestinationLocationID(), 
-                'name'=> Model_LNames::getInstance($this->source)->getName($character->getID(), $road->getDestinationLocationID()),
-                'distance'=>$road->getDistance(),
-                'direction'=>  Helper_Utils::getDirectionString($road->getDirection())
-            );
-         }
-         
-         return count($returned)? $returned : null;
-    }
+    
     
     public function addExit($exit_id) {
         $this->source->sadd("locations:{$this->id}:exits", $exit_id);
+    }
+    
+    public function getChildLocations() {
+        $all_sublocations = $this->source->smembers("sublocations:{$this->id}");
+        foreach ($all_sublocations as $sublocation_id) {
+            $sublocation = json_decode($this->source->get("locations:$sublocation_id"), true);
+            if ($sublocation['class'] == 'bld') {
+                $this->buildings[] = $sublocation;
+            }
+        }
     }
     
 }

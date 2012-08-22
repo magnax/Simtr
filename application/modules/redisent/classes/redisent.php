@@ -116,16 +116,9 @@ class Redisent {
 
 		/* Build the Redis unified protocol command */
 		array_unshift($args, strtoupper($name));
-		//$command = sprintf('*%d%s%s%s', count($args), CRLF, implode(array_map(function($arg) {
-		//	return sprintf('$%d%s%s', strlen($arg), CRLF, $arg);
-		//}, $args), CRLF), CRLF);
-        //if (in_array($name, $this->bulk_cmds)) {
-		//	$value = array_pop($args);
-		//	$command = sprintf("%s %s %d%s%s%s", $name, trim(implode(' ', $args)), strlen($value), CRLF, $value, CRLF);
-		//}
-		//else {
-			$command = sprintf("%s %s%s", $name, trim(implode(' ', $args)), CRLF);
-		//}
+		$command = sprintf('*%d%s%s%s', count($args), CRLF, implode(array_map(function($arg) {
+			return sprintf('$%d%s%s', strlen($arg), CRLF, $arg);
+		}, $args), CRLF), CRLF);
 
 		/* Add it to the pipeline queue */
 		$this->queue[] = $command;
@@ -165,7 +158,7 @@ class Redisent {
 						$block_size = ($size - $read) > 1024 ? 1024 : ($size - $read);
 						$r = fread($this->__sock, $block_size);
 						if ($r === FALSE) {
-							throw new \Exception('Failed to read response from stream');
+							throw new RedisException('Failed to read response from stream');
 						} else {
 							$read += strlen($r);
 							$response .= $r;

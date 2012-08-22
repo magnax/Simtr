@@ -50,10 +50,10 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
  * - boolean  caching     enable or disable internal caching                 FALSE
  */
 Kohana::init(array(
-    'base_url' => '/', 
-    'caching' => true, 
-    'profile' => true, 
-    'index_file' => 'index.php',
+    //'base_url' => '/', 
+    //'caching' => true, 
+    //'profile' => true, 
+    //'index_file' => 'index.php',
 ));
 
 /**
@@ -72,8 +72,8 @@ Kohana::$config->attach(new Kohana_Config_File);
 Kohana::modules(array(
     //'redis'         => APPPATH.'modules/predis',
     //'email'         => APPPATH.'modules/email',
-    'unittest'      => MODPATH.'unittest',   // Unit testing
-    //'redisent'      => APPPATH.'modules/redisent',   // redisent library
+    //'unittest'      => MODPATH.'unittest',   // Unit testing
+    'redisent'      => APPPATH.'modules/redisent',   // redisent library
 	// 'orm'        => MODPATH.'orm',        // Object Relationship Mapping
 	// 'pagination' => MODPATH.'pagination', // Paging of results
 	// 'userguide'  => MODPATH.'userguide',  // User guide and API documentation
@@ -85,7 +85,13 @@ Kohana::modules(array(
  */
 
 //default admin routes
-Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))')
+Route::set('admin_expanded', 'admin(/<controller>(/<action>(/<id>(/<param>))))')
+	->defaults(array(
+        'directory'  => 'admin',
+		'controller' => 'menu',
+		'action'     => 'index'
+	));
+Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))', array('id'=>'.*'))
 	->defaults(array(
         'directory'  => 'admin',
 		'controller' => 'menu',
@@ -99,7 +105,6 @@ Route::set('user_default', 'user(/<controller>(/<action>(/<id>)))')
 		'controller' => 'menu',
 		'action'     => 'index'
 	));
-
 //default route
 Route::set('default', '(<controller>(/<action>(/<id>)))')
 	->defaults(array(

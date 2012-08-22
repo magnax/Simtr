@@ -1,46 +1,60 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
-abstract class Model_Location {
+abstract class Model_Location {  
 
-    protected $PLACE_HEARABLE = array('loc', 'veh', 'shp');    
-
+    //attributes which every location has:
     protected $id;
-    protected $x;
-    protected $y;
+    
     /**
      * Internal name
      * @var string 
      */
     protected $name;
+    
+    /**
+     * type of location (ex. grassland or mountains for towns, tandem or van 
+     * for vehicles, hut or stone_extension for buildings and so on
+     * @var string 
+     */
     protected $type;
-    protected $res_slots;
-    protected $used_slots;
-    public $resources = array();
-    protected $projects = array();
+    
+    /**
+     * class of location: loc, bld, shp, veh etc.
+     * @var type 
+     */
+    protected $class;
+    
+    /**
+     * parent location, or null if town location
+     * @var int
+     */
+    protected $parent = null;
 
-    protected $source;
+    /**
+     * Data source (redis, mysql, whatever...)
+     * @var object
+     */
+    protected $source = null;
 
-    public function  __construct($source) {
+    public function  __construct($data) {
+        
+        if ($data) {
+            $this->id = isset($data['id']) ? $data['id'] : null;
+            $this->class = isset($data['class']) ? $data['class'] : 'loc';
+            $this->type = isset($data['type']) ? $data['type'] : null;
+            $this->name = $data['name'];
+            $this->parent = isset($data['parent']) ? $data['parent'] : null;
+        }
+        
+    }
+    
+    //set data source
+    public function setSource($source) {
         $this->source = $source;
     }
-    
-    public static function getInstance($source) {
-        //if ($source instanceof Redisent) {
-        if ($source instanceof Redis) {
-            return new Model_Location_Redis($source);
-        }
-    }
-    
+
     public function getID() {
         return $this->id;
-    }
-
-    public function getX() {
-        return $this->x;
-    }
-    
-    public function getY() {
-        return $this->y;
     }
 
     public function getName() {
@@ -51,65 +65,44 @@ abstract class Model_Location {
         return $this->type;
     }
     
-    public function getResSlots() {
-        return $this->res_slots;
+    //returns location class
+    public function getClass() {
+        return $this->class;
     }
 
-    public function getUsedSlots() {
-        return $this->used_slots;
-    }
-
-    public function getResources() {
-        return $this->resources;
-    }
-
-    public function getFullResources() {
-        $res_array = array();
-        foreach ($this->resources as $res) {
-            $resource = Model_Resource::getInstance($this->source)->findOneById($res, true);
-            $res_array[] = $resource;
-        }
-        return $res_array;
-    }
-
-
+    //generic update
     public function update($post) {
-        $this->x = $post['x'];
-        $this->y = $post['y'];
         $this->name = $post['name'];
         $this->type = $post['type'];
-        $this->res_slots = $post['res_slots'];
+        $this->class = $post['class'];
     }
 
 
     public function toArray() {
         return array(
             'id'=>$this->id,
-            'x'=>$this->x,
-            'y'=>$this->y,
             'name'=>$this->name,
             'type'=>$this->type,
-            'res_slots'=>$this->res_slots,
-            'used_slots'=>$this->used_slots,
-            'resources'=>$this->resources
+            'class'=>$this->class,
+            'parent'=>$this->parent,
         );
     }
 
-    public function addProject($project_id, $save = false) {
-        if (!in_array($project_id, $this->projects)) {
-            $this->projects[] = $project_id;
-            if ($save) {
-                $this->saveProjects();
-            }
-        }
+    public function getChildLocations() {
+        return null;
     }
 
-    abstract public function fetchOne($location_id);
-    abstract public function getAllHearableCharacters($as_array = false, $chname);
-    abstract public function calculateUsedSlots();
+        //get list of all characters (in this location, parent lokation, child 
+    //locations or even another location) who can hear events (ie. talk)
+    abstract public function getAllHearableCharacters($as_array = false);
+    
+    //get list of all characters (in this location, parent lokation, child 
+    //locations or even another location) who can view events (ie. get/put items)
+    abstract public function getAllVisibleCharacters($as_array = false);
+    
+    //saves location in database
     abstract public function save();
-    abstract public function saveProjects();
-    abstract public function getExits($character);
+    
 
 }
 

@@ -4,24 +4,21 @@ class Controller_User_Location extends Controller_Base_Character {
 
     public function action_index() {
 
-        $l = Model_Location::getInstance($this->redis)->
-            fetchOne($this->character->location_id);
+        //get resources list
+        $resources = $this->location->getResources();
         
-        
-        
-        $resources = array();
-        foreach ($l->resources as $res) {
+        foreach ($resources as $res) {
             $r = Model_Resource::getInstance($this->redis)->
                 findOneById($res)->
                 toArray();
             $resources[] = $r;
         }
         
-        $location = $l->toArray();
+        $location = $this->location->toArray();
         
         $location['resources'] = $resources;        
-        
-        $location['exits'] = $l->getExits($this->character);
+
+        $location['exits'] = $location->getExits($this->character);
         
         $this->view->l = $location;
     }

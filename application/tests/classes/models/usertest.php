@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access ST.');
 
-include_once APPPATH.'classes/model/User.php';
+//include_once APPPATH.'classes/model/User.php';
 
 class UserTest extends PHPUnit_Framework_TestCase {
     

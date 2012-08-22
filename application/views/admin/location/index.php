@@ -1,7 +1,13 @@
-Lokacje (liczba: <?php echo $count; ?>)
+Lokacje (liczba wszystkich: <?php echo html::anchor('admin/location/all', $count); ?>)
 <br />
-<?php foreach ($locations as $location): ?>
+<h2>Miasta:</h2>
+<?php foreach ($towns as $location): ?>
     <?php echo html::anchor('admin/location/edit/'.$location['id'], $location['name'].' ('.$location['id'].')').'<br />'; ?>
 <?php endforeach; ?>
 
-<?php echo html::anchor('admin/location/add/', 'Dodaj lokację').'<br />'; ?>
+<h2>Budynki:</h2>
+<?php foreach ($buildings as $location): ?>
+    <?php echo html::anchor('admin/location/edit/'.$location['id'], $location['name'].' ('.$location['id'].')').' ==> '.$location['parent'].'<br />'; ?>
+<?php endforeach; ?>
+
+<p><?php echo html::anchor('admin/location/add/', 'Dodaj lokację').'<br />'; ?>
