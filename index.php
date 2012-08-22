@@ -13,7 +13,7 @@ $application = 'application';
  *
  * @see  http://docs.kohanaphp.com/install#modules
  */
-$modules = realpath('/usr/share/php-devel/kohana-3.0.7.1/modules');
+$modules = 'modules';
 
 /**
  * The directory in which the Kohana resources are located. The system
@@ -21,7 +21,7 @@ $modules = realpath('/usr/share/php-devel/kohana-3.0.7.1/modules');
  *
  * @see  http://docs.kohanaphp.com/install#system
  */
-$system = realpath('/usr/share/php-devel/kohana-3.0.7.1/system');
+$system = 'system';
 
 /**
  * The default extension of resource files. If you change this, all resources
@@ -98,6 +98,5 @@ else
 	// Load empty core extension
 	require SYSPATH.'classes/kohana'.EXT;
 }
-
 // Bootstrap the application
 require APPPATH.'bootstrap'.EXT;
