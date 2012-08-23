@@ -58,7 +58,7 @@ class Redisent {
 		$timeout = $timeout ? $timeout : ini_get("default_socket_timeout");
 		$this->__sock = @fsockopen($host, $port, $errno, $errstr, $timeout);
 		if ($this->__sock === FALSE) {
-			throw new Exception("{$errno} - {$errstr}");
+			throw new RedisException("{$errno} - {$errstr}");
 		}
 		if (isset($this->dsn['pass'])) {
 			$this->auth($this->dsn['pass']);
@@ -91,7 +91,7 @@ class Redisent {
 			for ($written = 0; $written < strlen($command); $written += $fwrite) {
 				$fwrite = fwrite($this->__sock, substr($command, $written));
 				if ($fwrite === FALSE) {
-					throw new Exception('Failed to write entire command to stream');
+					throw new RedisException('Failed to write entire command to stream');
 				}
 			}
 		}
