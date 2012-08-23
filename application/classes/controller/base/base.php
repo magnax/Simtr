@@ -23,7 +23,9 @@ class Controller_Base_Base extends Controller_Template {
     protected $view;
 
     /**
-     * cały obiekt gry (m.in. czas)
+     * @var GameTime Object
+     * 
+     * overall game time object
      */
     protected $game;
 
@@ -32,26 +34,27 @@ class Controller_Base_Base extends Controller_Template {
         parent::before();
 
         /**
-         * inicjalizacja sesji
+         * init session
          */
         $this->session = Session::instance();
 
-        echo Kohana::config('general.paths.time_daemon_path');
-
-        //sprawdzenie demona i odczytanie czasu
+        /**
+         * check time daemon existence and get current game time
+         */
         try {
-            $this->game = new Model_GameTime(Kohana::config('general.paths.time_daemon_path'));
-            
+            $this->game = new Model_GameTime(Kohana::$config->load('general.paths.time_daemon_path'));           
         } catch (Exception $e) {
             $this->redirectError($e->getMessage());
         }
 
         $this->template->current_time = $this->game->getTime();
         $this->template->current_date = $this->game->getDate();
-            //Model_GameTime::formatDateTime($this->game->raw_time, 'y/f (d)');
         
-        $page = ($this->request->directory ? $this->request->directory.'/' : '')
-            . $this->request->controller.'/'.$this->request->action;
+        /**
+         * get default view and set it to content variable
+         */
+        $page = ($this->request->directory() ? $this->request->directory() . '/' : '')
+            . $this->request->controller() . '/' . $this->request->action();
 
         if (Kohana::find_file('views', $page)) {
             $this->template->content = View::factory($page);
@@ -62,22 +65,18 @@ class Controller_Base_Base extends Controller_Template {
         $this->view = $this->template->content;
 
         /**
-         * jeśli jest błąd
+         * flash messages: error and info message
          */
-        $this->template->err = $this->session->get('err');
-        $this->session->delete('err');
+        $this->template->err = $this->session->get_once('err');
         
         //flash message
         $this->template->msg = $this->session->get('msg');
         $this->session->delete('msg');
         
         /**
-         * inicjalizacja i połączenie z Redisem
-         * parametry połączenia w application/config/database.php
+         * Redis database init
          */
-        //$this->redis = new Predis_Client(Kohana::config('database.dsn'));
-        $this->redis = new Redis();
-        $this->redis->connect('127.0.0.1');
+        $this->redis = new Redisent(Kohana::$config->load('database.dsn'));
 
         try {
             $this->template->active_count = count($this->redis->keys('active:*'));
@@ -87,6 +86,12 @@ class Controller_Base_Base extends Controller_Template {
         
     }
 
+    /**
+     * sets error flash message and redirects
+     * 
+     * @param string $err
+     * @param string $uri
+     */
     public function redirectError($err, $uri = 'base/error') {
 
         $this->session->set('err', $err);
@@ -94,6 +99,12 @@ class Controller_Base_Base extends Controller_Template {
 
     }
 
+    /**
+     * sets info flash message and redirects
+     * 
+     * @param string $msg
+     * @param string $uri
+     */
     public function redirectMessage($msg, $uri = '/') {
 
         $this->session->set('msg', $msg);

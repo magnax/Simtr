@@ -51,7 +51,7 @@ class Redisent {
 	 * @param string $dsn The data source name of the Redis server
 	 * @param float $timeout The connection timeout in seconds
 	 */
-	function __construct($dsn = 'redis://localhost:6379', $timeout = null) {
+	function __construct($dsn = 'redis://127.0.0.1:6379', $timeout = null) {
 		$this->dsn = parse_url($dsn);
 		$host = isset($this->dsn['host']) ? $this->dsn['host'] : 'localhost';
 		$port = isset($this->dsn['port']) ? $this->dsn['port'] : 6379;
