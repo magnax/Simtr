@@ -33,6 +33,7 @@ class Controller_Character extends Controller_Base_User {
                 $character->user_id = $this->user->id;
                 $character->created = $this->game->getRawTime();
                 $character->save();
+                $this->request->redirect('user');
             } catch (ORM_Validation_Exception $e) {
                 $errors = $e->errors('');
             }

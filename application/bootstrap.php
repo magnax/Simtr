@@ -85,7 +85,7 @@ Cookie::$salt = 'whatever you want';
  * - boolean  caching     enable or disable internal caching                 FALSE
  */
 Kohana::init(array(
-	'base_url'   => 'simtr.ubu',
+	'base_url'   => '',
     'profile'   => false,
 ));
 

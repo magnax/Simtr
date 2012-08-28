@@ -21,6 +21,12 @@ class Controller_Base_Base extends Controller_Template {
      * @var Redis Database Object
      */
     protected $redis;
+    
+    /**
+     * @var string
+     */
+    protected $server_uri;
+
 
     public function before() {
 
@@ -65,7 +71,8 @@ class Controller_Base_Base extends Controller_Template {
             $this->redirectError($e->getMessage());
         }
         
-        $this->template->set_global('server_uri', Kohana::$config->load('general.server_ip'));
+        $this->server_uri = Kohana::$config->load('general.server_ip');
+        $this->template->set_global('server_uri', $this->server_uri);
         
     }
 

@@ -1,12 +1,12 @@
 <html>
     <head>
         <?php include Kohana::find_file('views', 'common/header') ?>
-        <script src="http://192.168.1.7:8011/socket.io/socket.io.js"></script>
+        <script src="<?= $server_uri;?>/socket.io/socket.io.js"></script>
         <script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
         <script src="/assets/js/general.js"></script>
         <script>
             
-        var socket = io.connect('http://192.168.1.7:8011');
+        var socket = io.connect('<?= $server_uri;?>');
         var char_id = <?= $character['id']; ?>;
         
         socket.on('connect', function(data) {

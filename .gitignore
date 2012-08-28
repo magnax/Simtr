@@ -4,6 +4,7 @@
 /application/modules/email/config/email.php
 /application/config/database_magnax_pl.php
 /application/config/database.php
+/application/config/general.php
 /modules/
 /system/
 /doc/

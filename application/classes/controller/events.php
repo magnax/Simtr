@@ -42,7 +42,7 @@ class Controller_Events extends Controller_Base_Character {
             $event_sender->send();
             $event_id = $event_sender->getEvent()->getId();
             
-            $elephant = new Client('http://192.168.1.7:8011');
+            $elephant = new Client($this->server_uri);
             $elephant->init();
             
             $event_dispatcher = Model_EventDispatcher::getInstance($this->redis, $this->lang);
