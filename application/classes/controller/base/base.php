@@ -65,7 +65,7 @@ class Controller_Base_Base extends Controller_Template {
             $this->redirectError($e->getMessage());
         }
         
-        $this->template->set_global('server_uri', substr(URL::base(),0, strlen(URL::base())-1));
+        $this->template->set_global('server_uri', Kohana::$config->load('general.server_ip'));
         
     }
 

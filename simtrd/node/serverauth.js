@@ -21,6 +21,9 @@ var connected_users = {};
 
 var timeFile = '/home/magnax/www/simtrd/counter';
 
+var addr = server.address();
+console.log('   app listening on http://' + addr.address + ':' + addr.port);
+
 io.sockets.on('connection', function(socket) {
     console.log('connected');
     socket.emit('auth');
