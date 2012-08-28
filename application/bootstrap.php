@@ -67,6 +67,11 @@ if (isset($_SERVER['KOHANA_ENV']))
 }
 
 /**
+ * cookie salt for remember login
+ */
+Cookie::$salt = 'whatever you want';
+
+/**
  * Initialize Kohana, setting the default options.
  *
  * The following options are available:
@@ -81,6 +86,7 @@ if (isset($_SERVER['KOHANA_ENV']))
  */
 Kohana::init(array(
 	'base_url'   => '/',
+    'profile'   => false,
 ));
 
 /**
@@ -97,13 +103,12 @@ Kohana::$config->attach(new Config_File);
  * Enable modules. Modules are referenced by a relative or absolute path.
  */
 Kohana::modules(array(
-    //'redis'         => APPPATH.'modules/predis',
     //'email'         => APPPATH.'modules/email',
     //'unittest'      => MODPATH.'unittest',   // Unit testing
     'redisent'      => APPPATH.'modules/redisent',   // redisent library
-	// 'orm'        => MODPATH.'orm',        // Object Relationship Mapping
-	// 'pagination' => MODPATH.'pagination', // Paging of results
-	// 'userguide'  => MODPATH.'userguide',  // User guide and API documentation
+	'orm'           => MODPATH.'orm',        // Object Relationship Mapping
+	'auth'          => MODPATH.'auth', // Auth module
+	'database'      => MODPATH.'database',  // Database
 	));
 
 /**
@@ -133,9 +138,8 @@ Route::set('user_default', 'user(/<controller>(/<action>(/<id>)))')
 		'action'     => 'index'
 	));
 //default route
-Route::set('default', '(<controller>(/<action>(/<id>)))')
+Route::set('default', '(<controller>(/<action>(/<id>)))', array('id'=>'.*'))
 	->defaults(array(
-        'directory'  => 'guest',
 		'controller' => 'welcome',
 		'action'     => 'index',
 	)); 

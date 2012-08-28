@@ -1,86 +1,38 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * user login & register controller
+ * user login controller
  */
-class Controller_Guest_Login extends Controller_Base_Guest {
+class Controller_Login extends Controller_Base_Guest {
 
     //default login action - shows login form or validate/login user if POST
     public function action_index() {
         
-        //initialize form validation
-        $post = Validate::factory($_POST);
+        $this->view->bind('errors', $errors);
         
-        //filters for fields
-        $post->filter(TRUE, 'trim');
-        $post->filter('email', 'strtolower');
-        
-        //labels
-        $post->label('email', 'User e-mail');
-        $post->label('pass', 'Password');
-        
-        //rules for fields
-        $post->rule('email', 'not_empty');
-        $post->rule('email', 'email');
-        $post->rule('pass', 'not_empty');
-        $post->rule('login', 'not_empty');
-        
-        if ($post->check()) {
+        if (HTTP_Request::POST == $this->request->method()) {
             
-            $user = Model_User::getInstance($this->redis);
-
-            $authkey = $user->login($_POST['email'], $_POST['pass']);
-
-            if ($authkey) {
-                $this->session->set('authkey', $authkey);
-                $this->request->redirect('user/menu');
-                return;
+            // Attempt to login user
+            $remember = array_key_exists('remember', $this->request->post()) ? (bool) $this->request->post('remember') : FALSE;
+            $user = Auth::instance()->login($this->request->post('email'), $this->request->post('password'), $remember);
+             
+            // If successful, redirect user
+            if ($user) {
+                
+                Request::current()->redirect('user');
+                
             } else {
-                $post->error('login', 'incorrect');
+                
+                $errors['failed'] = 'Login failed, try again';
+                print_r($this->view->errors);
+                
+                print_r($errors);
+                
             }
-            
-        }
-        
-        $this->view->errors = $post->errors('forms/login');
-
-    }
-
-
-    public function action_register() {
-        
-        if ($this->session->get('err')) {
-            $this->view->err = $this->session->get_once('err');
-        }
-        
-    }
-
-    public function action_registerform() {
-
-        //$session = Session::instance();
-        if (!$this->session->get('continue') && ((Request::$method != 'POST') || !isset($_POST['confirm']) || ($_POST['confirm'] != 1))) {
-
-            $this->session->set('err', 'You must check that you read all terms and conditions');
-            Request::instance()->redirect('guest/login/register');
-
-        }
-
-        if (!$this->session->get('continue')) {
-            $this->session->set('continue', 1);
         }
 
     }
 
-    /**
-     * login form
-     */
-    public function action_loginform() {
-
-        if ($this->session->get('err')) {
-            $this->view->err = $this->session->get_once('err');
-        }
-
-
-    }
 
     public function action_checkuser() {
 

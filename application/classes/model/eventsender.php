@@ -10,13 +10,17 @@ abstract class Model_EventSender {
 
     public static function getInstance(Model_Event $event) {
         //if ($event->getSource() instanceof Redisent) {
-        if ($event->getSource() instanceof Redis) {
+        if ($event->getSource() instanceof Redisent) {
             return new Model_EventSender_Redis($event);
         }
     }
 
     public function addRecipients(array $recipients) {
         $this->_event->addRecipients($recipients);
+    }
+
+    public function getEvent() {
+        return $this->_event;
     }
 
     public function setResource($res_id, $amount) {

@@ -6,23 +6,7 @@
                ID:
             </td>
             <td>
-               <?php echo $user->getID(); ?>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Nazwa:
-            </td>
-            <td>
-               <?php echo $user->getFullName(); ?>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Rok urodzenia:
-            </td>
-            <td>
-                <?php echo $user->getBirthYear(); ?>
+               <?php echo $user->id; ?>
             </td>
         </tr>
         <tr>
@@ -30,7 +14,7 @@
                 E-mail:
             </td>
             <td>
-               <?php echo $user->getEmail(); ?>
+               <?php echo $user->email; ?>
             </td>
         </tr>
         <tr>
@@ -38,7 +22,7 @@
                 Data rejestracji:
             </td>
             <td>
-               <?php echo $user->getRegisterDate(); ?>
+               <?php echo $user->created; ?>
             </td>
         </tr>
         <tr>
@@ -46,7 +30,7 @@
                 Status:
             </td>
             <td>
-               <?php echo $user->getStatus() ? 'Active' : 'Inactive'; ?>
+               <?php echo $user->active ? 'Active' : 'Inactive'; ?>
             </td>
         </tr>
     </table>

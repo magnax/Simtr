@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class Model_Event {
 
@@ -17,6 +17,7 @@ class Model_Event {
     /**
      * wspólne właściwości
      */
+    protected $id;
     protected $date;
     protected $type;
     
@@ -44,6 +45,14 @@ class Model_Event {
         return $this->source;
     }
     
+    public function setId($id) {
+        $this->id = $id;
+    }
+    
+    public function getId() {
+        return $this->id;
+    }
+
     public function setSender($ch) {
         $this->sender = $ch;
     }
@@ -59,6 +68,7 @@ class Model_Event {
     public function toArray() {
         
         return array(
+            'id' => $this->id,
             'date' => $this->date,
             'type' => $this->type,
             'sndr' => $this->sender

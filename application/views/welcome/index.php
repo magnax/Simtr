@@ -7,7 +7,7 @@
 </div>
 
 <div id="main_menu">
-    <?php echo html::anchor('login/register', 'Register new user'); ?><br />
+    <?php echo html::anchor('register', 'Register new user'); ?><br />
     <?php echo html::anchor('login', 'Login'); ?><br />
 </div>
 

@@ -1,17 +1,31 @@
-
 <div class="title_bar">Characters</div>
 <?php if (isset($characters) && count($characters)): ?>
     <?php foreach ($characters as $character): ?>
-        <?php echo html::anchor('user/menu/set/'.$character['id'], $character['name']); ?>
-        <?php echo $character['location']; ?> <?php echo $character['sex']; ?>
-        <?php if(isset($character['project'])): ?>
-            <?php echo $character['project']; ?>
-        <?php endif; ?>
-        <br />
+    <div class="character" id="character-<?=$character['id']?>">
+        <div class="character_sex">
+            <?php echo $character['sex']; ?>
+        </div>
+        <div class="character_name">
+            <?php echo html::anchor('character?id='.$character['id'], $character['name']); ?>
+        </div>
+        <div class="character_location">
+            <?php echo $character['location']; ?>
+        </div>
+        <div class="character_project">
+            <?php if(isset($character['project'])): ?>
+                <?php echo $character['project']; ?>
+            <?php endif; ?>
+        </div>
+        <div class="character_events">
+            <? if ($character['new_events']): ?>
+                <?= $character['new_events']; ?> new
+            <? endif; ?>
+        </div>
+    </div>
     <?php endforeach; ?>
 <?php else: ?>
     Nie masz aktualnie żadnych postaci w grze
 <?php endif; ?>
 <div>
-    <?php echo html::anchor('user/menu/newform', 'Twórz nową postać'); ?>
+    <?php echo html::anchor('character/new', 'Twórz nową postać'); ?>
 </div>

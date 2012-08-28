@@ -31,7 +31,7 @@ class Model_GameTime {
 
         $this->path = $daemon_path ? $daemon_path : self::PATH;
 
-        $this->raw_time = self::getRawTime($this->path);
+        $this->raw_time = $this->getRawTime($this->path);
         $t = $this->decodeRawTime($this->raw_time);
 
         $this->year = $t['y'];
@@ -43,10 +43,10 @@ class Model_GameTime {
 
     }
 
-    public static function getRawTime($daemon_path = null) {
+    public function getRawTime($daemon_path = null) {
         
         if (!$daemon_path) {
-            $daemon_path = self::PATH;
+            $daemon_path = $this->path ? $this->path : self::PATH;
         }
         
         $output = shell_exec($daemon_path.' say');

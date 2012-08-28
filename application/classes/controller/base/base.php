@@ -7,12 +7,6 @@ class Controller_Base_Base extends Controller_Template {
      * @var Session Object
      */
     protected $session;
-
-    /**
-     *
-     * @var Redis Database Object
-     */
-    protected $redis;
     
     /**
      *
@@ -21,13 +15,12 @@ class Controller_Base_Base extends Controller_Template {
      * shortcut to template content
      */
     protected $view;
-
+    
     /**
-     * @var GameTime Object
-     * 
-     * overall game time object
+     *
+     * @var Redis Database Object
      */
-    protected $game;
+    protected $redis;
 
     public function before() {
 
@@ -37,18 +30,6 @@ class Controller_Base_Base extends Controller_Template {
          * init session
          */
         $this->session = Session::instance();
-
-        /**
-         * check time daemon existence and get current game time
-         */
-        try {
-            $this->game = new Model_GameTime(Kohana::$config->load('general.paths.time_daemon_path'));           
-        } catch (Exception $e) {
-            $this->redirectError($e->getMessage());
-        }
-
-        $this->template->current_time = $this->game->getTime();
-        $this->template->current_date = $this->game->getDate();
         
         /**
          * get default view and set it to content variable
@@ -58,20 +39,19 @@ class Controller_Base_Base extends Controller_Template {
 
         if (Kohana::find_file('views', $page)) {
             $this->template->content = View::factory($page);
+            $this->view = $this->template->content;
+            
         } else {
             $this->template->content = 'brakuje pliku views/'.$page.'.php :)';
         }
-
-        $this->view = $this->template->content;
-
+        
         /**
          * flash messages: error and info message
          */
         $this->template->err = $this->session->get_once('err');
         
         //flash message
-        $this->template->msg = $this->session->get('msg');
-        $this->session->delete('msg');
+        $this->template->msg = $this->session->get_once('msg');
         
         /**
          * Redis database init

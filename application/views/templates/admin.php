@@ -18,6 +18,7 @@
 </style>
 <div id="menu">
     <?php echo html::anchor('admin/menu', 'Menu'); ?>
+    <?php echo html::anchor('admin/users', 'Users'); ?> 
     <?php echo html::anchor('admin/location', 'Locations'); ?> 
     <?php echo html::anchor('admin/resource', 'Resources'); ?>
     Manufacturing [<?php echo html::anchor('admin/tools', 'Tools'); ?>]

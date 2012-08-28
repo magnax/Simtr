@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class Model_EventSender_Redis extends Model_EventSender {
 
@@ -7,13 +7,17 @@ class Model_EventSender_Redis extends Model_EventSender {
      */
     public function send() {
 
-        $event = $this->_event->toArray();
         $source = $this->_event->getSource();
-
-        $serialised_event = json_encode($event);
-
-        //zapisać samo zdarzenie:
+        //new event create
         $event_id = $source->incr('global:IDEvent');
+
+        //set event id to event object
+        $this->_event->setId($event_id);
+        
+        //make serialised array from event object
+        $event = $this->_event->toArray();
+        $serialised_event = json_encode($event);
+        
         $source->set("events:$event_id", $serialised_event);
 
         //każdemu odbiorcy dopisać do kolejki zdarzeń:

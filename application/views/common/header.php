@@ -1,2 +1,2 @@
 <title>Simtr! Simulation Game</title>
-<link rel="stylesheet" href="/media/style.css" type="text/css" />
+<link rel="stylesheet" href="/assets/css/style.css" type="text/css" />

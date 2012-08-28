@@ -56,6 +56,16 @@ label, input {
     margin: 10px;
 }
 
+form li {
+    display: list-item;
+    text-align: left;
+}
+
+form label {
+    width: 120px;
+    display: inline-block;
+}
+
 #footer {
     width: 780px;
     margin: 30px auto;
@@ -115,4 +125,42 @@ label, input {
 
 .list {
     text-align: left;
+}
+
+form ul li {
+    list-style: none;
+}
+
+.error {
+    color: #ff0000;
+}
+
+.character {
+    display: table-row;
+    height: 25px;
+    border-bottom: 1px solid #CCC;
+}
+.character_sex {
+    display: table-cell;
+    width: 30px;
+}
+.character_name {
+    display: table-cell;
+    width: 200px;
+    text-align: left;
+}
+.character_location {
+    display: table-cell;
+    width: 200px;
+}
+.character_project {
+    display: table-cell;
+    width: 100px;
+}
+.character_events {
+    display: table-cell;
+    width: 100px;
+}
+.new_event {
+    background-color: #ccffcc;
 }

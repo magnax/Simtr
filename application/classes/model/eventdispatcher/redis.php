@@ -1,8 +1,8 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class Model_EventDispatcher_Redis extends Model_EventDispatcher {
 
-    public function formatEvent($id_event) {
+    public function formatEvent($id_event, $id_character) {
 
         //get and decode event
         $event = json_decode($this->source->get("events:$id_event"), true);
@@ -12,9 +12,9 @@ class Model_EventDispatcher_Redis extends Model_EventDispatcher {
         //print_r($event);echo $id_event.'<br><br>';
 
         //check if current character is sender, recipient or just viewer of the event
-        if ($event['sndr'] == $this->id_character) {
+        if ($event['sndr'] == $id_character) {
             $person = 1;
-        } elseif (isset($event['rcpt']) && $event['rcpt'] == $this->id_character) {
+        } elseif (isset($event['rcpt']) && $event['rcpt'] == $id_character) {
             $person = 2;
         } else {
             $person = 3;
@@ -25,7 +25,7 @@ class Model_EventDispatcher_Redis extends Model_EventDispatcher {
         $args = $this->source->lrange("global:event_tpl:{$event['type']}:$person:params", 0, -1);
         //delegate further dispatching to proper event model
         $event_object = Model_Event::getInstance($event['type'], NULL, $this->source);
-        $args = $event_object->dispatchArgs($event, $args, $this->id_character);
+        $args = $event_object->dispatchArgs($event, $args, $id_character, $this->lang);
 
         if (!$format) {
             $event['text'] = 'coś nie tak...('.$id_event.')';
@@ -40,7 +40,8 @@ class Model_EventDispatcher_Redis extends Model_EventDispatcher {
         }
 
         return array(
-            'date'=>$event['date'],
+            'id'  => $id_event,
+            'date'=> Model_GameTime::formatDateTime($event['date']),
             'text'=>'('.$id_event.') '.$event['text']
         );
 

@@ -8,7 +8,7 @@
                Nazwa:
             </td>
             <td>
-               <?php echo html::anchor('user/char/nameform/'.$character['id'], $character['known_as']); ?>
+               <?php echo html::anchor('user/char/nameform/'.$character['id'], $character['name']); ?>
             </td>
         </tr>
         <tr>
@@ -24,7 +24,7 @@
                 Przebudzenie:
             </td>
             <td>
-                <?php echo $character['spawn_day']; ?> w <?php echo html::anchor('user/location/nameform/'.$character['spawn_location_id'], $character['spawn_location']); ?>
+                <?php echo $character['spawn_day']; ?> w <?php echo html::anchor('user/location/nameform/'.$character['location_id'], $character['location_id']); ?>
             </td>
         </tr>
         <tr>

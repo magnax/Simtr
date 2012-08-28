@@ -3,7 +3,7 @@
 /**
  * Główna strona informacyjna
  */
-class Controller_Guest_Welcome extends Controller_Base_Guest {
+class Controller_Welcome extends Controller_Base_Guest {
 
     public function action_index() {
 

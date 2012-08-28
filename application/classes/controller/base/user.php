@@ -6,13 +6,42 @@
 class Controller_Base_User extends Controller_Base_Base {
 
     public $template = 'templates/user';
+    
+    /**
+     * @var GameTime Object
+     * 
+     * overall game time object
+     */
+    protected $game;
+    
+    /**
+     * current time is calculated once and used later
+     * 
+     * @var int
+     */
+    protected $raw_time;
+
 
     /**
      *
      * @var User Object
      */
     protected $user = null;
-    
+
+    /**
+     * current character
+     * 
+     * @var Character object
+     */
+    protected $character = null;
+
+    /**
+     * has logged in user admin role?
+     * 
+     * @var boolean
+     */
+    protected $is_admin = false;
+
     /**
      * dictionary
      * @var Object
@@ -29,19 +58,34 @@ class Controller_Base_User extends Controller_Base_Base {
 
         parent::before();
 
+        /**
+         * check time daemon existence and get current game time
+         */
+        try {
+            $this->game = new Model_GameTime(Kohana::$config->load('general.paths.time_daemon_path'));    
+            $this->raw_time = $this->game->getRawTime();
+        } catch (Exception $e) {
+            $this->redirectError($e->getMessage());
+        }
+
+        $this->template->current_time = $this->game->getTime();
+        $this->template->current_date = $this->game->getDate();
+        
         //init translations
         $this->dict = Model_Dict::getInstance($this->redis);
         
         //init location names
         $this->lnames = Model_LNames::getInstance($this->redis, $this->dict);
         
-        $this->user = Model_User::getInstance($this->redis);
-        if (!$this->user->tryLogIn($this->session->get('authkey'))) {
-            $this->redirectError('Wygasła sesja użytkownika', 'login');
+        $this->user = Auth::instance()->get_user();
+        if (!$this->user) {
+            Request::current()->redirect('login');
         }
-        $this->user->refreshActive();
+        
+        $this->is_admin = ($this->user->has('roles', ORM::factory('role', array('name' => 'admin'))));
         
         $this->template->user = $this->user;
+        $this->template->is_admin = $this->is_admin;
         
     }
 

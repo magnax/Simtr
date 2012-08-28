@@ -1,19 +1,42 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 /**
  * klasa postaci gracza
  */
-abstract class Model_Character {
+class Model_Character extends ORM {
+
+    protected $_belongs_to = array(
+        'spawn_location' => array(
+            'model' => 'location',
+            'foreign_key' => 'location_id',
+            'far_key' => 'id'
+        ),
+    );
+
+
+    public function rules() {
+        return array(
+            'name'=>array(
+                array('not_empty'),
+            ),
+            'sex'=>array(
+                array(function($value, Validation $obj) {
+                    if (!in_array($value, array('K','M'))) {
+                        $obj->error('sex', 'not_valid');
+                    }
+                }, array(':value', ':validation')),
+            )
+        );
+    }
 
     const START_AGE = 20;
-    protected $id = null;
-    protected $name;
-    protected $sex;
+    //protected $id = null;
+    //protected $name;
+    //protected $sex;
     protected $spawn_date;
     protected $spawn_location_id;
     protected $age;
-    protected $user_id;
-    public $location_id;
+    //public $location_id;
     protected $eq_weight;
     protected $place_type;
     protected $place_id;
@@ -63,17 +86,38 @@ abstract class Model_Character {
 
     //private $spawn_day;
 
-    public function  __construct($source) {
-        $this->source = $source;
-    }
+//    public function  __construct($source) {
+//        $this->source = $source;
+//    }
+//    
+//    public static function getInstance($source) {
+//        //if ($source instanceof Redisent) {
+//        if ($source instanceof Redis) {
+//            return new Model_Character_Redis($source);
+//        }
+//    }
     
-    public static function getInstance($source) {
-        //if ($source instanceof Redisent) {
-        if ($source instanceof Redis) {
-            return new Model_Character_Redis($source);
-        }
+    public function get_info($raw_time) {
+        return array(
+            'id' => $this->id,
+            'name' => $this->name,
+            'age' => $this->countVisibleAge($raw_time),
+            'spawn_day' => $this->created,
+            'location_id' => $this->location_id,
+            'location' => $this->location_id,
+            'life' => 100,
+            'vitality' => 100,
+            'strength' => 1.2,
+            'fighting' => 1.0,
+            'eq_weight' => 3450,
+        );
     }
+
     
+    public function getUnknownName($char_id, $lang) {
+        return 'nieznany ktoś';
+    }
+
     public function setIDUser($id) {
         $this->user_id = $id;
     }
@@ -129,10 +173,6 @@ abstract class Model_Character {
 
     public function getPlaceId() {
         return $this->place_id;
-    }
-
-    public function __get($name) {
-        return $this->{$name};
     }
 
 
@@ -208,15 +248,15 @@ abstract class Model_Character {
         $this->save();
     }
 
-    abstract public function save();
-    abstract public function fetchOne($id);
-    abstract public function getInfo(array $characters);
-    abstract public function getEvents();
-    //get all chnames for this user
-    abstract public function getChnames();
-    abstract public function getLnames();
-    abstract public function getUnknownName($for_user_id);
+    public function connectedChar($redis) {
+        return $redis->get("connected_char:{$this->id}");
+    }
 
+    public function connectedUser($redis) {
+        echo "=={$this->id}={$this->user_id}==";
+        return $redis->get("connected_user:{$this->user_id}");
+    }
+    
 }
 
 ?>

@@ -1,6 +1,36 @@
 <html>
     <head>
         <?php include Kohana::find_file('views', 'common/header') ?>
+        <script src="http://192.168.1.7:8011/socket.io/socket.io.js"></script>
+        <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+        <script src="/assets/js/general.js"></script>
+        <script>
+
+        var socket = io.connect('http://192.168.1.7:8011');
+        var user_id = <?= $user->id; ?>;
+        
+        socket.on('connect', function(data) {
+            
+            socket.on('auth', function(incoming) {
+                console.log('received auth request');
+                socket.emit('user check in', {'user_id': user_id});
+                $('#time').removeClass('error');
+            });
+            
+            socket.on('time', function (data) {
+                $('#time').html(decodeRawTime(data.time));
+            });
+            
+            socket.on('user_events', function (data) {
+                console.log('received user event: '+data);
+                var char_id = data.char_id;
+                $('#character-'+char_id+' .character_events').html(data['new'] + ' new');
+            });
+            
+        });
+
+
+        </script>
     </head>
     <body>
         <div id="main">
@@ -23,9 +53,6 @@
                     <?php include Kohana::find_file('views', 'user/buildmenu') ?>
                 </div>
             <?php endif; ?>
-        </div>
-        <div id="kohana-profiler">
-            <?php echo View::factory('profiler/stats') ?>
         </div>
     </body>
 </html>

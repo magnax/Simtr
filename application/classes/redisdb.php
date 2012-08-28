@@ -8,6 +8,11 @@ class RedisDB {
         $this->_connection = new Redis();
         $this->_connection->connect('127.0.0.1');
     }
+    
+    public function values(array $values, array $expected = NULL) {
+        
+    }
+    
     function get($key) {
         return json_decode($this->_connection->get($key), true);
     }

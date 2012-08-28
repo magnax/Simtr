@@ -21,29 +21,7 @@ class Controller_Admin_Location extends Controller_Base_Admin {
 
     public function action_index($page = 1) {
         
-        $locations = $this->redis->smembers("global:locations");
-        
-        $this->view->count = count($locations);
-        
-        //towns
-        $towns_ids = $this->redis->smembers("twn");
-        
-        $locations_array = array();
-        
-        foreach ($towns_ids as $location_id) {
-            $locations_array[] = json_decode($this->redis->get("locations:$location_id"), true);
-        }
-        $this->view->towns = $locations_array;
-        
-        //buildings
-        $bld_ids = $this->redis->smembers("bld");
-        
-        $locations_array = array();
-        
-        foreach ($bld_ids as $location_id) {
-            $locations_array[] = json_decode($this->redis->get("locations:$location_id"), true);
-        }
-        $this->view->buildings = $locations_array;
+        $this->view->locationsCount = ORM::factory('location')->count_all();
 
     }
 

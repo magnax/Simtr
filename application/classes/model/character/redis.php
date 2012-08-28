@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_Character_Redis extends Model_Character {
+class Model_Character_Redis {
 
     public function save() {
 
@@ -55,67 +55,31 @@ class Model_Character_Redis extends Model_Character {
         
     }
 
-    public function getEvents($page = 1) {
+    public static function getEvents($character_id, $source, $lang, $page = 1) {
         
         //ile na stronę 
         $pagesize = 20;
         
-        $size = $this->source->llen("characters:{$this->id}:events");
+        $size = $source->llen("characters:{$character_id}:events");
         if ($size) {
             $from = ($page - 1) * $pagesize;
-            $events = $this->source->lrange("characters:{$this->id}:events", $from, $from + $pagesize - 1);
+            $events = $source->lrange("characters:{$character_id}:events", $from, $from + $pagesize - 1);
         } else {
             return array();
         }
         $return_events = array();
 
-        //$event_dispatcher = Model_EventDispatcher::getInstance($this->source);
-        //$event_dispatcher->setIdCharacter($this->id);
+        $event_dispatcher = Model_EventDispatcher::getInstance($source, $lang);
 
         foreach ($events as $id_event) {
 
-            //$return_events[] = $event_dispatcher->formatEvent($event);
-            //get and decode event
-            $event = json_decode($this->source->get("events:$id_event"), true);
-
-            //check if current character is sender, recipient or just viewer of the event
-            if ($event['sndr'] == $this->id) {
-                $person = 1;
-            } elseif (isset($event['rcpt']) && $event['rcpt'] == $this->id) {
-                $person = 2;
-            } else {
-                $person = 3;
-            }
-
-            //get display format and params
-            $format = $this->source->get("global:event_tpl:{$event['type']}:$person");
-            $args = $this->source->lrange("global:event_tpl:{$event['type']}:$person:params", 0, -1);
-            //delegate further dispatching to proper event model
-            $event_object = Model_Event::getInstance($event['type'], NULL, $this->source);
-            $args = $event_object->dispatchArgs($event, $args, $this);
-
-            if (!$format) {
-                $event['text'] = 'coś nie tak...('.$id_event.')';
-            } else {
-                $event['text'] = @vsprintf($format, $args);
-                if ($person == 2) {
-                    $event['text'] = '<b>'.$event['text'].'</b>';
-                }
-                if (!$event['text']) {
-                    $event['text'] = 'ERROR: <b>'.$format.'</b> L.arg.:'.count($args).' Person:'.$person. ' Event: '.$id_event;
-                    
-                }
-            }
-
-            $return_events[] = array(
-                'date'=>$event['date'],
-                'text'=>'('.$id_event.') '.$event['text']
-            );
+            $return_events[] = $event_dispatcher->formatEvent($id_event, $character_id);
             
         }
         
         //"pagination" ;) just info 
         $return_events[] = array(
+            'id' => -1,
             'date' => '',
             'prev' => ($page > 1) ? $page - 1 : '',
             'current' => $page,
