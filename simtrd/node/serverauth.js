@@ -9,7 +9,7 @@ var server = http.createServer(function(req, res){
     res.end('<h1>Hello Socket Lover!</h1>');
 });
 
-server.listen(8011);
+server.listen(8000);
 
 // Create a Socket.IO instance, passing it our server
 var io = sio.listen(server);
