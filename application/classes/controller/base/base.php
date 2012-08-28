@@ -56,12 +56,13 @@ class Controller_Base_Base extends Controller_Template {
         /**
          * Redis database init
          */
-        $this->redis = new Redisent(Kohana::$config->load('database.dsn'));
-
         try {
+        
+            $this->redis = new Redisent(Kohana::$config->load('database.dsn'));
             $this->template->active_count = count($this->redis->keys('active:*'));
-        } catch (Predis_CommunicationException $e) {
-            $this->redirectError('Server Redis nie uruchomiony');
+            
+        } catch (RedisException $e) {
+            $this->redirectError($e->getMessage());
         }
         
     }
@@ -72,10 +73,10 @@ class Controller_Base_Base extends Controller_Template {
      * @param string $err
      * @param string $uri
      */
-    public function redirectError($err, $uri = 'base/error') {
+    public function redirectError($err, $uri = 'error') {
 
         $this->session->set('err', $err);
-        Request::instance()->redirect($uri);
+        $this->request->redirect($uri);
 
     }
 

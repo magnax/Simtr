@@ -1,2 +1,2 @@
 <div><?php echo html::anchor('/','Simtr 2'); ?></div>
-Błąd: <?php echo $errmsg; ?>
+Błąd: <?php echo $error_message; ?>
