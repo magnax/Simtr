@@ -1,5 +1,7 @@
-<?php defined('SYSPATH') or die('No direct access');
+<?php
 
-class BadDaemonException extends Exception {
-    
-}
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+?>
