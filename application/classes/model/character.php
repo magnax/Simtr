@@ -1,0 +1,262 @@
+<?php defined('SYSPATH') or die('No direct script access.');
+
+/**
+ * klasa postaci gracza
+ */
+class Model_Character extends ORM {
+
+    protected $_belongs_to = array(
+        'spawn_location' => array(
+            'model' => 'location',
+            'foreign_key' => 'location_id',
+            'far_key' => 'id'
+        ),
+    );
+
+
+    public function rules() {
+        return array(
+            'name'=>array(
+                array('not_empty'),
+            ),
+            'sex'=>array(
+                array(function($value, Validation $obj) {
+                    if (!in_array($value, array('K','M'))) {
+                        $obj->error('sex', 'not_valid');
+                    }
+                }, array(':value', ':validation')),
+            )
+        );
+    }
+
+    const START_AGE = 20;
+    //protected $id = null;
+    //protected $name;
+    //protected $sex;
+    protected $spawn_date;
+    protected $spawn_location_id;
+    protected $age;
+    //public $location_id;
+    protected $eq_weight;
+    protected $place_type;
+    protected $place_id;
+    protected $project_id;
+    protected $travel_id;
+    
+    /**
+     * współczynniki
+     */
+    
+     //jedzenie (0-100)
+     protected $food;
+     
+     //żywotność (800-1200) 
+     protected $vitality;
+     
+     //życie (aktualny stan, max. vitality) (punkty = 0 => śmierć)
+     protected $life;
+
+     //siła (0.6 ... 1.8)
+     protected $strength;
+     
+     //walka (0.8 ... 1.2)
+     public $fighting;
+
+     /**
+      * kolekcje
+      */
+     protected $items = array(); //asocjacyjna ID:stan, np: 928:98
+     protected $resources = array(); //asocjacyjna np: RES_SAND : 20000
+     protected $events = array(); //osobna struktura
+
+    /**
+     * źródło danych (Redis, RDBMS, other)
+     */
+    protected $source;
+
+    protected $chnames;
+
+    //memorized characters names
+    public $character_names = null;
+    public $location_names = null;
+    
+    public $raw_time;
+    
+    public $lang = 'pl';
+
+    //private $spawn_day;
+
+//    public function  __construct($source) {
+//        $this->source = $source;
+//    }
+//    
+//    public static function getInstance($source) {
+//        //if ($source instanceof Redisent) {
+//        if ($source instanceof Redis) {
+//            return new Model_Character_Redis($source);
+//        }
+//    }
+    
+    public function get_info($raw_time) {
+        return array(
+            'id' => $this->id,
+            'name' => $this->name,
+            'age' => $this->countVisibleAge($raw_time),
+            'spawn_day' => $this->created,
+            'location_id' => $this->location_id,
+            'location' => $this->location_id,
+            'life' => 100,
+            'vitality' => 100,
+            'strength' => 1.2,
+            'fighting' => 1.0,
+            'eq_weight' => 3450,
+        );
+    }
+
+    
+    public function getUnknownName($char_id, $lang) {
+        return 'nieznany ktoś';
+    }
+
+    public function setIDUser($id) {
+        $this->user_id = $id;
+    }
+
+    public function setSex($sex) {
+        $this->sex = $sex;
+    }
+
+    public function setName($name) {
+        $this->name = $name;
+    }
+
+    public function setIDLocation($id) {
+        $this->location_id = $id;
+    }
+
+    public function setProjectId($id) {
+        $this->project_id = $id;
+    }
+    
+    public function getId() {
+        return $this->id;
+    }
+
+    public function getName() {
+        return ($this->name);
+    }
+
+    public function getSex() {
+        return $this->sex;
+    }
+
+    public function getSpawnDate() {
+        return $this->spawn_date;
+    }
+
+    public function countVisibleAge($raw_time) {
+        $age = $this->countAge($raw_time);
+        if ($age >= 90) {
+            return 'old';
+        } else {
+            return floor($age / 10) * 10;
+        }
+    }
+
+    public function getIDLocation() {
+        return $this->location_id;
+    }
+
+    public function getPlaceType() {
+        return $this->place_type;
+    }
+
+    public function getPlaceId() {
+        return $this->place_id;
+    }
+
+
+
+    public function countAge($raw_time) {
+        return self::START_AGE + Model_GameTime::formatDateTime($raw_time - $this->spawn_date, 'y');
+    }
+
+    public function toArray() {
+        
+        return array(
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'name' => $this->name,
+            'spawn_date' => $this->spawn_date,
+            'sex' => $this->sex,
+            'location_id' => $this->location_id,
+            'spawn_location_id' => $this->spawn_location_id,
+            'eq_weight' => $this->eq_weight,
+            'project_id' => $this->project_id,
+            'place_type' => $this->place_type,
+            'place_id' => $this->place_id,
+            'vitality' => $this->vitality,
+            'life' => $this->life,
+            'strength' => $this->strength,
+            'fighting' => $this->fighting
+        );
+        
+    }
+
+    public function createNew($data) {
+
+        $this->spawn_date = $data['spawn_date'];
+        $this->spawn_location_id = $data['location_id'];
+        $this->location_id = $data['location_id'];
+        $this->eq_weight = 0;
+        $this->place_type = 'loc';
+        $this->place_id = $data['location_id'];
+        $this->name = $data['name'];
+        $this->sex = $data['sex'];
+        $this->user_id = $data['user_id'];
+        
+        $this->save();
+        
+        return $this;
+
+    }
+    
+    public function getChname($for_user_id) {
+        if ($this->character_names && isset($this->character_names[$for_user_id])) {
+            return $this->character_names[$for_user_id];
+        } else {
+            if ($for_user_id == $this->id) {
+                return $this->name;
+            }
+        }
+        return null;
+    }
+
+    public function getLname($for_location_id) {
+        if ($this->location_names && isset($this->location_names[$for_location_id])) {
+            return $this->location_names[$for_location_id];
+        }
+        return null;
+    }
+
+    public function isDying() {
+        return ($this->life <= 0);
+    }
+
+    public function setDamage($points) {
+        $this->life -= $points;
+        $this->save();
+    }
+
+    public function connectedChar($redis) {
+        return $redis->get("connected_char:{$this->id}");
+    }
+
+    public function connectedUser($redis) {
+        echo "=={$this->id}={$this->user_id}==";
+        return $redis->get("connected_user:{$this->user_id}");
+    }
+    
+}
+
+?>
