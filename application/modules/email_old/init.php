@@ -5,9 +5,9 @@
 /**
  * When SwiftMailer library is included in email module: 
  */
-//require Kohana::find_file('vendor/swiftmailer', 'lib/swift_required');
+require Kohana::find_file('vendor/swiftmailer', 'lib/swift_required');
 
 /**
  * after installing SwiftMailer from PEAR: 
  */
-require '/usr/share/php/swift_required.php';
+//require '/usr/share/php/swift_required.php';

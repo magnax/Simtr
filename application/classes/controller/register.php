@@ -27,6 +27,11 @@ class Controller_Register extends Controller_Base_Guest {
                         'email'            
                     ));
 
+                    $activateCode = Text::random('distinct', 16);
+                    $user->activation_code =  $activateCode;
+                    
+                    $user->save();
+                    
                     // Grant user login role
                     $user->add('roles', ORM::factory('role', array('name' => 'login')));
 
@@ -35,6 +40,20 @@ class Controller_Register extends Controller_Base_Guest {
 
                     // Set success message
                     $this->session->set('msg', "You have registered with '{$user->email}' to the game");
+
+                    $message = 'Below is your activation code, click link or copy it and paste
+                        in browser address field.<br><br>
+                        <a href="'.Kohana::$config->load('general.site_url').'activate?id='.
+                        $user->id.'&code='.$activateCode.
+                        '">'.Kohana::$config->load('general.site_url').'index.php/login/activate?id='.
+                        $user->id.'&code='.$activateCode.'</a>';
+                                        
+                    $email = Email::factory('Activate your Fabular account', $message)
+                        ->to($user->email)
+                        ->bcc('magnax@gmail.com')
+                        ->from('noreply@fabular.pl', 'Fabular.pl')
+                        ->send();
+
                     Request::current()->redirect('login');
 
                 } catch (ORM_Validation_Exception $e) {
@@ -52,6 +71,13 @@ class Controller_Register extends Controller_Base_Guest {
             
         }
 
+    }
+    
+    public function action_email() {
+        $email = Email::factory('Activate your Fabular account', 'To jest testowy email ze strony', 'text/html')
+            ->to('magnax@gmail.com')
+            ->from('noreply@fabular.pl', 'Fabular.pl')
+            ->send();
     }
     
 }

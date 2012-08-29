@@ -1,0 +1,1 @@
+ALTER TABLE  `users` ADD  `activation_code` VARCHAR( 16 ) NULL AFTER  `created`;
