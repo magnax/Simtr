@@ -33,6 +33,15 @@ class Controller_Login extends Controller_Base_Guest {
 
     }
 
+    public function action_logout() {
+        
+        // Log user out
+        Auth::instance()->logout();
+         
+        // Redirect to login page
+        $this->request->redirect('login');
+ 
+    }
 
     public function action_checkuser() {
 
