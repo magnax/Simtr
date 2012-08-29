@@ -27,7 +27,7 @@ class Controller_Character extends Controller_Base_User {
             try {
                 $character = new Model_Character;
                 $character->values($_POST);
-                $location_id = 5;
+                $location_id = Model_Location::getRandomSpawnLocation();
                 $character->location_id = $location_id; //will be random location
                 $character->spawn_location_id = $location_id;
                 $character->user_id = $this->user->id;

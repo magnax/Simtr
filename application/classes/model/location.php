@@ -31,6 +31,15 @@ class Model_Location extends ORM {
         
     }
     
+    public static function getRandomSpawnLocation() {
+        $random_location = ORM::factory('location')
+            ->where('locationtype_id', '=', 1)
+            ->order_by(DB::expr('RAND()'))
+            ->find();
+        
+        return $random_location->id;
+    }
+    
 }
 
 ?>

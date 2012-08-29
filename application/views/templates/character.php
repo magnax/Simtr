@@ -20,9 +20,10 @@
         
         socket.on('events', function (data) {
             console.log('got data');
-            var exists = $('#events ul li[data-id="' + data.event_id + '"]').html();
+            var exists = $('#events ul li[data-id="' + data.event_id + '"]').length;
             console.log(exists);
-            if (exists == undefined) {
+            if (exists == 0) {
+                console.log('adding...');
                 $('#events ul').prepend('<li data-id="' + data.event_id + '">' + data.text.date + ': ' + data.text.text + '</li>');
             }
           });
@@ -45,9 +46,9 @@
                 });
             });
             $('#insert').live('click', function() {
-                event.preventDefault(); 
-                $('#events ul').prepend('<li>new item appended!</li>');
-                console.log('insert');
+                event.preventDefault();
+                var exists = $('#events ul li[data-id="9888"]').length;
+                console.log(exists);
             });
         });
         

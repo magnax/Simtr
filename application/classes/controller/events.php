@@ -36,7 +36,6 @@ class Controller_Events extends Controller_Base_Character {
             
             //recipients to lista obiektów klasy Character
             $recipients = $this->location->getHearableCharacters($this->character);
-            print_r($recipients);
             $event_sender->addRecipients($recipients);
             $event_sender->setSender($this->character->id);
 
@@ -92,6 +91,7 @@ class Controller_Events extends Controller_Base_Character {
 
         if ($this->request->is_ajax()) {
             $this->auto_render = false;
+            echo 'success';
             return;
         }
         

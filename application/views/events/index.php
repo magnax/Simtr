@@ -5,9 +5,9 @@
     <?php echo form::close(); ?>
 </div>
 <div id="events">
-    
+<ul>    
 <?php if (isset($events) && count($events)): ?>
-    <ul>
+    
     <?php foreach ($events as $event): ?>
         <li<?= (($event['id'] >= $first_new_event))? ' class="new_event"':'' ?>>
         <?php if ($event['date'] == ''): ?>
@@ -22,7 +22,8 @@
         <?php endif; ?>
         </li>
     <?php endforeach; ?>
-    </ul>
+    
 <?php endif; ?>
+</ul>
 </div>
 <a id="insert" href="#">Insert</a>
