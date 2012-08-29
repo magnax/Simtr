@@ -24,9 +24,6 @@ class Controller_Login extends Controller_Base_Guest {
             } else {
                 
                 $errors['failed'] = 'Login failed, try again';
-                print_r($this->view->errors);
-                
-                print_r($errors);
                 
             }
         }
@@ -42,102 +39,46 @@ class Controller_Login extends Controller_Base_Guest {
         $this->request->redirect('login');
  
     }
-
-    public function action_checkuser() {
-
-        if (!isset($_POST['email']) || !$_POST['email']) {
-           $this->redirectError('You must provide valid email', 'registerform');
-        }
-
-        if (!isset($_POST['pass']) || !$_POST['pass']) {
-           $this->redirectError('You must provide password', 'registerform');
-        }
-
-        $user = Model_User::getInstance($this->redis);
-
-        if ($user->isDuplicateEmail($_POST['email'])) {
-            $this->redirectError('This email already exists', 'registerform');
-        }
-
-        //creates (and saves) new user
-        $user->createNew($_POST); 
-        
-        $activateCode = Text::random('distinct', 16);
-        $user->setActivationCode($user->getID(), $activateCode);
-        
-        //send activation code
-        $email = Email::factory()
-            ->subject(__('Activate your Simtr account'))
-            ->to($user->getEmail())
-            ->bcc('magnax@gmail.com')
-            ->from('noreply@example.com', 'Simtr');
-        $email->message('Below is your activation code, click link or copy it and paste
-            in browser address field.<br><br>
-            <a href="'.URL::base().'index.php/login/activate?id='.
-            $user->getID().'&code='.$activateCode.
-            '">'.URL::base().'index.php/login/activate?id='.
-            $user->getID().'&code='.$activateCode.'</a>', 'text/html');
-        $email->send();
-        
-
-        $this->view->IDUser = $user->getID();
-
-    }
-
-    public function action_checklogin() {
-
-        if (isset($_POST['iduser']) && $_POST['iduser'] && isset($_POST['pass']) && $_POST['pass']) {
-            
-            $user = Model_User::getInstance($this->redis);
-
-            $authkey = $user->login($_POST['iduser'], $_POST['pass']);
-
-            if ($authkey) {
-                $this->session->set('authkey', $authkey);
-                $this->request->redirect('user/menu');
-                return;
-            } else {
-                $this->redirectError('Incorrect ID or password', 'loginform');
-            }
-        } else {
-            $this->redirectError('ID and password must be provided', 'loginform');
-        }
-
-    }
     
     public function action_activate() {
-        
-        $id = $_GET['id'];
-        $code = $_GET['code'];
        
-        if (!$id || !is_numeric($id) || !$code || (strlen($code) != 16)) {
+        if (!isset($_GET['id']) 
+            || !is_numeric($_GET['id']) 
+            || !isset($_GET['code']) 
+            || (strlen($_GET['code']) != 16)) {
+            
             $this->redirectError('Bad request!');
         }
         
-        $user = Model_User::getInstance($this->redis);
-        $activateCode = $user->fetchActivationCode($id);
+        $user = ORM::factory('user', $_GET['id']);
         
-        if (!$activateCode) {
-            $user->getUserData($id);
-            if ($user->isActive()) {
-                $message = 'Account already activated';
-            } else {
-                //ups! user is not active and doesn't have activation code
-                $this->redirectError('Something went wrong with activation process');
-            }
-        } elseif ($code == $activateCode) {           
-            $user->activate($id);
-            $message = 'Your account is now activated.';
-        } else {
-            $this->redirectError('Bad code!');
+        if (!$user->id) {
+            $this->redirectError('This user does not exists!');
         }
         
-        //not redirected means activation ok or user already active
-        //check where to redirect
-        if ($user->tryLogIn($this->session->get('authkey'))) {
-            $this->redirectMessage($message, '/user/menu');
+        if ($user->active) {
+            $this->session->set('msg', 'User already active');
+            $this->request->redirect('login');
+        }
+        
+        $activateCode = $user->activation_code;
+        
+        if (!$activateCode) {
+            $this->redirectError('Something went wrong with activation process');
+        }
+        
+        if ($_GET['code'] == $activateCode) {           
+            
+            $user->active = 1;
+            $user->activation_code = null;
+            $user->save();
+            $this->session->set('msg', 'Your account is now activated.');
+            $this->request->redirect('login');
+            
         } else {
-            $this->redirectMessage($message, '/guest/login/loginform');
+            
+            $this->redirectError('Bad activation code!');
+            
         }
         
     }
