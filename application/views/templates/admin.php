@@ -17,6 +17,7 @@
     }
 </style>
 <div id="menu">
+    <?php echo html::anchor('', 'Main page'); ?>
     <?php echo html::anchor('admin/menu', 'Menu'); ?>
     <?php echo html::anchor('admin/users', 'Users'); ?> 
     <?php echo html::anchor('admin/location', 'Locations'); ?> 
@@ -26,5 +27,7 @@
     <?php echo html::anchor('admin/characters/menu', 'Characters menu'); ?> 
     <?php echo html::anchor('admin/itemtypes/menu', 'Item types'); ?> 
     <?php echo html::anchor('admin/menu/keys', 'DB Keys'); ?> 
+    Node server: [<?php echo html::anchor('admin/server/check', 'Check server'); ?> 
+    <?php echo html::anchor('admin/server/on', 'Turn on server'); ?>]
 </div>
 <?php echo $content; ?>
