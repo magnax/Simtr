@@ -9,7 +9,7 @@
 <?php if (isset($events) && count($events)): ?>
     
     <?php foreach ($events as $event): ?>
-        <li<?= (($event['id'] >= $first_new_event))? ' class="new_event"':'' ?>>
+        <li<?= ($first_new_event && ($event['id'] >= $first_new_event))? ' class="new_event"':'' ?>>
         <?php if ($event['date'] == ''): ?>
             <?php if ($event['prev']): ?>
                 <?php echo html::anchor('/events/index/'.$event['prev'], 'Poprzednia strona'); ?> &nbsp; &nbsp;
