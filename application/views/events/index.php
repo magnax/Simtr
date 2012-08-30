@@ -3,6 +3,7 @@
     <?php echo form::open('#', array('id'=>'talk_all')); ?>
         <input id="event_input_small" type="text" name="text"> <input id="talk" type="submit" value="Talk to all">
     <?php echo form::close(); ?>
+    <div id="talk_error" class="error"></div>
 </div>
 <div id="events">
 <ul>    

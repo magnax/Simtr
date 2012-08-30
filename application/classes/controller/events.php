@@ -22,8 +22,6 @@ class Controller_Events extends Controller_Base_Character {
 
     public function action_talkall() {
         
-        require_once APPPATH . 'modules/elephant/classes/client.php';
-        
         if (isset($_POST['text']) && $_POST['text']) {
             
             $event_sender = Model_EventSender::getInstance(
@@ -42,50 +40,7 @@ class Controller_Events extends Controller_Base_Character {
             $event_sender->send();
             $event_id = $event_sender->getEvent()->getId();
             
-            $elephant = new Client($this->server_uri);
-            $elephant->init();
-            
-            $event_dispatcher = Model_EventDispatcher::getInstance($this->redis, $this->lang);
-            
-            foreach ($recipients as $recipient) {
-
-                $notifyChar = new Model_Character($recipient);
-                
-                if ($notifyChar->connectedChar($this->redis)) {
-                
-                    $data = json_encode(array(
-                        'name' => 'push_event',
-                        'args' => array(
-                            'event_id'=> $event_id,
-                            'char_id' => $recipient,
-                            'text' => $event_dispatcher->formatEvent($event_id, $recipient),
-                        )
-                    ));               
-
-                    $elephant->send(Client::TYPE_EVENT, null, null, $data);
-                    echo 'notifying char: '.$recipient;
-                    
-                } else {
-                    
-                    $this->redis->rpush("new_events:$recipient", $event_id);
-
-                    if ($notifyChar->connectedUser($this->redis)) {
-                        //user is watching, add to event query
-                        $data = json_encode(array(
-                            'name' => 'push_user_event',
-                            'args' => array(
-                                'user_id' => $notifyChar->user_id,
-                                'char_id' => $recipient,
-                                'event_id' => $event_sender->getEvent()->getId(),
-                            )
-                        ));
-
-                        $elephant->send(Client::TYPE_EVENT, null, null, $data);
-                        echo 'notifying user of: '.$recipient;
-                    }
-                }
-                
-            }
+            Model_EventNotifier::notify($recipients, $event_id, $this->redis, $this->lang);
 
         }
 

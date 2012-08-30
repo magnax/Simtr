@@ -48,6 +48,11 @@
                     $('#event_input_small').val('');
                     $('#talk').removeAttr("disabled");
                     $('#event_input_small').removeAttr("disabled");
+                })
+                .error(function() {
+                    $('#talk').removeAttr("disabled");
+                    $('#event_input_small').removeAttr("disabled");
+                    $('#talk_error').html('something went wrong').delay(6000).hide(1000);
                 });
             });
             $('#insert').live('click', function() {
