@@ -1,0 +1,6 @@
+CREATE TABLE  `lnames` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+`char_id` INT NOT NULL ,
+`location_id` INT NOT NULL ,
+`name` VARCHAR( 255 ) NOT NULL
+) ENGINE = INNODB ;

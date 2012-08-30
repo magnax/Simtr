@@ -24,7 +24,7 @@
                 Przebudzenie:
             </td>
             <td>
-                <?php echo $character['spawn_day']; ?> w <?php echo html::anchor('user/location/nameform/'.$character['location_id'], $character['location_id']); ?>
+                <?php echo $character['spawn_day']; ?> w <?php echo html::anchor('lname?id='.$character['spawn_location_id'], $character['spawn_location']); ?>
             </td>
         </tr>
         <tr>
@@ -40,7 +40,7 @@
                 Miejsce:
             </td>
             <td>
-               <?php echo html::anchor('user/location/nameform/'.$character['location_id'], $character['location']); ?>
+               <?php echo html::anchor('lname?id='.$character['location_id'], $character['location']); ?>
             </td>
         </tr>
         <tr>

@@ -1,7 +1,15 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
+/** 
+ * ChName - character name controller
+ * allows to get and change remembered characters names
+ */
+
 class Controller_ChName extends Controller_Base_Character {
     
+    /**
+     * change name of given character
+     */
     public function action_index() {
         
         if ($_POST) {
@@ -23,6 +31,7 @@ class Controller_ChName extends Controller_Base_Character {
                 $chname->name = trim($_POST['name']);
                 $chname->save();
             } elseif ($chname->id) {
+                //"forget" this character's name
                 $chname->delete();
             }
             

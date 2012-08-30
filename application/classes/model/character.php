@@ -34,7 +34,6 @@ class Model_Character extends ORM {
     //protected $name;
     //protected $sex;
     protected $spawn_date;
-    protected $spawn_location_id;
     protected $age;
     //public $location_id;
     protected $eq_weight;
@@ -99,13 +98,17 @@ class Model_Character extends ORM {
     
     public function get_info($raw_time) {
         $name = ORM::factory('chname')->name($this->id, $this->id)->name;
+        $location_name = ORM::factory('lname')->name($this->id, $this->location_id)->name;
+        $spawn_location_name = ORM::factory('lname')->name($this->id, $this->spawn_location_id)->name;
         return array(
             'id' => $this->id,
             'name' => $name ? $name : $this->name,
             'age' => $this->countVisibleAge($raw_time),
             'spawn_day' => $this->created,
             'location_id' => $this->location_id,
-            'location' => $this->location_id,
+            'spawn_location_id' => $this->spawn_location_id,
+            'location' => ($location_name) ? $location_name : 'unknown location',
+            'spawn_location' => ($spawn_location_name) ? $spawn_location_name : 'unknown location',
             'life' => 100,
             'vitality' => 100,
             'strength' => 1.2,
