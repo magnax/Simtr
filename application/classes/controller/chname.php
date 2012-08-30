@@ -37,7 +37,9 @@ class Controller_ChName extends Controller_Base_Character {
             $this->view->character_id = $_GET['id'];
             $name = ORM::factory('chname')->name($this->character->id, $_GET['id'])->name;
             if (!$name) {
-                $name = $this->character->getUnknownName($_GET['id'], $this->lang);
+                $name = ($this->character->id == $_GET['id']) 
+                    ? $this->character->name 
+                    : $this->character->getUnknownName($_GET['id'], $this->lang);
             }
             $this->view->name = $name;
             
