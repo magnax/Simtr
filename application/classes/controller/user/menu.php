@@ -11,11 +11,12 @@ class Controller_User_Menu extends Controller_Base_User {
             $new_events = $this->redis->llen("new_events:{$character->id}");
             
             $name = ORM::factory('chname')->name($character, $character)->name;
+            $location_name = ORM::factory('lname')->name($character, $character->location->id)->name;
             
             $returnedCharacters[] = array(
                 'id' => $character->id,
                 'name' => $name ? $name : $character->name,
-                'location' => $character->spawn_location->name,
+                'location' => ($location_name) ? $location_name : 'unknown location',
                 'sex' => $character->sex,
                 'project' => '??',
                 'age' => $character->created,

@@ -8,9 +8,14 @@ class Model_Character extends ORM {
     protected $_belongs_to = array(
         'spawn_location' => array(
             'model' => 'location',
-            'foreign_key' => 'location_id',
+            'foreign_key' => 'spawn_location_id',
             'far_key' => 'id'
         ),
+        'location' => array(
+            'model' => 'location',
+            'foreign_key' => 'location_id',
+            'far_key' => 'id'
+        )
     );
 
 
