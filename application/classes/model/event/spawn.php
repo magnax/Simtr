@@ -18,22 +18,21 @@ class Model_Event_Spawn extends Model_Event {
 
     }
     
-    public function dispatchArgs($event_data, $args, $character) {
+    public function dispatchArgs($event_data, $args, $character_id, $lang) {
         
         $returned = array();
         
         if (in_array('loc_type', $args)) {
-            $returned['loc_type'] = Model_Dict::getInstance($this->source)->
-                getString($event_data['loc_type']);
+            $returned['loc_type'] = ORM::factory('locationclass', $event_data['loc_type'])->name;
         }
         
         if (in_array('sndr', $args)) {
-            $name = $character->getChname($event_data['sndr']);
+            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
             if (!$name) {
-                $name = $character->getUnknownName($event_data['sndr']);
-                $name = Model_Dict::getInstance($this->source)->getString($name);
+                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
             }
-            $returned['sndr'] = html::anchor('user/char/nameform/'.$event_data['sndr'], $name);
+            $returned['sndr'] = '<a href="chname?id='.
+                $event_data['sndr'].'">'.$name.'</a>';
         }
         
         return $returned;

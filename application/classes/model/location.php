@@ -37,7 +37,7 @@ class Model_Location extends ORM {
             ->order_by(DB::expr('RAND()'))
             ->find();
         
-        return $random_location->id;
+        return $random_location;
     }
     
 }
