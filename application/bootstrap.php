@@ -87,6 +87,7 @@ Cookie::$salt = 'whatever you want';
 Kohana::init(array(
 	'base_url'   => '',
     'profile'   => false,
+    'index_file' => false,
 ));
 
 /**
