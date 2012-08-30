@@ -28,27 +28,25 @@ class Model_Event_TalkTo extends Model_Event {
 
     }
 
-    public function dispatchArgs($event_data, $args, $character) {
+    public function dispatchArgs($event_data, $args, $character_id, $lang) {
         
         $returned = array();
         
         if (in_array('sndr', $args)) {
-            $name = $character->getChname($event_data['sndr']);
+            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
             if (!$name) {
-                $name = $character->getUnknownName($event_data['sndr']);
-                $name = Model_Dict::getInstance($this->source)->getString($name);
+                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
             }
-            $returned['sndr'] = '<a href="/user/char/nameform/'.
+            $returned['sndr'] = '<a href="chname?id='.
                 $event_data['sndr'].'">'.$name.'</a>';
         }
         
         if (in_array('rcpt', $args)) {
-            $name = $character->getChname($event_data['rcpt']);
+            $name = ORM::factory('chname')->name($character_id, $event_data['rcpt'])->name;
             if (!$name) {
-                $name = $character->getUnknownName($event_data['rcpt']);
-                $name = Model_Dict::getInstance($this->source)->getString($name);
+                $name = ORM::factory('character')->getUnknownName($event_data['rcpt'], $lang);
             }
-            $returned['rcpt'] = '<a href="/user/char/nameform/'.
+            $returned['rcpt'] = '<a href="chname?id='.
                 $event_data['rcpt'].'">'.$name.'</a>';
         }
         

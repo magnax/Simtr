@@ -4,19 +4,21 @@ class Controller_User_People extends Controller_Base_Character {
 
     public function action_index() {
 
-        $characters = $this->location
-            ->getAllHearableCharacters(true, $this->character);
-        //return;
-        foreach ($characters as &$ch) {
-            $name = $this->character->getChname($ch['id']);
+        $characters = $this->location->getHearableCharacters($this->character);
+       
+        $this->view->characters = array();
+        
+        foreach ($characters as $ch) {
+            $name = ORM::factory('chname')->name($this->character->id, $ch)->name;
             if (!$name) {
-                $name = $this->character->getUnknownName($ch['id']);
-                $name = Model_Dict::getInstance($this->redis)->getString($name);
+                $name = ORM::factory('character')->getUnknownName($ch, $this->lang);
             }
-            $ch['name'] = $name;
+            $this->view->characters[] = array(
+                'name' => $name,
+                'id' => $ch,
+            );
         }
 
-        $this->view->characters = $characters;
     }
 
     public function action_hit($character_id) {
