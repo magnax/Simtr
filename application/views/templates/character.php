@@ -31,6 +31,11 @@
         socket.on('time', function (data) {
             $('#time').html(decodeRawTime(data.time));
         });
+        
+        socket.on('disconnect', function () {
+            console.log('disconnected!');
+            $('#time').addClass('error');
+        });
 
         $(document).ready(function() {
             console.log('started app');

@@ -6,7 +6,7 @@
         <script src="/assets/js/general.js"></script>
         <script>
 
-            var socket = io.connect('<?= $server_uri;?>');
+        var socket = io.connect('<?= $server_uri;?>');
         var user_id = <?= $user->id; ?>;
         
         socket.on('connect', function(data) {
@@ -25,6 +25,11 @@
                 console.log('received user event: '+data);
                 var char_id = data.char_id;
                 $('#character-'+char_id+' .character_events').html(data['new'] + ' new');
+            });
+            
+            socket.on('disconnect', function () {
+                console.log('disconnected!');
+                $('#time').addClass('error');
             });
             
         });
