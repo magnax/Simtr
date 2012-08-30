@@ -98,9 +98,10 @@ class Model_Character extends ORM {
 //    }
     
     public function get_info($raw_time) {
+        $name = ORM::factory('chname')->name($this->id, $this->id)->name;
         return array(
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => $name ? $name : $this->name,
             'age' => $this->countVisibleAge($raw_time),
             'spawn_day' => $this->created,
             'location_id' => $this->location_id,

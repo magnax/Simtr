@@ -8,7 +8,7 @@
                Nazwa:
             </td>
             <td>
-               <?php echo html::anchor('user/char/nameform/'.$character['id'], $character['name']); ?>
+               <?php echo html::anchor('chname?id='.$character['id'], $character['name']); ?>
             </td>
         </tr>
         <tr>

@@ -10,15 +10,18 @@ class Controller_User_Menu extends Controller_Base_User {
             
             $new_events = $this->redis->llen("new_events:{$character->id}");
             
+            $name = ORM::factory('chname')->name($character, $character)->name;
+            
             $returnedCharacters[] = array(
                 'id' => $character->id,
-                'name' => $character->name,
+                'name' => $name ? $name : $character->name,
                 'location' => $character->spawn_location->name,
                 'sex' => $character->sex,
                 'project' => '??',
                 'age' => $character->created,
                 'new_events' => $new_events,
             );
+            
         }
         
         $this->view->characters = $returnedCharacters;
@@ -27,11 +30,6 @@ class Controller_User_Menu extends Controller_Base_User {
 //            //get character data as array
 //            $char = Model_Character::getInstance($this->redis)
 //                ->fetchOne($ch, true);
-//
-//            if ($character_name = Model_ChNames::getInstance($this->redis)
-//                ->getName($char['id'], $char['id'])) {
-//                $char['name'] =  $character_name;
-//            }
 //            
 //            $location_name = Model_LNames::getInstance($this->redis)->getName($ch, $char['location_id']);
 //            $char['location'] = $location_name ? $location_name : $this->dict->getString('unnamed_location');
