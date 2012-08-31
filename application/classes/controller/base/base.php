@@ -62,20 +62,20 @@ class Controller_Base_Base extends Controller_Template {
         /**
          * Redis database init
          */
-        try {
+//        try {
+//        
+//            $this->redis = new Redisent(Kohana::$config->load('database.dsn'));
+//            $this->template->active_count = count($this->redis->keys('active:*'));
+//            
+//        } catch (RedisException $e) {
+//            $this->redirectError($e->getMessage());
+//        }
+
+        $this->redis = RedisDB::getInstance()
+            ->connect(Kohana::$config->load('database.dsn'))
+            ->getConnectionObject();
         
-            $this->redis = new Redisent(Kohana::$config->load('database.dsn'));
-            $this->template->active_count = count($this->redis->keys('active:*'));
-            
-        } catch (RedisException $e) {
-            $this->redirectError($e->getMessage());
-        }
-        
-        /**
-         * I know, it's second redis object, but it's for now only
-         * until I remove old code
-         */
-        RedisDB::getInstance()->connect(Kohana::$config->load('database.dsn'));
+        $this->template->active_count = count($this->redis->keys('active:*'));
         
         $this->server_uri = Kohana::$config->load('general.server_ip');
         $this->template->set_global('server_uri', $this->server_uri);

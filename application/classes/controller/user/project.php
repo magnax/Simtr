@@ -46,7 +46,6 @@ class Controller_User_Project extends Controller_Base_Character {
             ->findOneById($id);
         $this->view->project = $manager->getProject()->toArray();
 
-        print_r($this->view->project);
     }
 
     public function action_join() {
@@ -86,8 +85,10 @@ class Controller_User_Project extends Controller_Base_Character {
         $this->request->redirect('events');
     }
 
-    public function action_leave($id) {
+    public function action_leave() {
 
+        $id = $this->request->param('id');
+        
         $manager = Model_ProjectManager::getInstance(null, $this->redis)
             ->findOneById($id);
         $project = $manager->getProject();
@@ -95,15 +96,9 @@ class Controller_User_Project extends Controller_Base_Character {
         $manager->removeParticipant($this->character, $this->game->getRawTime());
         $manager->save();
 
-        $this->character->setProjectId(null);
-        $this->character->save();
-
-        if ($project->getTypeId() == 'GetRaw') {
-            $this->location->calculateUsedSlots();
-            $this->location->save();
-        }
+        RedisDB::getInstance()->del("characters:{$this->character->id}:current_project");
         
-        $this->request->redirect('user/event');
+        $this->request->redirect('events');
 
     }
 
@@ -116,7 +111,7 @@ class Controller_User_Project extends Controller_Base_Character {
             $res = ORM::factory('resource', $_POST['resource_id']);
             
             $time = ceil($_POST['amount'] / $res->gather_base * Model_GameTime::DAY_LENGTH);
-//
+
             $project_manager = Model_ProjectManager::getInstance(
                 Model_Project::getInstance(Model_Project::TYPE_GET_RAW, $this->redis)//;
             );

@@ -26,19 +26,38 @@ class RedisDB {
             throw new RedisException($e->getMessage());
         }
         
+        return self::$_instance;
+        
     }
     
+    public function getConnectionObject() {
+        return self::$_connection;
+    }
+
     public static function get($key) {
         return json_decode(self::$_connection->get($key), true);
     }
     
     public static function set($key, $value) {
-        self::$_connection->set($key, json_encode($value));
+        return self::$_connection->set($key, json_encode($value));
+    }
+    
+    public static function del($key) {
+        return self::$_connection->del($key);
     }
     
     public static function smembers($key) {
         return self::$_connection->smembers($key);
     }
+    
+    public static function llen($key) {
+        return self::$_connection->llen($key);
+    }
+    
+    public static function lrange($key, $from, $to) {
+        return self::$_connection->lrange($key, $from, $to);
+    }
+    
 }
 
 ?>
