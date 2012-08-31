@@ -119,6 +119,7 @@ class Model_Character extends ORM {
             'strength' => 1.2,
             'fighting' => 1.0,
             'eq_weight' => 3450,
+            'project_id' => null,
         );
     }
 

@@ -10,18 +10,32 @@ class Controller_User_Project extends Controller_Base_Character {
 
         $this->view->character = $this->template->character;
 
-        $this->view->projects = Model_ProjectManager::getInstance(
+        $projects = Model_ProjectManager::getInstance(
             null, $this->redis)
-                ->find($this->character->getPlaceType(), $this->character->getPlaceId());
-
-        foreach ($this->view->projects as &$p) {
-            $p['owner'] = $this->character->getChname($this->character->getId(), $p['owner_id']);
-            if (!$p['owner'] && $p['owner_id'] == $this->character->getId()) {
-                $p['owner'] = $this->character->getName();
+                ->find($this->location->id);
+        
+        $this->view->projects = array();
+        
+        foreach ($projects as $p) {
+            
+            $name = ORM::factory('chname')->name($this->character->id, $p['owner_id'])->name;
+            if (!$name) {
+                $name = ORM::factory('character')->getUnknownName($p['owner_id'], $this->lang);
             }
-            $p['name']=$this->dict->getString($p['name']);
+            $name = '<a href="chname?id='.$p['owner_id'].'">'.$name.'</a>';
+            
+            $this->view->projects[] = array(
+                'id' => $p['id'],
+                'owner_id' => $p['owner_id'],
+                'owner' => $name,
+                'name' => $p['name'],
+                'created_at' => $p['created_at'],
+            );
+
+//            $p['name']=$this->dict->getString($p['name']);
         }
-        //print_r($projects);
+
+        $this->view->character = $this->template->character;
     }
 
     public function action_info($id) {

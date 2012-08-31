@@ -2,15 +2,6 @@
 
 class Model_ProjectManager_Redis extends Model_ProjectManager {
 
-    private $places = array(
-        'loc'=>'locations',
-        'shp'=>'ships',
-        'cab'=>'cabins',
-        'veh'=>'vehicles',
-        'bld'=>'buildings',
-        'rom'=>'rooms'
-    );
-
     protected $global_id_key = 'global:IDProject';
     
     public function save() {
@@ -38,11 +29,11 @@ class Model_ProjectManager_Redis extends Model_ProjectManager {
 
     }
 
-    public function find($place_type, $place_id) {
+    public function find($place_id) {
 
         $projects = array();
-        $key = $this->places[$place_type];
-        $p = $this->source->smembers("$key:{$place_id}:projects");
+
+        $p = $this->source->smembers("locations:{$place_id}:projects");
 
         foreach ($p as $project) {
             $projects[] = $this->findOneById($project)->getProject()->toArray();
