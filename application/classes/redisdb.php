@@ -1,26 +1,43 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class RedisDB {
-    private $_connection;
-    protected $class_string = 'Redis';
-
-    function __construct() {
-        $this->_connection = new Redis();
-        $this->_connection->connect('127.0.0.1');
-    }
     
-    public function values(array $values, array $expected = NULL) {
+    private static $_instance = null;
+    private static $_connection = null;
+
+    private function __construct() {
         
     }
     
-    function get($key) {
-        return json_decode($this->_connection->get($key), true);
+    public static function getInstance() {
+        
+        if (!self::$_instance) { 
+            self::$_instance = new RedisDB(); 
+        } 
+        return self::$_instance; 
+        
     }
-    function set($key, $value) {
-        $this->_connection->set($key, json_encode($value));
+
+    public function connect($dsn) {
+        
+        try {
+            self::$_connection = new Redisent($dsn);
+        } catch (RedisException $e) {
+            throw new RedisException($e->getMessage());
+        }
+        
     }
+    
+    public static function get($key) {
+        return json_decode(self::$_connection->get($key), true);
+    }
+    
+    public static function set($key, $value) {
+        self::$_connection->set($key, json_encode($value));
+    }
+    
     public static function smembers($key) {
-        return $this->_connection->smembers($key);
+        return self::$_connection->smembers($key);
     }
 }
 

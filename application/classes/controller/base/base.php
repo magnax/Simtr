@@ -71,6 +71,12 @@ class Controller_Base_Base extends Controller_Template {
             $this->redirectError($e->getMessage());
         }
         
+        /**
+         * I know, it's second redis object, but it's for now only
+         * until I remove old code
+         */
+        RedisDB::getInstance()->connect(Kohana::$config->load('database.dsn'));
+        
         $this->server_uri = Kohana::$config->load('general.server_ip');
         $this->template->set_global('server_uri', $this->server_uri);
         
