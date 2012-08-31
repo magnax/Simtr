@@ -57,6 +57,21 @@ class Model_Location extends ORM {
         
     }
     
+    /**
+     * this method has to calculate count of free slots for 
+     * gathering
+     * 
+     * @return integer count of free slots
+     */
+    public function countUsedSlots($source) {
+        $projects = $source->smembers("locations:{$this->id}:projects");
+        $participants_count = 0;
+        foreach ($projects as $project) {
+            $participants_count += count(json_decode($source->get("projects:{$project}:participants"), true));
+        }
+        return $participants_count;
+    }
+    
 }
 
 ?>

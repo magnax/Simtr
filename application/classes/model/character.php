@@ -105,6 +105,11 @@ class Model_Character extends ORM {
         $name = ORM::factory('chname')->name($this->id, $this->id)->name;
         $location_name = ORM::factory('lname')->name($this->id, $this->location_id)->name;
         $spawn_location_name = ORM::factory('lname')->name($this->id, $this->spawn_location_id)->name;
+        $my_project_id = RedisDB::get("characters:{$this->id}:current_project");
+        $my_project = ($my_project_id) ? RedisDB::get("projects:$my_project_id") : null;
+        if ($my_project) {
+            $my_project['percent'] = $my_project['time_elapsed'] / $my_project['time'];
+        }
         return array(
             'id' => $this->id,
             'name' => $name ? $name : $this->name,
@@ -119,7 +124,8 @@ class Model_Character extends ORM {
             'strength' => 1.2,
             'fighting' => 1.0,
             'eq_weight' => 3450,
-            'project_id' => null,
+            'project_id' => $my_project_id,
+            'myproject' => $my_project,
         );
     }
 

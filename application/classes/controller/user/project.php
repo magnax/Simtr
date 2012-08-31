@@ -38,7 +38,9 @@ class Controller_User_Project extends Controller_Base_Character {
         $this->view->character = $this->template->character;
     }
 
-    public function action_info($id) {
+    public function action_info() {
+        
+        $id = $this->request->param('id');
         
         $manager = Model_ProjectManager::getInstance(null, $this->redis)
             ->findOneById($id);
@@ -47,8 +49,9 @@ class Controller_User_Project extends Controller_Base_Character {
         print_r($this->view->project);
     }
 
-    public function action_join($id) {
+    public function action_join() {
 
+        $id = $this->request->param('id');
         //manager
         $manager = Model_ProjectManager::getInstance(null, $this->redis)
             ->findOneById($id);
@@ -62,16 +65,16 @@ class Controller_User_Project extends Controller_Base_Character {
 
             if (!$errors) {
 
-                $manager->addParticipant($this->character, $this->game->getRawTime());
-                $manager->save();
-                //print_r($manager);
-
-                $this->character->setProjectId($project->getId());
-                $this->character->save();
-
                 if ($project->getTypeId() == 'GetRaw') {
-                    $this->location->calculateUsedSlots();
-                    $this->location->save();
+                    $used_slots = $this->location->countUsedSlots($this->redis);
+                    
+                    if ($used_slots < $this->location->town->slots) {
+                        $manager->addParticipant($this->character, $this->game->getRawTime());
+                        $manager->save();
+                    }
+
+                    $this->redis->set("characters:{$this->character->id}:current_project", $project->getId());
+
                 }
             }
         }
@@ -80,7 +83,7 @@ class Controller_User_Project extends Controller_Base_Character {
             $session->set_flash('errors', json_encode($errors));
         }
         
-        $this->request->redirect('user/event');
+        $this->request->redirect('events');
     }
 
     public function action_leave($id) {
