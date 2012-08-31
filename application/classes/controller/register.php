@@ -48,7 +48,7 @@ class Controller_Register extends Controller_Base_Guest {
                         '">'.Kohana::$config->load('general.site_url').'index.php/login/activate?id='.
                         $user->id.'&code='.$activateCode.'</a>';
                                         
-                    $email = Email::factory('Activate your Fabular account', $message)
+                    $email = Email::factory('Activate your Fabular account')
                         ->message($message, 'text/html')
                         ->to($user->email)
                         ->bcc('magnax@gmail.com')
