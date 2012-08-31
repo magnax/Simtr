@@ -1,8 +1,8 @@
 <div class="title_bar">
-    <?php echo $l['name']; ?>: WYJŚCIA
+    <?php echo $location['name']; ?>: WYJŚCIA
 </div>
-<?php if ($l['exits']): ?>
-<?php foreach ($l['exits'] as $exit): ?>
+<?php if ($exits): ?>
+<?php foreach ($exits as $exit): ?>
     <div>
         <?php echo html::anchor('user/point/e/'.$exit['id'], '[wskaż]'); ?> 
         [idź] [buduj] 
@@ -13,10 +13,10 @@
     No exits from this location! You're trapped!
 <?php endif; ?>
 <div class="title_bar">
-    <?php echo $l['name']; ?>: OPIS
+    <?php echo $location['name']; ?>: OPIS
 </div>
-<?php echo $l['used_slots']; ?> out of <?php echo $l['res_slots']; ?> resource slots are used<br />
-<?php foreach ($l['resources'] as $res): ?>
+<?php echo $location['used_slots']; ?> out of <?php echo $location['res_slots']; ?> resource slots are used<br />
+<?php foreach ($location['resources'] as $res): ?>
     <?php echo html::anchor('user/project/get_raw/'.$res['id'], '[zbieraj]'); ?>
     <?php echo $res['name']; ?> (<?php echo $res['id']; ?>)<br />
 <?php endforeach; ?>

@@ -1,10 +1,10 @@
 <?php
 
-abstract class Model_Resource {
+class Model_Resource extends ORM {
 
-    protected $id;
-    protected $name;
-    protected $type;
+//    protected $id;
+//    protected $name;
+//    protected $type;
     
     /**
      * podstawowa ilość zbierana na dzień
@@ -16,20 +16,20 @@ abstract class Model_Resource {
      * raw resource?
      * @var boolean 
      */
-    protected $is_raw;
+//    protected $is_raw;
 
-    protected $source;
+//    protected $source;
 
-    public function  __construct($source) {
-        $this->source = $source;
-    }
-
-    public static function getInstance($source) {
-        //if ($source instanceof Redisent) {
-        if ($source instanceof Redis) {
-            return new Model_Resource_Redis($source);
-        }
-    }
+//    public function  __construct($source) {
+//        $this->source = $source;
+//    }
+//
+//    public static function getInstance($source) {
+//        //if ($source instanceof Redisent) {
+//        if ($source instanceof Redis) {
+//            return new Model_Resource_Redis($source);
+//        }
+//    }
     
     public function getGatherBase() {
         return $this->gather_base;
@@ -69,17 +69,17 @@ abstract class Model_Resource {
         );
     }
     
-    public function update($post) {
-        $this->name = $post['name'];
-        $this->type = $post['type'];
-        $this->gather_base = $post['gather_base'];
-        $this->is_raw = isset($post['is_raw']) && $post['is_raw'];
-    }
+//    public function update($post) {
+//        $this->name = $post['name'];
+//        $this->type = $post['type'];
+//        $this->gather_base = $post['gather_base'];
+//        $this->is_raw = isset($post['is_raw']) && $post['is_raw'];
+//    }
 
-    abstract public function findOneById($id);
-    abstract public function findAll($name_only = true, $raw = false);
-    abstract public function getDictionaryName($type);
-    abstract public function save();
+//    abstract public function findOneById($id);
+//    abstract public function findAll($name_only = true, $raw = false);
+//    abstract public function getDictionaryName($type);
+//    abstract public function save();
 
 }
 

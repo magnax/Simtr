@@ -10,6 +10,10 @@ class Model_Town extends ORM {
         )
     );
     
+    public function getResources() {
+//        return ORM::factory('locationresource')->
+    }
+    
 }
 
 ?>

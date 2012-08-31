@@ -7,7 +7,12 @@ class Model_Location extends ORM {
             'model' => 'town',
             'foreign_key' => 'location_id',
             'far_key' => 'id',
-        )
+        ),
+        'locationtype' => array(
+            'model' => 'locationtype',
+            'foreign_key' => 'id',
+            'far_key' => 'locationtype_id',
+        ),
     );
     
     protected $_has_many = array(
@@ -15,7 +20,13 @@ class Model_Location extends ORM {
             'model' => 'character',
             'foreign_key' => 'location_id',
             'far_key' => 'id'
-        )
+        ),
+        'resources' => array(
+            'model' => 'resource',
+            'through' => 'locations_resources',
+            'foreign_key' => 'location_id',
+            'far_key' => 'resource_id'
+        ),
     );
     
     public function getHearableCharacters() {
