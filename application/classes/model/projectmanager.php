@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 abstract class Model_ProjectManager {
 
@@ -15,7 +15,7 @@ abstract class Model_ProjectManager {
             $source = $project->getSource();
         }
         //if ($source instanceof Redisent) {
-        if ($source instanceof Redis) {
+        if ($source instanceof Redisent) {
             return new Model_ProjectManager_Redis($project, $source);
         }
     }

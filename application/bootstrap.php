@@ -132,7 +132,7 @@ Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))', array('id'=>'.*'))
 	));
 
 //default user routes
-Route::set('user_default', 'user(/<controller>(/<action>(/<id>)))')
+Route::set('user_default', 'user(/<controller>(/<action>(/<id>)))', array('id'=>'.*'))
 	->defaults(array(
         'directory'  => 'user',
 		'controller' => 'menu',

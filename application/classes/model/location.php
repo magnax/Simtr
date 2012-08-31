@@ -51,6 +51,12 @@ class Model_Location extends ORM {
         return $random_location;
     }
     
+    public function addProject($project_id, $source) {
+        
+        $source->sadd("locations:{$this->id}:projects", $project_id);
+        
+    }
+    
 }
 
 ?>

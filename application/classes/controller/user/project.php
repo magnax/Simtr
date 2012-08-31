@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_User_Project extends Controller_Base_Character {
 
@@ -90,45 +90,44 @@ class Controller_User_Project extends Controller_Base_Character {
 
     }
 
-    public function action_get_raw($id) {
-
-        $r = Model_Resource::getInstance($this->redis)->
-            findOneById($id)->toArray();
-        $this->view->resource = $r;
- 
-    }
-
-    public function action_start() {
-
-        //pierwsze, naiwne liczenie czasu trwania projektu
-        //tylko na podstawie ilości i dziennego zbioru
-        $res = Model_Resource::getInstance($this->redis)
-            ->findOneById($_POST['resource_id']);
-
-        $time = ceil($_POST['amount'] / $res->getGatherBase() * Model_GameTime::DAY_LENGTH);
-
-        $project = Model_ProjectManager::getInstance(
-            Model_Project::getInstance(Model_Project::TYPE_GET_RAW, $this->redis)//;
-        );
-
-        $data = array(
-            'name'=>$res->getType().' '.$res->getName('d'),
-            'owner_id'=>$this->character->getId(),
-            'amount'=>$_POST['amount'],
-            'time'=>$time,
-            'type_id'=>$_POST['type_id'],
-            'place_type'=>$this->character->getPlaceType(),
-            'place_id'=>$this->character->getPlaceID(),
-            'resource_id'=>$_POST['resource_id'],
-            'created_at'=>$this->game->getRawTime()
-        );
-        $project->set($data);
-        $project->save();
-
-        $this->location->addProject($project->getId(), true);
-
-        $this->request->redirect('user/project');
+    public function action_get_raw() {
         
+        if ($_POST) {
+            
+            //pierwsze, naiwne liczenie czasu trwania projektu
+            //tylko na podstawie ilości i dziennego zbioru
+            $res = ORM::factory('resource', $_POST['resource_id']);
+            
+            $time = ceil($_POST['amount'] / $res->gather_base * Model_GameTime::DAY_LENGTH);
+//
+            $project_manager = Model_ProjectManager::getInstance(
+                Model_Project::getInstance(Model_Project::TYPE_GET_RAW, $this->redis)//;
+            );
+
+            $data = array(
+                'name'=>$res->projecttype->find()->name.' '.$res->d,
+                'owner_id'=>$this->character->id,
+                'amount'=>$_POST['amount'],
+                'time'=>$time,
+                'type_id'=>$_POST['type_id'],
+                'place_type'=>$this->location->locationtype_id,
+                'place_id'=>$this->location->id,
+                'resource_id'=>$_POST['resource_id'],
+                'created_at'=>$this->game->getRawTime()
+            );
+
+            $project_manager->set($data);
+            $project_manager->save();
+
+            $this->location->addProject($project_manager->getId(), $this->redis);
+
+            $this->request->redirect('events');
+        }
+        
+        $id = $this->request->param('id');
+        $r = new Model_Resource($id);
+        $this->view->resource = $r->as_array();
+ 
     }
 
 }

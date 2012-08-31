@@ -2,23 +2,13 @@
 
 class Model_Resource extends ORM {
 
-//    protected $id;
-//    protected $name;
-//    protected $type;
-    
-    /**
-     * podstawowa ilość zbierana na dzień
-     * @var integer
-     */
-    protected $gather_base;
-    
-    /**
-     * raw resource?
-     * @var boolean 
-     */
-//    protected $is_raw;
-
-//    protected $source;
+    protected $_has_one = array(
+        'projecttype' => array(
+            'model' => 'projecttype',
+            'foreign_key' => 'id',
+            'far_key' => 'projecttype_id',
+        ),
+    );
 
 //    public function  __construct($source) {
 //        $this->source = $source;
