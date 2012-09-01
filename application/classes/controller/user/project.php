@@ -20,9 +20,13 @@ class Controller_User_Project extends Controller_Base_Character {
             
             $name = ORM::factory('chname')->name($this->character->id, $p['owner_id'])->name;
             if (!$name) {
-                $name = ORM::factory('character')->getUnknownName($p['owner_id'], $this->lang);
+                if ($p['owner_id'] == $this->character->id) {
+                    $name = $this->character->name;
+                } else {
+                    $name = ORM::factory('character')->getUnknownName($p['owner_id'], $this->lang);
+                }
             }
-            $name = '<a href="chname?id='.$p['owner_id'].'">'.$name.'</a>';
+            $name = '<a href="/chname?id='.$p['owner_id'].'">'.$name.'</a>';
             
             $this->view->projects[] = array(
                 'id' => $p['id'],

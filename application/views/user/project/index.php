@@ -8,7 +8,7 @@ Projekty:<br />
             <?php echo html::anchor('user/project/join/'.$project['id'], '[Dołącz]'); ?>
         <?php endif; ?>
         <?php echo $project['name']; ?>
-        (<?php echo Model_GameTime::formatDateTime($project['created_at'], "d-h"); ?>
+        (<?php echo Model_GameTime::formatDateTime($project['created_at'], "d-h:m"); ?>
         <?php echo $project['owner']; ?>)
     </div>
 <?php endforeach; ?>
