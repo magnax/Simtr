@@ -8,6 +8,20 @@
             
         var socket = io.connect('<?= $server_uri;?>');
         var char_id = <?= $character['id']; ?>;
+        var project_id = <?= $character['project_id']; ?>;
+        
+        //project update
+        <? if ($character['project_id']): ?>
+            var project = {
+                'time_elapsed': <?= $character['myproject']['time_elapsed']; ?>,
+                'time_zero': <?= $character['myproject']['time_zero']; ?>,
+                'time': <?= $character['myproject']['time']; ?>,
+                'speed': <?= $character['myproject']['speed']; ?>
+            };
+        <? else: ?>
+            var project = {};
+        <? endif; ?>
+
         
         socket.on('connect', function(data) {
             console.log('connected');
@@ -30,6 +44,10 @@
 
         socket.on('time', function (data) {
             $('#time').html(decodeRawTime(data.time));
+            if (project) {
+                var now = (project.time_elapsed + ((data.time - project.time_zero) * project.speed)) / project.time * 100;                  
+                $('#project_percent').html(Math.round(now*100)/100);
+            }
         });
         
         socket.on('disconnect', function () {
@@ -60,6 +78,19 @@
                 var exists = $('#events ul li[data-id="9888"]').length;
                 console.log(exists);
             });
+            
+            var timer = function() {
+                    var now = (project.time_elapsed + ((Math.floor(Date.now()/1000) - project.time_zero) * project.speed)) / project.time * 100;
+//                    
+                    $('#project_percent').html(Math.round(now*100)/100);
+                    //console.log(now);
+                    //window.setTimeout(timer, 1000);
+                };
+//            //project update, if project
+//            //if (project) {
+                //window.setTimeout(timer, 1000); 
+//            //}
+            
         });
         
         </script>

@@ -48,8 +48,8 @@
                 Projekt:
             </td>
             <td>
-                <?php if (isset($character['project_id'])) : ?>
-                    (<?php echo $character['myproject']['name']; ?> <?php echo $character['myproject']['percent']; ?>%)
+                <?php if (isset($character['project_id']) && $character['project_id']) : ?>
+                    (<?php echo $character['myproject']['name']; ?> <span id="project_percent"><?php echo $character['myproject']['percent']; ?></span>%)
                     <?php echo html::anchor('user/project/leave/'.$character['project_id'], '[Porzuć]'); ?>
                 <?php endif; ?>
             </td>

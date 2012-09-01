@@ -25,32 +25,23 @@ class Model_Event_GetRawEnd extends Model_Event {
         $this->amount = $amount;
     }
 
-    public function dispatchArgs($event_data, $args, $character) {
-
-        $dict = Model_Dict::getInstance($this->source);
-        
-        $res = Model_Resource::getInstance($this->source)
-            ->findOneById($event_data['res_id']);
-        
-        $res_name = $res->getDictionaryName('d');
-        $res_action = $res->getType();
+    public function dispatchArgs($event_data, $args, $character_id, $lang) {
         
         $returned = array();
         
-        $returned['name'] = $dict->getString($res_action);
-        $returned['res_id'] = $res_name;
+        $returned['name'] = $event_data['name'];
+        $returned['res_id'] = $event_data['res_id'];
         
         if (in_array('amount', $args)) {
             $returned['amount'] = $event_data['amount'];
         }
         
         if (in_array('sndr', $args)) {
-            $name = $character->getChname($event_data['sndr']);
+            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
             if (!$name) {
-                $name = $character->getUnknownName($event_data['sndr']);
-                $name = Model_Dict::getInstance($this->source)->getString($name);
+                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
             }
-            $returned['sndr'] = '<a href="/user/char/nameform/'.
+            $returned['sndr'] = '<a href="chname?id='.
                 $event_data['sndr'].'">'.$name.'</a>';
         }
 

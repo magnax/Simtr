@@ -35,10 +35,18 @@ class RedisDB {
     }
 
     public static function get($key) {
+        return self::$_connection->get($key);
+    }
+    
+    public static function getJSON($key) {
         return json_decode(self::$_connection->get($key), true);
     }
     
     public static function set($key, $value) {
+        return self::$_connection->set($key, $value);
+    }
+    
+    public static function setJSON($key, $value) {
         return self::$_connection->set($key, json_encode($value));
     }
     
@@ -50,12 +58,28 @@ class RedisDB {
         return self::$_connection->smembers($key);
     }
     
+    public static function srem($key, $element) {
+        return self::$_connection->srem($key, $element);
+    }
+
     public static function llen($key) {
         return self::$_connection->llen($key);
     }
     
     public static function lrange($key, $from, $to) {
         return self::$_connection->lrange($key, $from, $to);
+    }
+    
+    public static function keys($pattern) {
+        return self::$_connection->keys($pattern);
+    }
+    
+    public static function incr($key) {
+        return self::$_connection->incr($key);
+    }
+    
+    public static function lpush($key, $value) {
+        return self::$_connection->lpush($key, $value);
     }
     
 }
