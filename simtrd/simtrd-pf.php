@@ -31,14 +31,14 @@ foreach ($argv as $k=>$arg) {
 }
 
 // Help mode. Shows allowed argumentents and quit directly
-//if ($runmode['help'] == true) {
-//    echo 'Usage: '.$argv[0].' [runmode]' . "\n";
-//    echo 'Available runmodes:' . "\n";
-//    foreach ($runmode as $runmod=>$val) {
-//        echo ' --'.$runmod . "\n";
-//    }
-//    die();
-//}
+if ($runmode['help'] == true) {
+    echo 'Usage: '.$argv[0].' [runmode]' . "\n";
+    echo 'Available runmodes:' . "\n";
+    foreach ($runmode as $runmod=>$val) {
+        echo ' --'.$runmod . "\n";
+    }
+    die();
+}
 
 define ('PATH', $config['time_daemon_path']);
 define ('SLEEP_TIME', 20);
@@ -61,28 +61,28 @@ $options = array(
     'appPidLocation' => $config['finished_pid_file'],
 );
 
-//System_Daemon::setOptions($options);
+System_Daemon::setOptions($options);
 
-//if (!$runmode['no-daemon']) {
-//    // Spawn Daemon
-//    System_Daemon::start();
-//}
+if (!$runmode['no-daemon']) {
+    // Spawn Daemon
+    System_Daemon::start();
+}
 
 // With the runmode --write-initd, this program can automatically write a
 // system startup file called: 'init.d'
 // This will make sure your daemon will be started on reboot
-//if (!$runmode['write-initd']) {
-//    System_Daemon::info('not writing an init.d script this time');
-//} else {
-//    if (($initd_location = System_Daemon::writeAutoRun()) === false) {
-//        System_Daemon::notice('unable to write init.d script');
-//    } else {
-//        System_Daemon::info(
-//            VER.' sucessfully written startup script: %s',
-//            $initd_location
-//        );
-//    }
-//}
+if (!$runmode['write-initd']) {
+    System_Daemon::info('not writing an init.d script this time');
+} else {
+    if (($initd_location = System_Daemon::writeAutoRun()) === false) {
+        System_Daemon::notice('unable to write init.d script');
+    } else {
+        System_Daemon::info(
+            VER.' sucessfully written startup script: %s',
+            $initd_location
+        );
+    }
+}
 
 //redis init:
 require_once '../application/modules/redisent/classes/redisent.php';
@@ -138,7 +138,7 @@ $places = array(
 
 define('EQ_MAX', 15000);
 
-//while(!System_Daemon::isDying() && $runningOK) {
+while(!System_Daemon::isDying() && $runningOK) {
 
     $time = getTime();
 
@@ -151,7 +151,7 @@ define('EQ_MAX', 15000);
         array_walk($projects_ids, 'strip');
         foreach ($projects_ids as $project_id) {
             
-//            System_Daemon::info(microtime(true).': rozliczam: '.$project_id);
+            System_Daemon::info(microtime(true).': rozliczam: '.$project_id);
             
             $project = json_decode($redis->get("projects:$project_id"), true);
             
@@ -210,16 +210,16 @@ define('EQ_MAX', 15000);
             
             echo "Event: $event_type\n";
             
-            if ($raws) {
-                $raws = json_decode($raws, true);
-                if (in_array($project['resource_id'], array_keys($raws))) {
-                    $raws[$project['resource_id']] += $project['amount'];
-                } else {
-                    $raws[$project['resource_id']] = $project['amount'];
-                }
-            } else {
-                $raws[$project['resource_id']] = $project['amount'];
-            }
+//            if ($raws) {
+//                $raws = json_decode($raws, true);
+//                if (in_array($project['resource_id'], array_keys($raws))) {
+//                    $raws[$project['resource_id']] += $project['amount'];
+//                } else {
+//                    $raws[$project['resource_id']] = $project['amount'];
+//                }
+//            } else {
+//                $raws[$project['resource_id']] = $project['amount'];
+//            }
 
 //            System_Daemon::info('Raws: '.json_encode($raws));
 
@@ -295,13 +295,13 @@ define('EQ_MAX', 15000);
 
     //notice tylko jeśli były projekty
     if (count($projects_ids)) {
-//        System_Daemon::info('Count: '.count($projects_ids).'; time: '.($end_time-$start_time));
+        System_Daemon::info('Count: '.count($projects_ids).'; time: '.($end_time-$start_time));
     }
 
-//    System_Daemon::iterate(SLEEP_TIME);
+    System_Daemon::iterate(SLEEP_TIME);
 
-//}
+}
 
-//System_Daemon::stop();
+System_Daemon::stop();
 
 ?>
