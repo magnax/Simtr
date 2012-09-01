@@ -281,6 +281,27 @@ class Model_Character extends ORM {
         return $redis->get("connected_user:{$this->user_id}");
     }
     
+    /**
+     * gets inventory raws for character
+     */
+    public function getRaws() {
+
+        $raws = RedisDB::getInstance()->getJSON("raws:{$this->id}");
+        $tmp = array();
+        if ($raws) {
+            foreach ($raws as $k => $v) {
+                $resource = ORM::factory('resource', $k)->d;
+                $tmp[$k] = array(
+                    'id'=>$k,
+                    'name'=>$resource,
+                    'amount'=>$v
+                );
+            }
+        }
+        return $tmp;
+
+    }
+    
 }
 
 ?>

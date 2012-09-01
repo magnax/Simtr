@@ -108,26 +108,6 @@ class Model_Character_Redis {
         
     }
 
-    /**
-     * pobiera surowce z inwentarza
-     */
-    public function getRaws() {
-
-        $raws = json_decode($this->source->get("raws:{$this->id}"), true);
-        $tmp = array();
-        if ($raws) {
-            foreach ($raws as $k => $v) {
-                $tmp[$k] = array(
-                    'id'=>$k,
-                    'name'=>$this->source->get("resources:$k:names:d"),
-                    'amount'=>$v
-                );
-            }
-        }
-        return $tmp;
-
-    }
-
     public function putRaw($id, $amount) {
 
         $raws = json_decode($this->source->get("raws:{$this->id}"), true);
