@@ -44,9 +44,14 @@
 
         socket.on('time', function (data) {
             $('#time').html(decodeRawTime(data.time));
-            if (project) {
+            if (project.hasOwnProperty('time_zero')) {
                 var now = (project.time_elapsed + ((data.time - project.time_zero) * project.speed)) / project.time * 100;                  
-                $('#project_percent').html(Math.round(now*100)/100);
+                if (now >= 100) {
+                    $('#project_percent').html('<b>100</b>');
+                    project = {};
+                } else {
+                    $('#project_percent').html(Math.round(now*100)/100);
+                }
             }
         });
         
