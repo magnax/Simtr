@@ -2,12 +2,12 @@
     Profil postaci
 </div>
 <div id="userinfo">
-    <table>
+    <table width="600">
         <tr>
-            <td>
+            <td width="180">
                Nazwa:
             </td>
-            <td>
+            <td width="420">
                <?php echo html::anchor('chname?id='.$character['id'], $character['name']); ?>
             </td>
         </tr>
@@ -24,7 +24,7 @@
                 Przebudzenie:
             </td>
             <td>
-                <?php echo $character['spawn_day']; ?> w <?php echo html::anchor('lname?id='.$character['spawn_location_id'], $character['spawn_location']); ?>
+                Day <?php echo Model_GameTime::formatDateTime($character['spawn_day'], 'd'); ?> w <?php echo html::anchor('lname?id='.$character['spawn_location_id'], $character['spawn_location']); ?>
             </td>
         </tr>
         <tr>
@@ -32,7 +32,7 @@
                 Dźwiga:
             </td>
             <td>
-               <?php echo $character['eq_weight']; ?>g
+               <?php echo $character['eq_weight']; ?> gram
             </td>
         </tr>
         <tr>
