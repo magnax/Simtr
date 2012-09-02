@@ -108,25 +108,6 @@ class Model_Character_Redis {
         
     }
 
-    public function putRaw($id, $amount) {
-
-        $raws = json_decode($this->source->get("raws:{$this->id}"), true);
-        
-        if ($raws) {
-            $raws[$id] -= $amount;
-            if ($raws[$id] <= 0) {
-                unset($raws[$id]);
-            }
-            
-            $this->source->set("raws:{$this->id}", json_encode($raws));
-            
-            $this->eq_weight = $this->calculateEqWeight();
-            $this->save();
-            
-        }
-
-    }
-
     public function addItem($item_id) {
         $this->source->sadd("char_items:{$this->id}", $item_id);
     }

@@ -85,6 +85,21 @@ $this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
 $this->redis->rpush("$key:$person:params", 'res_id');$loaded++;
 $this->redis->rpush("$key:$person:params", 'rcpt');$loaded++;
 
+//PutRaw
+$key = "global:event_tpl:PutRaw";
+$person = 1;
+$this->redis->set("$key:$person", 'Odkładasz %sg %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'amount');$loaded++;
+$this->redis->rpush("$key:$person:params", 'res_id');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Widzisz jak %s odkłada %s %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
+$this->redis->rpush("$key:$person:params", 'amount');$loaded++;
+$this->redis->rpush("$key:$person:params", 'res_id');$loaded++;
+
 //TalkTo
 $key = "global:event_tpl:TalkTo";
 $person = 1;

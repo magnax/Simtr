@@ -42,6 +42,19 @@ class Model_Location extends ORM {
         
     }
     
+    public function getVisibleCharacters() {
+        
+        $returned = array();
+        //for now only, these are actually all visible characters
+        $all = $this->characters->find_all()->as_array();
+        foreach ($all as $character) {
+            $returned[] = $character->id;
+        }
+        
+        return $returned;
+        
+    }
+    
     public static function getRandomSpawnLocation() {
         $random_location = ORM::factory('location')
             ->where('locationtype_id', '=', 1)
@@ -70,6 +83,63 @@ class Model_Location extends ORM {
             $participants_count += count(json_decode($source->get("projects:{$project}:participants"), true));
         }
         return $participants_count;
+    }
+    
+    public function getRaws() {
+
+        $raws = RedisDB::getInstance()->getJSON("locations:{$this->id}:raws");
+        
+        $tmp = array();
+        if ($raws) {
+            foreach ($raws as $k => $v) {
+                $resource = ORM::factory('resource', $k)->d;
+                $tmp[$k] = array(
+                    'id'=>$k,
+                    'name'=>$resource,
+                    'amount'=>$v
+                );
+            }
+        }
+        return $tmp;
+
+    }
+    
+    public function getItems() {
+        return array();
+    }
+
+    public function addRaw($id, $amount) {
+        
+        $raws = RedisDB::getInstance()->getJSON("locations:{$this->id}:raws");
+        
+        if ($raws) {
+            if (in_array($id, array_keys($raws))) {
+                $raws[$id] += $amount;
+            } else {
+                $raws[$id] = $amount;
+            }
+        } else {
+            $raws[$id] = $amount;
+        }
+
+        RedisDB::getInstance()->setJSON("locations:{$this->id}:raws", $raws);
+        
+    }
+    
+    public function putRaw($id, $amount) {
+
+        $raws = RedisDB::getInstance()->getJSON("locations:{$this->id}:raws");
+        
+        if ($raws) {
+            $raws[$id] -= $amount;
+            if ($raws[$id] <= 0) {
+                unset($raws[$id]);
+            }
+            
+            RedisDB::getInstance()->setJSON("locations:{$this->id}:raws", $raws);
+            
+        }
+
     }
     
 }

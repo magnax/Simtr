@@ -54,63 +54,82 @@ class Controller_Events extends Controller_Base_Character {
         
     }
 
-    public function action_put_raw($id) {
+    public function action_put_raw() {
+        
+        if ($_POST) {
+            
+            $id = $_POST['res_id'];
+            $amount = $_POST['amount'];
+
+            $this->character->putRaw($id, $amount);
+            $this->location->addRaw($id, $amount);
+
+            //wysłanie eventu
+            $event_sender = Model_EventSender::getInstance(
+                Model_Event::getInstance(
+                    Model_Event::PUT_RAW, $this->game->getRawTime(), $this->redis
+                )
+            );
+            $event_sender->setResource($_POST['res_id'], $_POST['amount']);
+            //recipients to lista obiektów klasy Character
+            $event_sender->addRecipients($this->location->getVisibleCharacters());
+            $event_sender->setSender($this->character->id);
+            $event_sender->send();
+
+            Model_EventNotifier::notify(
+                $event_sender->getEvent()->getRecipients(), 
+                $event_sender->getEvent()->getId(), 
+                $this->redis, $this->lang
+            );
+            
+            $this->request->redirect('events');
+            
+        }
+        
+        $id = $this->request->param('id');
+        
         $inventory = $this->character->getRaws();
         $this->view->res = $inventory[$id];
         $this->view->character = $this->template->character;
     }
 
-    public function action_put() {
-
-        $id = $_POST['res_id'];
-        $amount = $_POST['amount'];
-
-        $this->character->putRaw($id, $amount);
-        $this->location->addRaw($id, $amount);
-
-        //wysłanie eventu
-        $event = Model_EventSender::getInstance(
-            Model_Event::getInstance(
-                Model_Event::PUT_RAW, $this->game->getRawTime(), $this->redis
-            )
-        );
-        $event->setResource($_POST['res_id'], $_POST['amount']);
-        //recipients to lista obiektów klasy Character
-        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType()));
-        $event->setSender($this->character->getId());
-        $event->send();
-
-        $this->request->redirect('user/event');
+    public function action_get_raw() {
         
-    }
+        if ($_POST) {
+        
+            $id = $_POST['res_id'];
+            $amount = $_POST['amount'];
 
-    public function action_get_raw($id) {
+            $this->location->putRaw($id, $amount);
+            $this->character->addRaw($id, $amount);
+
+            //wysłanie eventu
+            $event_sender = Model_EventSender::getInstance(
+                Model_Event::getInstance(
+                    Model_Event::GET_RAW, $this->game->raw_time, $this->redis
+                )
+            );
+            $event_sender->setResource($_POST['res_id'], $_POST['amount']);
+            //recipients to lista obiektów klasy Character
+            $event_sender->addRecipients($this->location->getVisibleCharacters());
+            $event_sender->setSender($this->character->id);
+            $event_sender->send();
+
+            Model_EventNotifier::notify(
+                $event_sender->getEvent()->getRecipients(), 
+                $event_sender->getEvent()->getId(), 
+                $this->redis, $this->lang
+            );
+            
+            $this->request->redirect('events');
+            
+        }
+        
+        $id = $this->request->param('id');
+        
         $raws = $this->location->getRaws();
         $this->view->res = $raws[$id];
         $this->view->character = $this->template->character;
-    }
-
-    public function action_get() {
-
-        $id = $_POST['res_id'];
-        $amount = $_POST['amount'];
-
-        $this->location->putRaw($id, $amount);
-        $this->character->addRaw($id, $amount);
-
-        //wysłanie eventu
-        $event = Model_EventSender::getInstance(
-            Model_Event::getInstance(
-                Model_Event::GET_RAW, $this->game->raw_time, $this->redis
-            )
-        );
-        $event->setResource($_POST['res_id'], $_POST['amount']);
-        //recipients to lista obiektów klasy Character
-        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType()));
-        $event->setSender($this->character->getId());
-        $event->send();
-
-        $this->request->redirect('user/event');
         
     }
 

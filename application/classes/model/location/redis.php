@@ -114,45 +114,6 @@ class Model_Location_Redis extends Model_Location {
         $this->source->exec();
     }
 
-    public function getRaws() {
-
-        $raws = $this->source->smembers("locations:{$this->id}:raws");
-        $tmp = array();
-        foreach ($raws as $r) {
-            $raw = json_decode($r, true);
-            $ak = array_keys($raw);
-            $tmp[$ak[0]] = array(
-                'id'=>$ak[0],
-                'name'=>$this->source->get("resources:{$ak[0]}:names:d"),
-                'amount'=>$raw[$ak[0]]
-            );
-        }
-        return $tmp;
-
-    }
-
-    public function addRaw($id, $amount) {
-        $raws = $this->getRaws();
-        if (isset($raws[$id])) {
-            $raws[$id]['amount'] += $amount;
-        } else {
-            $raws[$id] = array(
-              'id'=>$id,
-                'amount'=>$amount,
-                'name'=>''
-            );
-        }
-
-        //$tmp = array();
-
-        $this->source->del("locations:{$this->id}:raws");
-
-        foreach ($raws as $r) {
-            $tmp = array($r['id']=>$r['amount']);
-            $this->source->sadd("locations:{$this->id}:raws", json_encode($tmp));
-        }
-    }
-
     public function addItem($item_id) {
         $this->source->sadd("loc_items:{$this->id}", $item_id);
     }

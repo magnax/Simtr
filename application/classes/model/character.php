@@ -131,7 +131,7 @@ class Model_Character extends ORM {
             'vitality' => 100,
             'strength' => 1.2,
             'fighting' => 1.0,
-            'eq_weight' => 3450,
+            'eq_weight' => $this->calculateWeight(),
             'project_id' => ($my_project_id) ? $my_project_id : 0,
             'myproject' => $my_project,
         );
@@ -282,11 +282,34 @@ class Model_Character extends ORM {
     }
     
     /**
+     * calculates character inventory weight
+     * 
+     * @return int character inventory total weight (raws, items, keys)
+     */
+    public function calculateWeight() {
+        
+        //raws... and only raws for a while ;-)
+        $raws = RedisDB::getInstance()->getJSON("raws:{$this->id}");
+        
+        $weight = 0;
+        
+        if ($raws) {
+            foreach ($raws as $k => $v) {
+                $weight += $v;
+            }
+        }
+        
+        return $weight;
+        
+    }
+
+        /**
      * gets inventory raws for character
      */
     public function getRaws() {
 
         $raws = RedisDB::getInstance()->getJSON("raws:{$this->id}");
+        
         $tmp = array();
         if ($raws) {
             foreach ($raws as $k => $v) {
@@ -299,6 +322,40 @@ class Model_Character extends ORM {
             }
         }
         return $tmp;
+
+    }
+    
+    public function addRaw($id, $amount) {
+        
+        $raws = RedisDB::getInstance()->getJSON("raws:{$this->id}");
+        
+        if ($raws) {
+            if (in_array($id, array_keys($raws))) {
+                $raws[$id] += $amount;
+            } else {
+                $raws[$id] = $amount;
+            }
+        } else {
+            $raws[$id] = $amount;
+        }
+
+        RedisDB::getInstance()->setJSON("raws:{$this->id}", $raws);
+        
+    }
+    
+    public function putRaw($id, $amount) {
+
+        $raws = RedisDB::getInstance()->getJSON("raws:{$this->id}");
+        
+        if ($raws) {
+            $raws[$id] -= $amount;
+            if ($raws[$id] <= 0) {
+                unset($raws[$id]);
+            }
+            
+            RedisDB::getInstance()->setJSON("raws:{$this->id}", $raws);
+            
+        }
 
     }
     
