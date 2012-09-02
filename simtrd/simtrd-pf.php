@@ -94,7 +94,7 @@ $redis = RedisDB::getInstance()
 
 //mysql connection
 $db = mysql_connect($config['db_server'], $config['db_username'], $config['db_password']) or die ('Cannot connect to MySQL');
-mysql_select_db('simtr');
+mysql_select_db($config['db_name']);
 
 function getTime() {
     $output = shell_exec(PATH.' say');
