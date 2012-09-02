@@ -1,18 +1,18 @@
-var http = require('http');
+//var http = require('http');
 var sio = require('socket.io');
 var fs = require('fs');
 var redis = require("./lib/redis-client").createClient();
 
 // Start the server
-var server = http.createServer(function(req, res){ 
-    res.writeHead(200,{ 'Content-Type': 'text/html' }); 
-    res.end('<h1>Hello Socket Lover!</h1>');
-});
+//var server = http.createServer(function(req, res){ 
+//    res.writeHead(200,{ 'Content-Type': 'text/html' }); 
+//    res.end('<h1>Hello Socket Lover!</h1>');
+//});
+//
+//server.listen(8000);
 
-server.listen(8000);
-
-// Create a Socket.IO instance, passing it our server
-var io = sio.listen(server);
+// Create a Socket.IO instance, passing it port
+var io = sio.listen(8000);
 
 var characters = {};
 var connected_chars = {};
@@ -21,59 +21,53 @@ var connected_users = {};
 
 var timeFile = '/home/magnax/www/simtrd/counter';
 
-var addr = server.address();
-console.log('   app listening on http://' + addr.address + ':' + addr.port);
+console.log('version 0.0.1 started');
 
 io.sockets.on('connection', function(socket) {
     console.log('connected');
     socket.emit('auth');
     
     socket.on('check in', function(data) {
-        char_id = data.char_id;
-        console.log('received check in from ' + char_id + ' (' + socket.id +')');
-        characters[char_id] = socket.id;
-        connected_chars[socket.id] = char_id;
+        console.log('received check in from ' + data.char_id + ' (' + socket.id +')');
+        characters[data.char_id] = socket.id;
+        connected_chars[socket.id] = data.char_id;
         console.log(characters);
-        redis.set("connected_char:"+char_id, socket.id, function() {
+        redis.set("connected_char:" + data.char_id, socket.id, function() {
             console.log('connected char saved');
         })
     });
     
     socket.on('user check in', function(data) {
-        user_id = data.user_id;
-        console.log('received user check in from ' + user_id + ' (' + socket.id +')');
-        users[user_id] = socket.id;
-        connected_users[socket.id] = user_id;
+        console.log('received user check in from ' + data.user_id + ' (' + socket.id +')');
+        users[data.user_id] = socket.id;
+        connected_users[socket.id] = data.user_id;
         console.log(users);
-        redis.set("connected_user:"+user_id, socket.id, function() {
+        redis.set("connected_user:" + data.user_id, socket.id, function() {
             console.log('connected user saved');
         })
     });
     
     socket.on('push_event', function(data) {
         console.log('event pushed (' + socket.id + ')');
-        var char_id = data.char_id;
-        var socket_id = characters[char_id];
+        var socket_id = characters[data.char_id];
         if (socket_id) {
             console.log('sended to '+socket_id);
             io.sockets.sockets[socket_id].emit('events', data);
         } else {
-            console.log ('theres no registered user of '+char_id);
+            console.log ('theres no registered user of '+data.char_id);
         }
     });
     
     socket.on('push_user_event', function(data) {
-        var user_id = data.user_id;
-        var char_id = data.char_id;
-        var socket_id = users[user_id];
+        var socket_id = users[data.user_id];
         if (socket_id) {
-            redis.llen("new_events:"+char_id, function(err, data) {
-                console.log("new_events:"+char_id+' = '+data);
+            redis.llen("new_events:"+data.char_id, function(err, data) {
+                console.log("new_events:"+data.char_id+' = '+data);
                 console.log('sended to '+socket_id);
-                io.sockets.sockets[socket_id].emit('user_events', {'char_id': char_id, 'new': data});
+                io.sockets.sockets[socket_id].emit('user_events', {'char_id': data.char_id, 'new': data});
             });
         } else {
-            console.log ('theres no registered user of '+user_id);
+            console.log ('theres no registered user of '+data.user_id);
         } 
     });
     

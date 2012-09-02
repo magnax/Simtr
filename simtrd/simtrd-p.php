@@ -8,6 +8,9 @@
 
 require_once "System/Daemon.php";                 // Include the Class
 
+//version of this file
+define('VER', '0.0.1');
+
 /**
  * config file from framework
  */
@@ -38,7 +41,7 @@ if ($runmode['help'] == true) {
 }
 
 define ('PATH', $config['time_daemon_path']);
-define ('SLEEP_TIME', 1);
+define ('SLEEP_TIME', 3);
 define ('SYSPATH', '');
 
 error_reporting(E_ALL);
@@ -63,6 +66,7 @@ System_Daemon::setOptions($options);
 if (!$runmode['no-daemon']) {
     // Spawn Daemon
     System_Daemon::start();
+    System_Daemon::info('VERSION: '.VER);
 }
 
 // With the runmode --write-initd, this program can automatically write a
@@ -81,12 +85,16 @@ if (!$runmode['write-initd']) {
     }
 }
 
+unset($runmode);
+
 //redis init:
 require_once '../application/modules/redisent/classes/redisent.php';
-require_once '../application/classes/redisdb.php';
-$redis = RedisDB::getInstance()
-    ->connect($config['database_dsn'])
-    ->getConnectionObject();
+require_once '../application/modules/redisent/classes/redisexception.php';
+try {
+    $redis = new Redisent($config['database_dsn']);
+} catch (RedisException $e) {
+    throw new RedisException($e->getMessage());
+}
 
 function getTime() {
     $output = shell_exec(PATH.' say');
@@ -103,7 +111,6 @@ function strip(&$v) {
 }
 
 $runningOK = true;
-$cnt = 1;
 
 while(!System_Daemon::isDying() && $runningOK) {
 
@@ -129,6 +136,7 @@ while(!System_Daemon::isDying() && $runningOK) {
                     $elapsed += ($time - $p['start']) * $p['factor'];
                 }
             }
+            unset($participants);
             if ($elapsed >= $project['time']) {
                 $project['time_elapsed'] = $project['time'];
                 //dodaj projekt do rozliczenia
@@ -139,7 +147,7 @@ while(!System_Daemon::isDying() && $runningOK) {
                 $project['time_elapsed'] = $elapsed;
             }
             $redis->set("projects:$project_id", json_encode($project));
-
+            unset($elapsed);
         }
     }
 
