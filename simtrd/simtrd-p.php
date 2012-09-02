@@ -52,8 +52,8 @@ $options = array(
     'sysMaxExecutionTime' => '0',
     'sysMaxInputTime' => '0',
     'sysMemoryLimit' => '1024M',
-    'appRunAsGID' => 0,
-    'appRunAsUID' => 0,
+    'appRunAsGID' => $config['gid'],
+    'appRunAsUID' => $config['uid'],
     'logLocation' => $config['projects_log_file'],
     'appPidLocation' => $config['projects_pid_file'],
 );

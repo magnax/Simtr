@@ -14,6 +14,9 @@ $config = array(
     'db_server' => 'localhost:3306',
     'db_username' => 'USER',
     'db_password' => 'PASS',
+    //gid & uid for process
+    'gid' => 60009,
+    'uid'=> 60009,
 );
 
 ?>
