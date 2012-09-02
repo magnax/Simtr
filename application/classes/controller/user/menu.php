@@ -12,20 +12,36 @@ class Controller_User_Menu extends Controller_Base_User {
             
             $name = ORM::factory('chname')->name($character, $character)->name;
             $location_name = ORM::factory('lname')->name($character, $character->location->id)->name;
+            $current_project = RedisDB::getInstance()->get("characters:{$character->id}:current_project");
+            if ($current_project) {
+                $my_project = ($current_project) ? RedisDB::getJSON("projects:$current_project") : null;
+
+                if ($my_project) {
+                    if (!$my_project['time_elapsed']) {
+                        $my_project['time_elapsed'] = 0;
+                    }
+                    $my_project['percent'] = number_format($my_project['time_elapsed'] / $my_project['time'] * 100, 2);
+                    $my_project['time_zero'] = $this->game->raw_time;
+                    $my_project['speed'] = 1; //for now, will be calculated
+                }
+                $project = $current_project;
+            }
             
             $returnedCharacters[] = array(
                 'id' => $character->id,
                 'name' => $name ? $name : $character->name,
                 'location' => ($location_name) ? $location_name : 'unknown location',
                 'sex' => $character->sex,
-                'project' => '??',
+                'project' => $current_project ? $my_project['percent'].'%' : '-',
                 'age' => $character->created,
                 'new_events' => $new_events,
+                'myproject' => $current_project ? $my_project : null,
             );
             
         }
         
         $this->view->characters = $returnedCharacters;
+        $this->template->chars = $returnedCharacters;
 //        
 //        foreach($this->user->characters as $ch) {
 //            //get character data as array

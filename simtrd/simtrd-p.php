@@ -38,7 +38,7 @@ if ($runmode['help'] == true) {
 }
 
 define ('PATH', $config['time_daemon_path']);
-define ('SLEEP_TIME', 20);
+define ('SLEEP_TIME', 1);
 define ('SYSPATH', '');
 
 error_reporting(E_ALL);

@@ -60,6 +60,8 @@ class Controller_User_Project extends Controller_Base_Character {
             ->findOneById($id);
         $project = $manager->getProject();
 
+        
+        
         $errors = $project->getProjectRequirements();
 
         if (!$errors) {
@@ -72,8 +74,10 @@ class Controller_User_Project extends Controller_Base_Character {
                     $used_slots = $this->location->countUsedSlots($this->redis);
                     
                     if ($used_slots < $this->location->town->slots) {
-                        $manager->addParticipant($this->character, $this->game->getRawTime());
+                        $manager->addParticipant($this->character, $this->game->raw_time);
+                        
                         $manager->save();
+
                     }
 
                     $this->redis->set("characters:{$this->character->id}:current_project", $project->getId());
@@ -83,7 +87,7 @@ class Controller_User_Project extends Controller_Base_Character {
         }
 
         if ($errors) {
-            $session->set_flash('errors', json_encode($errors));
+            $this->session->set_flash('errors', json_encode($errors));
         }
         
         $this->request->redirect('events');
@@ -97,7 +101,7 @@ class Controller_User_Project extends Controller_Base_Character {
             ->findOneById($id);
         $project = $manager->getProject();
 
-        $manager->removeParticipant($this->character, $this->game->getRawTime());
+        $manager->removeParticipant($this->character, $this->game->raw_time);
         $manager->save();
 
         RedisDB::getInstance()->del("characters:{$this->character->id}:current_project");

@@ -13,7 +13,7 @@
         </div>
         <div class="character_project">
             <?php if(isset($character['project'])): ?>
-                <?php echo $character['project']; ?>
+                <span id="project-<?= $character['id']; ?>"><?php echo $character['project']; ?></span>
             <?php endif; ?>
         </div>
         <div class="character_events">
