@@ -65,7 +65,7 @@
 <div id="actions">
     <ul>
         <li>
-            <?php echo html::anchor('user/event', 'Zdarzenia'); ?>
+            <?php echo html::anchor('events', 'Zdarzenia'); ?>
         </li>
         <li>
             <?php echo html::anchor('user/inventory', 'Inwentarz'); ?>
