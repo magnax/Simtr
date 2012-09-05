@@ -8,16 +8,18 @@
 
         var projects = {};
         
-        <? foreach ($chars as $char): ?>
-            <? if ($char['myproject']): ?>
-                projects[<?= $char['id']; ?>] = {
-                    'time_elapsed': <?= $char['myproject']['time_elapsed']; ?>,
-                    'time_zero': <?= $char['myproject']['time_zero']; ?>,
-                    'time': <?= $char['myproject']['time']; ?>,
-                    'speed': <?= $char['myproject']['speed']; ?>
-                };
-            <? endif; ?>
-        <? endforeach; ?>
+        <? if (isset($chars) && count($chars)): ?>
+            <? foreach ($chars as $char): ?>
+                <? if ($char['myproject']): ?>
+                    projects[<?= $char['id']; ?>] = {
+                        'time_elapsed': <?= $char['myproject']['time_elapsed']; ?>,
+                        'time_zero': <?= $char['myproject']['time_zero']; ?>,
+                        'time': <?= $char['myproject']['time']; ?>,
+                        'speed': <?= $char['myproject']['speed']; ?>
+                    };
+                <? endif; ?>
+            <? endforeach; ?>
+        <? endif; ?>
 
         var socket = io.connect('<?= $server_uri;?>');
         var user_id = <?= $user->id; ?>;
