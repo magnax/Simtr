@@ -21,13 +21,12 @@ class Controller_User_People extends Controller_Base_Character {
 
     }
 
-    public function action_hit($character_id) {
+    public function action_hit() {
+        
+        $character_id = $this->request->param('id');
         
         //initialize form validation
-        $post = Validate::factory($_POST);
-        
-        //filters for fields
-        $post->filter(TRUE, 'trim');
+        $post = Validation::factory($_POST);
         
         //labels
         $post->label('weapon', 'Weapon');
@@ -37,12 +36,13 @@ class Controller_User_People extends Controller_Base_Character {
         $post->rule('weapon', 'digit');
         $post->rule('strength', 'numeric');
         
-        if ($post->check()) {
+        if ($_POST) {
             
             //get victim character
-            $victim = Model_Character::getInstance($this->redis)
-                ->fetchOne($character_id);
+            $victim = new Model_Character($character_id);
             
+            print_r($victim);
+            return;
             //get attack strength of weapon
             $weapon_attack = Model_ItemType::getInstance($this->redis)
                 ->fetchOne($_POST['weapon'])
@@ -81,17 +81,13 @@ class Controller_User_People extends Controller_Base_Character {
             $event->addRecipients($this->location->getAllHearableCharacters($this->character->chnames));
             $event->send();
         
-            $this->request->redirect('/user/event');
+            $this->request->redirect('events');
         }
         
         $this->view->weapons = array();
             
         $weapons_list = $this->character->getWeaponsList();
-        foreach ($weapons_list as $w) {
-            $this->view->weapons[$w] = Model_Dict::getInstance($this->redis)
-                ->getString(Model_ItemType::getInstance($this->redis)
-                    ->getName($w));
-        }
+        $this->view->weapons = $weapons_list;
         
         $this->view->strengths = array(
             '0' => 'bez siły',

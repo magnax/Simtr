@@ -392,6 +392,35 @@ class Model_Character extends ORM {
         
     }
     
+    //returns list of available weapons from character inventory
+    public function getWeaponsList() {
+        
+        $items = RedisDB::getInstance()->smembers("items:{$this->id}");
+        
+        $weapons = ORM::factory('item')
+            ->with('itemtype')
+            ->where('item.id', 'IN', DB::expr('('. join(',',$items).')'))
+            ->and_where('itemtype.attack', 'is not', NULL)
+            ->order_by('itemtype.attack', 'desc')
+            ->find_all()
+            ->as_array();
+
+        $weapon_list = array();
+        
+        foreach ($weapons as $weapon) {
+            if (!in_array($weapon->itemtype->id, array_keys($weapon_list))) {
+                $weapon_list[$weapon->itemtype->id] = $weapon->itemtype->name;
+            }
+        }
+        
+        $weapon_list[0] = 'goła pięść';
+        arsort($weapon_list);
+        
+        return $weapon_list;
+            
+    }
+    
+    
 }
 
 ?>
