@@ -41,12 +41,10 @@ class Controller_User_People extends Controller_Base_Character {
             //get victim character
             $victim = new Model_Character($character_id);
             
-            print_r($victim);
-            return;
             //get attack strength of weapon
-            $weapon_attack = Model_ItemType::getInstance($this->redis)
-                ->fetchOne($_POST['weapon'])
-                ->getAttack();
+            $weapon_attack = ORM::factory('itemtype', $_POST['weapon'])
+//                ->find()
+                ->attack;
             
             //damage calculate
             //@todo: get char. strength and fighting skill into calculation
@@ -61,25 +59,25 @@ class Controller_User_People extends Controller_Base_Character {
             }
             
             //generate event & message
-            $event = Model_EventSender::getInstance(
+            $event_sender = Model_EventSender::getInstance(
                 Model_Event::getInstance(
                     Model_Event::HIT_PERSON, $this->game->raw_time, $this->redis
                 )
             );
 
-            $event->setRecipient($character_id);           
-            $event->setSender($this->character->getId());
+            $event_sender->setRecipient($character_id);           
+            $event_sender->setSender($this->character->id);
             
             //set fighting skill
-            $event->setSkill($this->character->fighting);
-            $event->setWeaponTypeID($_POST['weapon']);
+            $event_sender->setSkill($this->character->fighting);
+            $event_sender->setWeaponTypeID($_POST['weapon']);
             
-            $event->setDamage($damage);
-            $event->setShieldTypeID(0);
-            $event->setShield(0);
+            $event_sender->setDamage($damage);
+            $event_sender->setShieldTypeID(-1);
+            $event_sender->setShield(0);
             
-            $event->addRecipients($this->location->getAllHearableCharacters($this->character->chnames));
-            $event->send();
+            $event_sender->addRecipients($this->location->getHearableCharacters());
+            $event_sender->send();
         
             $this->request->redirect('events');
         }

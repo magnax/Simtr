@@ -56,15 +56,9 @@ class Model_Character extends ORM {
      
      //żywotność (800-1200) 
      protected $vitality;
-     
-     //życie (aktualny stan, max. vitality) (punkty = 0 => śmierć)
-     protected $life;
 
      //siła (0.6 ... 1.8)
      protected $strength;
-     
-     //walka (0.8 ... 1.2)
-     public $fighting;
 
      /**
       * kolekcje
@@ -420,6 +414,19 @@ class Model_Character extends ORM {
             
     }
     
+    public static function getSkillString($skill) {
+        if ($skill >= 1.2) {
+            return 'po mistrzowsku';
+        } elseif ($skill >= 1.1) {
+            return 'umiejętnie';
+        } elseif ($skill >= 1) {
+            return 'przeciętnie';
+        } elseif ($skill >= 0.9) {
+            return 'po amatorsku';
+        } else {
+            return 'niezręcznie';
+        }
+    }
     
 }
 

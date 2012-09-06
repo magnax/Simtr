@@ -52,49 +52,40 @@ class Model_Event_HitPerson extends Model_Event {
 
     }
 
-    public function dispatchArgs($event_data, $args, $character) {
+    public function dispatchArgs($event_data, $args, $character_id, $lang) {
         
         $returned = array();
         
         if (in_array('sndr', $args)) {
-            $name = $character->getChname($event_data['sndr']);
+            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
             if (!$name) {
-                $name = $character->getUnknownName($event_data['sndr']);
-                $name = Model_Dict::getInstance($this->source)->getString($name);
+                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
             }
-            $returned['sndr'] = '<a href="'.URL::base(true).'user/char/nameform/'.
+            $returned['sndr'] = '<a href="chname?id='.
                 $event_data['sndr'].'">'.$name.'</a>';
         }
         
-        $returned['skill'] = Model_Dict::getInstance($this->source)
-            ->getString('fight'.$event_data['skill']);
+        $returned['skill'] = Model_Character::getSkillString($event_data['skill']);
         
         if (in_array('rcpt', $args)) {
-            $name = $character->getChname($event_data['rcpt']);
+            $name = ORM::factory('chname')->name($character_id, $event_data['rcpt'])->name;
             if (!$name) {
-                $name = $character->getUnknownName($event_data['rcpt']);
-                $name = Model_Dict::getInstance($this->source)->getString($name);
+                $name = ORM::factory('character')->getUnknownName($event_data['rcpt'], $lang);
             }
-            $returned['rcpt'] = '<a href="'.URL::base(true).'user/char/nameform/'.
+            $returned['rcpt'] = '<a href="chname?id='.
                 $event_data['rcpt'].'">'.$name.'</a>';
         }
         
-        $weapon_name = Model_ItemType::getInstance($this->source)
-            ->getName($event_data['wpid']);
-        
-        $returned['wpid'] = Model_Dict::getInstance($this->source)
-            ->getString($weapon_name);
+        $returned['wpid'] = ORM::factory('itemtype', $event_data['wpid'])
+                ->name;
         
         if (in_array('dmg', $args)) {
             $returned['dmg'] = $event_data['dmg'];
         }
         
         if (in_array('shid', $args)) {
-            $shield_name = Model_ItemType::getInstance($this->source)
-                ->getName($event_data['shid']);
-
-            $returned['shid'] = Model_Dict::getInstance($this->source)
-                ->getString($shield_name);
+            $returned['shid'] = ORM::factory('itemtype', $event_data['shid'])
+                ->name;
         }
         
         if (in_array('shd', $args)) {
