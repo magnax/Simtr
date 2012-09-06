@@ -103,10 +103,6 @@ class Model_Location extends ORM {
         return $tmp;
 
     }
-    
-    public function getItems() {
-        return array();
-    }
 
     public function addRaw($id, $amount) {
         
@@ -140,6 +136,42 @@ class Model_Location extends ORM {
             
         }
 
+    }
+    
+    public function getItems() {
+        
+        $items = RedisDB::getInstance()->smembers("loc_items:{$this->id}");
+        
+        $tmp = array();
+        if ($items) {
+            
+            $db_items = ORM::factory('item')->where('id', 'IN', DB::expr('('. join(',',$items).')'))
+                ->find_all()->as_array();
+        
+            foreach ($db_items as $item) {
+                $tmp[] = array(
+                    'id'=>$item->id,
+                    'name'=>$item->itemtype->name,
+                    'state'=>  Model_ItemType::getState($item->points/$item->itemtype->points)
+                );
+            }
+            
+        }
+        
+        return $tmp;
+        
+    }
+    
+    public function addItem($item_id) {
+        
+        RedisDB::getInstance()->sadd("loc_items:{$this->id}", $item_id);
+        
+    }
+
+    public function putItem($item_id) {
+        
+        RedisDB::getInstance()->srem("loc_items:{$this->id}", $item_id);
+        
     }
     
 }

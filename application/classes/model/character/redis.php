@@ -108,14 +108,6 @@ class Model_Character_Redis {
         
     }
 
-    public function addItem($item_id) {
-        $this->source->sadd("char_items:{$this->id}", $item_id);
-    }
-    
-    public function putItem($item_id) {
-        $this->source->srem("char_items:{$this->id}", $item_id);
-    }
-
     public function addRaw($id, $amount) {
 
         $raws = json_decode($this->source->get("raws:{$this->id}"), true);

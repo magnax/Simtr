@@ -28,37 +28,24 @@ class Model_Event_PutItem extends Model_Event {
 
     }
 
-    public function dispatchArgs($event_data, $args, $character) {
+    public function dispatchArgs($event_data, $args, $character_id, $lang) {
         
-//        $item = Model_Resource::getInstance($this->source)
-//            ->fetchOne($event_data['item_id']);
+        $item = ORM::factory('item')->where('id', '=', $event_data['itemid'])
+            ->find();
         
         $returned = array();
         
         if (in_array('sndr', $args)) {
-            $name = $character->getChname($event_data['sndr']);
+            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
             if (!$name) {
-                $name = $character->getUnknownName($event_data['sndr']);
-                $name = Model_Dict::getInstance($this->source)->getString($name);
+                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
             }
-            $returned['sndr'] = '<a href="/user/char/nameform/'.
+            $returned['sndr'] = '<a href="chname?id='.
                 $event_data['sndr'].'">'.$name.'</a>';
         }
         
-        $dict = Model_Dict::getInstance($this->source);
-        $lang = $dict->getLang();
-        
-        $item = json_decode($this->source->get("global:items:{$event_data['itemid']}"), true);
-        $itemtype = json_decode($this->source->get("itemtype:{$item['type']}"), true);
-        $itemkind = $this->source->get("kind:$lang:{$itemtype['name']}");
-        if (!$itemkind) {
-            $itemkind = 'm';
-        }
-        $state = Model_ItemType::getInstance($this->source)
-            ->getState($item['points'] / $itemtype['points']).":$itemkind";
-        
-        $returned['stt'] = Model_Dict::getInstance($this->source)->getString($state);
-        $returned['itemid'] = Model_Dict::getInstance($this->source)->getString($itemtype['name']);
+        $returned['stt'] = Model_ItemType::getState($item->points / $item->itemtype->points);
+        $returned['itemid'] = $item->itemtype->name;
         
         return $returned;
         

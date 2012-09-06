@@ -58,6 +58,10 @@ class RedisDB {
         return self::$_connection->smembers($key);
     }
     
+    public static function sadd($key, $element) {
+        return self::$_connection->sadd($key, $element);
+    }
+    
     public static function srem($key, $element) {
         return self::$_connection->srem($key, $element);
     }

@@ -359,6 +359,39 @@ class Model_Character extends ORM {
 
     }
     
+    public function getItems() {
+        
+        $items = RedisDB::getInstance()->smembers("items:{$this->id}");
+        
+        $tmp = array();
+        if ($items) {
+            $db_items = ORM::factory('item')->where('id', 'IN', DB::expr('('. join(',',$items).')'))
+                ->find_all()->as_array();
+        
+            foreach ($db_items as $item) {
+                $tmp[] = array(
+                    'id'=>$item->id,
+                    'name'=>$item->itemtype->name,
+                    'state'=>  Model_ItemType::getState($item->points/$item->itemtype->points)
+                );
+            }
+        }
+        return $tmp;
+        
+    }
+    
+    public function addItem($item_id) {
+        
+        RedisDB::getInstance()->sadd("items:{$this->id}", $item_id);
+        
+    }
+    
+    public function putItem($item_id) {
+        
+        RedisDB::getInstance()->srem("items:{$this->id}", $item_id);
+        
+    }
+    
 }
 
 ?>

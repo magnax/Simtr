@@ -1,25 +1,17 @@
 <?php
 
-abstract class Model_Item {
+class Model_Item extends ORM {
     
-    //datasource
-    protected $source = null;
-    
-    //constants describing type of item
-    const TOOL = 'tools';
-    
-    public function __construct($source) {
-        $this->source = $source;
-    }
-    
-    public static function getInstance($source) {
-        //if ($source instanceof Redisent) {
-        if ($source instanceof Predis_Client) {
-            return new Model_Redis_Item($source);
-        }
-    }
-    
-    abstract public function fetchAll($filter);
+    protected $_has_one = array(
+        'itemtype' => array(
+            'model' => 'itemtype',
+            'foreign_key' => 'id',
+            'far_key' => 'itemtype_id'
+        ),
+    );
+
+
+//    abstract public function fetchAll($filter);
     
 }
 

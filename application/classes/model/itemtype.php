@@ -1,23 +1,23 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-abstract class Model_ItemType {
+class Model_ItemType extends ORM {
     
-    protected $source;
+//    protected $source;
+//    
+//    protected $attack;
+//
+//
+//    public function __construct($source) {
+//        $this->source = $source;
+//    }
+//    
+//    static public function getInstance($source) {
+//        if ($source instanceof Redis) {
+//            return new Model_ItemType_Redis($source);
+//        }
+//    }
     
-    protected $attack;
-
-
-    public function __construct($source) {
-        $this->source = $source;
-    }
-    
-    static public function getInstance($source) {
-        if ($source instanceof Redis) {
-            return new Model_ItemType_Redis($source);
-        }
-    }
-    
-    public function getState($percent) {
+    public static function getState($percent) {
         if ($percent > 0.8) return 'brand_new';
         elseif ($percent > 0.6) return 'new';
         elseif ($percent > 0.4) return 'used';
@@ -29,8 +29,8 @@ abstract class Model_ItemType {
         return $this->attack;
     }
 
-    abstract public function fetchOne($itemtype_id, $as_array = false);
-    abstract public function getName($item_id);
+//    abstract public function fetchOne($itemtype_id, $as_array = false);
+//    abstract public function getName($item_id);
     
 }
 

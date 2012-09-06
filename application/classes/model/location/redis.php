@@ -114,14 +114,6 @@ class Model_Location_Redis extends Model_Location {
         $this->source->exec();
     }
 
-    public function addItem($item_id) {
-        $this->source->sadd("loc_items:{$this->id}", $item_id);
-    }
-
-    public function putItem($item_id) {
-        $this->source->srem("loc_items:{$this->id}", $item_id);
-    }
-
     public function putRaw($id, $amount) {
 
         $raws = $this->getRaws();

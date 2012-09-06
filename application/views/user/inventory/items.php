@@ -2,5 +2,5 @@
 Przedmioty
 <p>
 <?php foreach ($items as $item): ?>
-    <?php echo html::anchor('user/inventory/put/'.$item['id'], '[odłóż]'); ?><?php echo $item['name']; ?><br />
+    <?= html::anchor('user/inventory/put/'.$item['id'], '[odłóż]'); ?> <?= $item['state']; ?> <?= $item['name']; ?><br />
 <?php endforeach; ?>

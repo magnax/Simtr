@@ -36,8 +36,9 @@ class Controller_User_Location extends Controller_Base_Character {
         $this->view->items = $this->location->getItems();
     }
 
-    public function action_getitem($item_id) {
+    public function action_getitem() {
         
+        $item_id = $this->request->param('id');
         /**
          * @todo check if user has this item 
          */
@@ -53,10 +54,10 @@ class Controller_User_Location extends Controller_Base_Character {
         $event->setSender($this->character->getId());
         $event->setItem($item_id);
 
-        $event->addRecipients($this->location->getAllVisibleCharacters($this->character->getPlaceType()));
+        $event->addRecipients($this->location->getVisibleCharacters());
         $event->send();
         
-        $this->request->redirect('user/event');
+        $this->request->redirect('events');
     }
     
 }
