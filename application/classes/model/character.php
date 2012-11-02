@@ -98,7 +98,20 @@ class Model_Character extends ORM {
     public function get_info($raw_time) {
         
         $name = ORM::factory('chname')->name($this->id, $this->id)->name;
-        $location_name = ORM::factory('lname')->name($this->id, $this->location_id)->name;
+        $location = ORM::factory('location', $this->location_id);
+        
+        if ($location->parent_id) {
+            $parent_location = ORM::factory('location', $location->parent_id);
+            $sublocation = $location->name;
+            $location_id = $parent_location->id;
+            $location_name = ORM::factory('lname')->name($this->id, $parent_location->id)->name;
+        } else {
+            //is grand location
+            $sublocation = null;
+            $location_id = $location->id;
+            $location_name = ORM::factory('lname')->name($this->id, $this->location_id)->name;
+        }
+        
         $spawn_location_name = ORM::factory('lname')->name($this->id, $this->spawn_location_id)->name;
         $my_project_id = RedisDB::get("characters:{$this->id}:current_project");
         $my_project = ($my_project_id) ? RedisDB::getJSON("projects:$my_project_id") : null;
@@ -117,10 +130,12 @@ class Model_Character extends ORM {
             'name' => $name ? $name : $this->name,
             'age' => $this->countVisibleAge($raw_time),
             'spawn_day' => $this->created,
-            'location_id' => $this->location_id,
+            'location_id' => $location_id,
             'spawn_location_id' => $this->spawn_location_id,
             'location' => ($location_name) ? $location_name : 'unknown location',
             'spawn_location' => ($spawn_location_name) ? $spawn_location_name : 'unknown location',
+            'sublocation' => $sublocation,
+            'sublocation_id' => null, //for now, later it may be ie. vehicle
             'life' => 100,
             'vitality' => 100,
             'strength' => 1.2,

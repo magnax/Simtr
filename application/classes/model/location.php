@@ -174,6 +174,17 @@ class Model_Location extends ORM {
         
     }
     
+    public function getBuildings() {
+        
+        $returned = ORM::factory('location')
+            ->where('locationtype_id', '=', '2')
+            ->and_where('parent_id', '=', $this->id)
+            ->find_all()
+            ->as_array();
+        
+        return $returned;
+    }
+    
 }
 
 ?>

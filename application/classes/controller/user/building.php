@@ -10,9 +10,9 @@ class Controller_User_Building extends Controller_Base_Character {
         $buildings = array();
         
         foreach ($buildings_ids as $building_id) {
-            $building = Model_LocationFactory::getInstance($this->redis)
-                ->fetchOne($building_id)
-                ->toArray();
+            $building = ORM::factory('building')
+                ->where('location_id', '=', $building_id)
+                ->find();
             $buildings[] = $building;
         }
         

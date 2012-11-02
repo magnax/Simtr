@@ -13,6 +13,7 @@ class Model_Event {
     const GIVE_RAW = 'GiveRaw';
     const POINT_EXIT = 'PointExit';
     const HIT_PERSON = 'HitPerson';
+    const ENTER_LOCATION = 'EnterLocation';
 
     /**
      * wspólne właściwości

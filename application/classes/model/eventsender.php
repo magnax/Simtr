@@ -71,6 +71,10 @@ abstract class Model_EventSender {
         $this->_event->setLocationType($type);
     }
     
+    public function setLocationId($location_id) {
+        $this->_event->setLocationId($location_id);
+    }
+    
     abstract public function send();
 
 }

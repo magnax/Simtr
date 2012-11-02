@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access ST.');
 
-include_once APPPATH.'classes/model/User.php';
+//include_once APPPATH.'classes/model/User.php';
 
 class UserTest extends PHPUnit_Framework_TestCase {
     
@@ -10,12 +10,9 @@ class UserTest extends PHPUnit_Framework_TestCase {
 
     public static function setUpBeforeClass() {
         parent::setUpBeforeClass();
-        self::$_redis = new Predis_Client(array(
-            'host'     => '127.0.0.1',
-            'port'     => 6379,
-            'database' => 1,
-            'alias' => 'mn_test'
-        ));
+        self::$_redis = new Redis();
+        self::$_redis->connect('127.0.0.1:6379');
+        self::$_redis->select(1);
         
         self::$_redis->flushdb();
         
@@ -60,8 +57,8 @@ class UserTest extends PHPUnit_Framework_TestCase {
     
     public function testLoginUser() {
         
-        $this->assertFalse($this->user->login(1, 'notcorrect'));
-        $this->assertEquals(32, strlen($this->user->login(1, 'password')));
+        $this->assertNull($this->user->login('fake@email.com', 'notcorrect'));
+        $this->assertEquals(32, strlen($this->user->login('test@test.com', 'password')));
         $this->assertTrue($this->user->isLoggedIn());
         
     }

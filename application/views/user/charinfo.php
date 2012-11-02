@@ -41,6 +41,13 @@
             </td>
             <td>
                <?php echo html::anchor('lname?id='.$character['location_id'], $character['location']); ?>
+                <?php if ($character['sublocation']): ?>
+                    <?php if ($character['sublocation_id']): ?>
+                        : <?php echo html::anchor('lname?id='.$character['sublocation_id'], $character['sublocation']); ?>
+                    <?php else: ?>
+                        : <?= $character['sublocation']; ?>
+                    <?php endif; ?>
+                <?php endif; ?>
             </td>
         </tr>
         <tr>

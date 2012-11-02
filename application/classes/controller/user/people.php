@@ -11,7 +11,12 @@ class Controller_User_People extends Controller_Base_Character {
         foreach ($characters as $ch) {
             $name = ORM::factory('chname')->name($this->character->id, $ch)->name;
             if (!$name) {
-                $name = ORM::factory('character')->getUnknownName($ch, $this->lang);
+                if ($ch == $this->character->id) {
+                    //myself
+                    $name = $this->character->name;
+                } else {
+                    $name = ORM::factory('character')->getUnknownName($ch, $this->lang);
+                }
             }
             $this->view->characters[] = array(
                 'name' => $name,
