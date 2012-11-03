@@ -132,7 +132,7 @@ class Model_Character extends ORM {
             'spawn_day' => $this->created,
             'location_id' => $location_id,
             'spawn_location_id' => $this->spawn_location_id,
-            'location' => ($location_name) ? $location_name : 'unknown location',
+            'location' => Utils::getLocationName($location_name),
             'spawn_location' => ($spawn_location_name) ? $spawn_location_name : 'unknown location',
             'sublocation' => $sublocation,
             'sublocation_id' => null, //for now, later it may be ie. vehicle

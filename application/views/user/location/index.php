@@ -1,5 +1,5 @@
 <div class="title_bar">
-    <?php echo $location['name']; ?>: WYJŚCIA
+    <?php echo html::anchor('lname?id='.$character['location_id'], $character['location']); ?>: WYJŚCIA
 </div>
 
 <?php if ($doors): ?>
@@ -21,7 +21,7 @@
 <?php endif; ?>
     <?php if ($locationtype == 1): ?>
         <div class="title_bar">
-            <?php echo $location['name']; ?>: OPIS
+            <?php echo html::anchor('lname?id='.$character['location_id'], $character['location']); ?>: OPIS
         </div>
         <?php echo $location['used_slots']; ?> out of <?php echo $location['res_slots']; ?> resource slots are used<br />
         <?php foreach ($location['resources'] as $res): ?>

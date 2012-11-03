@@ -1,6 +1,6 @@
 <?php
 
-class Helper_Utils {
+class Utils {
     
     public static function calculateDistance($x1, $y1, $x2, $y2) {
         return sqrt(pow(abs($x2-$x1), 2)+pow(abs($y2-$y1), 2));
@@ -86,6 +86,12 @@ class Helper_Utils {
         } else {
             return 'NNW';
         }
+        
+    }
+    
+    public static function getLocationName($lname) {
+        
+        return ($lname) ? $lname : 'unknown location';
         
     }
 }

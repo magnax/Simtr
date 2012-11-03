@@ -10,7 +10,7 @@
         <?php if (isset($msg) && $msg): ?>
             <div class="message"><?php echo $msg; ?></div>
         <?php endif; ?>
-        <div><?php echo html::anchor('/','Simtr 2'); ?></div>
+        <div><?php echo html::anchor('/','Fabular (pre-alpha)'); ?></div>
         <?php echo $content; ?>
         </div>
         <?php include Kohana::find_file('views', 'common/footer') ?>

@@ -48,7 +48,7 @@ class Model_Event_EnterLocation extends Model_Event {
             $returned['locid'] = $location->name;
         } else {
             $location_name = ORM::factory('lname')->name($character_id, $event_data['locid'])->name;
-            $lname = ($location_name) ? $location_name : 'unknown location';
+            $lname = Utils::getLocationName($location_name);
             $returned['locid'] = '<a href="lname?id='.$event_data['locid'].'">'.$lname.'</a>';
         }
         

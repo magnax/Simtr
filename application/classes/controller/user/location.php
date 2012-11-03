@@ -35,7 +35,7 @@ class Controller_User_Location extends Controller_Base_Character {
             $location_name = ORM::factory('lname')->name($this->character->id, $this->location->parent_id)->name;
             $this->view->doors = array(
                 'id' => $this->location->parent_id,
-                'name' => ($location_name) ? $location_name : 'unknown location',
+                'name' => Utils::getLocationName($location_name),
             );
         } else {
             $this->view->doors = null;
