@@ -12,7 +12,11 @@ class Model_EventNotifier {
         require_once APPPATH . 'modules/elephant/classes/client.php';
         
         $elephant = new Client(Kohana::$config->load('general.server_ip'));
-        $elephant->init();
+        try {
+            $elephant->init();
+        } catch (Exception $e) {
+            $elephant_error = $e->getMessage();
+        }
 
         $event_dispatcher = Model_EventDispatcher::getInstance($source, $lang);
 
@@ -31,8 +35,10 @@ class Model_EventNotifier {
                     )
                 ));               
 
-                $elephant->send(Client::TYPE_EVENT, null, null, $data);
-                echo 'notifying char: '.$recipient;
+                if (!isset($elephant_error)) {
+                    $elephant->send(Client::TYPE_EVENT, null, null, $data);
+                    echo 'notifying char: '.$recipient;
+                }
 
             } else {
 
@@ -49,8 +55,10 @@ class Model_EventNotifier {
                         )
                     ));
 
-                    $elephant->send(Client::TYPE_EVENT, null, null, $data);
-                    echo 'notifying user of: '.$recipient;
+                    if (!isset($elephant_error)) {
+                        $elephant->send(Client::TYPE_EVENT, null, null, $data);
+                        echo 'notifying user of: '.$recipient;
+                    }
                 }
             }
 

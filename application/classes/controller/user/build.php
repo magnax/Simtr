@@ -13,7 +13,7 @@ class Controller_User_Build extends Controller_Base_Character {
             'menu' => $menu_id ? Model_Buildmenu::getMenu($menu_id) : null,
             'items' => $menu_id ? Model_Spec::getItems($menu_id) : null,
         );
-        print_r($this->view->submenu);
+        //print_r($this->view->submenu);
     }
 
     public function action_form($id) {

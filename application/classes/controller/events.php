@@ -38,9 +38,12 @@ class Controller_Events extends Controller_Base_Character {
             $event_sender->setSender($this->character->id);
 
             $event_sender->send();
-            $event_id = $event_sender->getEvent()->getId();
             
-            Model_EventNotifier::notify($recipients, $event_id, $this->redis, $this->lang);
+            Model_EventNotifier::notify(
+                $event_sender->getEvent()->getRecipients(), 
+                $event_sender->getEvent()->getId(), 
+                $this->redis, $this->lang
+            );
 
         }
 
