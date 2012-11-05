@@ -1,21 +1,13 @@
 <?php
 
-abstract class Model_Buildmenu {
+class Model_Buildmenu extends ORM {
     
-    protected $source;
-    protected $dict;
-    
-    private function  __construct($source, $dict) {
-        $this->source = $source;
-        $this->dict = $dict;
+    public static function getMenu($menu_id) {
+        
+        return ORM::factory('buildmenu')->where('parent_id', '=', $menu_id)->find_all();
+        
     }
     
-    public static function getInstance($source, $dict) {
-        if ($source instanceof Redisent) {
-            return new Model_Buildmenu_Redis($source, $dict);
-        }
-    }
-
 }
 
 ?>

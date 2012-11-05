@@ -131,6 +131,14 @@ Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))', array('id'=>'.*'))
 		'action'     => 'index'
 	));
 
+
+Route::set('user_build', 'user/build(/<menu_id>)', array('menu_id'=>'.*'))
+	->defaults(array(
+        'directory'  => 'user',
+		'controller' => 'build',
+		'action'     => 'index'
+	));
+
 //default user routes
 Route::set('user_default', 'user(/<controller>(/<action>(/<id>)))', array('id'=>'.*'))
 	->defaults(array(

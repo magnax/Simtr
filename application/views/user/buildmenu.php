@@ -1,1 +1,1 @@
-<?php echo html::anchor('u/build', 'Produkcja'); ?>
+<?php echo html::anchor('user/build', 'Produkcja'); ?>
