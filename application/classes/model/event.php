@@ -90,7 +90,7 @@ class Model_Event {
             if (!$name) {
                 $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
             }
-            $returned['sndr'] = '<a href="chname?id='.
+            $returned['sndr'] = '<a href="/chname?id='.
                 $event_data['sndr'].'">'.$name.'</a>';
         }
         
@@ -99,7 +99,7 @@ class Model_Event {
             if (!$name) {
                 $name = ORM::factory('character')->getUnknownName($event_data['rcpt'], $lang);
             }
-            $returned['rcpt'] = '<a href="chname?id='.
+            $returned['rcpt'] = '<a href="/chname?id='.
                 $event_data['rcpt'].'">'.$name.'</a>';
         }
         
