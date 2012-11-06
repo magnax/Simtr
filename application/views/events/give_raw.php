@@ -5,6 +5,6 @@ Maksymalna ilość <?php echo $res['name']; ?>, jaką możesz podać: <?php echo
     <input type="hidden" name="res_id" value="<?php echo $res['id']; ?>">
 
     Ilość, jaką chcesz podać: <input name="amount">
-    Komu: <?php echo form::select('character_id', $all_characters); ?>
+    Komu: <?php echo form::select('character_id', $characters); ?>
     <input type="submit" value="Kontynuuj">
 <?= form::close(); ?>

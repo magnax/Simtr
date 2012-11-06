@@ -171,14 +171,14 @@ class Controller_Events extends Controller_Base_Character {
         
         $raws = $this->character->getRaws();
         $all_characters = $this->location->getHearableCharacters();
-        $this->view->all_characters = array();
-        foreach ($all_characters as $char) {
-            if ($char['id'] != $this->character->getId()) {
-                $name = ORM::factory('chname')->name($this->character->id, $char)->name;
+        $this->view->characters = array();
+        foreach ($all_characters as $ch) {
+            if ($ch != $this->character->id) {
+                $name = ORM::factory('chname')->name($this->character->id, $ch)->name;
                 if (!$name) {
-                    $name = ORM::factory('character')->getUnknownName($char, $this->lang);
+                    $name = ORM::factory('character')->getUnknownName($ch, $this->lang);
                 }
-                $this->view->all_characters[$char['id']] = $name;
+                $this->view->characters[$ch] = $name;
             }
         }
         $this->view->res = $raws[$id];
