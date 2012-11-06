@@ -5,7 +5,9 @@
  */
 class Controller_Events extends Controller_Base_Character {
     
-    public function action_index($page = 1) {
+    public function action_index() {
+        
+        $page = $this->request->param('page', 1);
 
         $events = Model_Character_Redis::getEvents($this->character->id, $this->redis, $this->lang, $page);
         $this->view->first_new_event = $this->redis->lpop("new_events:{$this->character->id}");
