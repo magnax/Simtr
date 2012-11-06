@@ -131,6 +131,11 @@ Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))', array('id'=>'.*'))
 		'action'     => 'index'
 	));
 
+Route::set('events', 'events/p(/<page>)', array('page'=>'.*'))
+	->defaults(array(
+		'controller' => 'events',
+		'action'     => 'index'
+	));
 
 Route::set('user_build', 'user/build(/<menu_id>)', array('menu_id'=>'.*'))
 	->defaults(array(
