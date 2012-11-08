@@ -51,6 +51,7 @@ class Controller_ChName extends Controller_Base_Character {
                     : $this->character->getUnknownName($_GET['id'], $this->lang);
             }
             $this->view->name = $name;
+            $this->view->character = $character;
             
         } else {
             $this->session->set('err', 'Bad character');

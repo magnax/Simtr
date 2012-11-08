@@ -4,7 +4,7 @@ Menu produkcji:<br />
     <?php if ($submenu['id'] == $m->id): ?>
         <?php if (count($submenu['items'])): ?>
             <?php foreach ($submenu['items'] as $item): ?>
-                -- <?php echo $item->item->name; ?><br />
+    -- <?php echo $item->item->name; ?> <?php echo html::anchor('user/project/builditem/'.$item->item->id, '[wytwarzaj]'); ?> <br />
             <?php endforeach; ?>
         <?php else: ?>
                 [brak]<br />

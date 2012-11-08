@@ -13,3 +13,7 @@ Obecna nazwa: <?php echo $name; ?>
     <input type="submit" value="Zmień">
 </form>
 <p><?php echo html::anchor('user/people/hit/'.$character_id, '[Atakuj]'); ?></p>
+<div id="char_stats">
+    Obecny stan:<br />
+    Zdrowie: <?php echo Utils::conditionBar($character->life); ?>
+</div>

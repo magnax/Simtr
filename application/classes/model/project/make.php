@@ -3,6 +3,7 @@
 class Model_Project_Make extends Model_Project {
 
     protected $amount;
+    protected $itemtype_id;
 
     /**
      * Identyfikator przedmiotu produkcji
@@ -15,10 +16,9 @@ class Model_Project_Make extends Model_Project {
     public function toArray() {
 
         $tmp_arr = parent::toArray();
-        $tmp_arr['name'] = 'Manufacturing '.$this->item_id;
+        $tmp_arr['name'] = $this->name;
         $tmp_arr['amount'] = $this->amount;
-        $tmp_arr['resource_id'] = $this->resource_id;
-        $tmp_arr['item_id'] = $this->item_id;
+        $tmp_arr['itemtype_id'] = $this->itemtype_id;
 
         return $tmp_arr;
 

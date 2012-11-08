@@ -13,6 +13,7 @@ class Controller_User_Project extends Controller_Base_Character {
         $projects = Model_ProjectManager::getInstance(
             null, $this->redis)
                 ->find($this->location->id);
+            print_r($projects);
         
         $this->view->projects = array();
         
@@ -125,7 +126,7 @@ class Controller_User_Project extends Controller_Base_Character {
             );
 
             $data = array(
-                'name'=>$res->projecttype->find()->name.' '.$res->d,
+                'name'=>$res->projecttype->name.' '.$res->d,
                 'owner_id'=>$this->character->id,
                 'amount'=>$_POST['amount'],
                 'time'=>$time,
@@ -150,6 +151,42 @@ class Controller_User_Project extends Controller_Base_Character {
  
     }
 
+    public function action_builditem() {
+        
+        $spec = ORM::factory('spec')
+            ->where('itemtype_id', '=', $this->request->param('id'))
+            ->find();
+        
+        if ($_POST) {
+            
+            $project_manager = Model_ProjectManager::getInstance(
+                Model_Project::getInstance(Model_Project::TYPE_MAKE, $this->redis)//;
+            );
+
+            $data = array(
+                'name'=>'Produkcja: '.$spec->item->name,
+                'owner_id'=>$this->character->id,
+                'amount'=>1,
+                'time'=>$spec->time,
+                'type_id'=>Model_Project::TYPE_MAKE,
+                'place_type'=>$this->location->locationtype_id,
+                'place_id'=>$this->location->id,
+                'itemtype_id'=>$spec->itemtype_id,
+                'created_at'=>$this->game->getRawTime()
+            );
+
+            $project_manager->set($data);
+            $project_manager->save();
+
+            $this->location->addProject($project_manager->getId(), $this->redis);
+
+            $this->request->redirect('events');
+        }
+        
+        $this->view->spec = $spec;
+        
+    }
+    
 }
 
 ?>

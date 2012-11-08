@@ -136,10 +136,10 @@ class Model_Character extends ORM {
             'spawn_location' => ($spawn_location_name) ? $spawn_location_name : 'unknown location',
             'sublocation' => $sublocation,
             'sublocation_id' => null, //for now, later it may be ie. vehicle
-            'life' => 100,
-            'vitality' => 100,
+            'life' => $this->life,
+            'vitality' => 1000,
             'strength' => 1.2,
-            'fighting' => 1.0,
+            'fighting' => $this->fighting,
             'eq_weight' => $this->calculateWeight(),
             'project_id' => ($my_project_id) ? $my_project_id : 0,
             'myproject' => $my_project,
@@ -406,19 +406,21 @@ class Model_Character extends ORM {
         
         $items = RedisDB::getInstance()->smembers("items:{$this->id}");
         
-        $weapons = ORM::factory('item')
-            ->with('itemtype')
-            ->where('item.id', 'IN', DB::expr('('. join(',',$items).')'))
-            ->and_where('itemtype.attack', 'is not', NULL)
-            ->order_by('itemtype.attack', 'desc')
-            ->find_all()
-            ->as_array();
+        if (count($items)) {
+            $weapons = ORM::factory('item')
+                ->with('itemtype')
+                ->where('item.id', 'IN', DB::expr('('. join(',',$items).')'))
+                ->and_where('itemtype.attack', 'is not', NULL)
+                ->order_by('itemtype.attack', 'desc')
+                ->find_all()
+                ->as_array();
 
-        $weapon_list = array();
-        
-        foreach ($weapons as $weapon) {
-            if (!in_array($weapon->itemtype->id, array_keys($weapon_list))) {
-                $weapon_list[$weapon->itemtype->id] = $weapon->itemtype->name;
+            $weapon_list = array();
+
+            foreach ($weapons as $weapon) {
+                if (!in_array($weapon->itemtype->id, array_keys($weapon_list))) {
+                    $weapon_list[$weapon->itemtype->id] = $weapon->itemtype->name;
+                }
             }
         }
         

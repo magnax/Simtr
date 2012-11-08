@@ -64,7 +64,7 @@
     </table>
 </div>
 <div id="user_status">
-    Food: 100, Vitality: <?php echo $character['life']; ?>/<?php echo $character['vitality']; ?>
+    Food: 100, Vitality: <?php echo Utils::conditionBar($character['life']); ?>
 </div>
 <div id="user_skills">
     Strength: <?php echo $character['strength']; ?>, Fighting: <?php echo $character['fighting']; ?>

@@ -65,6 +65,8 @@ class Controller_User_Build extends Controller_Base_Character {
         }
 
     }
+    
+    
 
 }
 
