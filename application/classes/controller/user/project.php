@@ -13,7 +13,6 @@ class Controller_User_Project extends Controller_Base_Character {
         $projects = Model_ProjectManager::getInstance(
             null, $this->redis)
                 ->find($this->location->id);
-            print_r($projects);
         
         $this->view->projects = array();
         
