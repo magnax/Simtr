@@ -60,8 +60,6 @@ class Controller_User_Project extends Controller_Base_Character {
             ->findOneById($id);
         $project = $manager->getProject();
 
-        
-        
         $errors = $project->getProjectRequirements();
 
         if (!$errors) {
@@ -75,13 +73,17 @@ class Controller_User_Project extends Controller_Base_Character {
                     
                     if ($used_slots < $this->location->town->slots) {
                         $manager->addParticipant($this->character, $this->game->raw_time);
-                        
                         $manager->save();
+                        /**
+                         * @todo move this stuff to character model, or to project model
+                         */
+                        $this->redis->set("characters:{$this->character->id}:current_project", $project->getId());
+                    }      
 
-                    }
-
+                } else {
+                    $manager->addParticipant($this->character, $this->game->raw_time);                 
+                    $manager->save();
                     $this->redis->set("characters:{$this->character->id}:current_project", $project->getId());
-
                 }
             }
         }
