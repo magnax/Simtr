@@ -381,7 +381,7 @@ class Model_Character extends ORM {
                 $tmp[] = array(
                     'id'=>$item->id,
                     'name'=>$item->itemtype->name,
-                    'state'=>  Model_ItemType::getState($item->points/$item->itemtype->points)
+                    'state'=>  Model_ItemType::getState($item->points/$item->itemtype->points, $item->itemtype->kind)
                 );
             }
         }

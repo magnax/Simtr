@@ -44,7 +44,7 @@ class Model_Event_GetItem extends Model_Event {
                 $event_data['sndr'].'">'.$name.'</a>';
         }
         
-        $returned['stt'] = Model_ItemType::getState($item->points / $item->itemtype->points);
+        $returned['stt'] = Model_ItemType::getState($item->points / $item->itemtype->points, $item->itemtype->kind);
         $returned['itemid'] = $item->itemtype->name;
         
         return $returned;

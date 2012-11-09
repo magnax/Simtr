@@ -4,12 +4,15 @@
 
 /**
  * Demon rozliczający zakończone projekty
+ * 
+ * Version: 0.0.4
+ * Changes: Dodane rozliczanie projektów produkcji przedmiotów
  */
 
 require_once "System/Daemon.php";                 // Include the Class
 //
 //version of this file
-define('VER', '0.0.3');
+define('VER', '0.0.4');
 
 /**
  * config file from framework
@@ -159,69 +162,79 @@ while(!System_Daemon::isDying() && $runningOK) {
             $query = mysql_query("select * from characters where id={$project['owner_id']}");
             $owner = mysql_fetch_array($query);
 
+            //is project owner present in location?
             $is_owner_present = ($owner['location_id'] == $project['place_id']);
 
-            print_r($owner);
             echo "Owner present: $is_owner_present\n";
 
-            //dodanie surowca do inwentarza lub na ziemię
-            if ($is_owner_present) {
-                
-                $owner_weight = 0;
-                $owner_has_resource = false;
+            //owner weight and existence of given resource in his inventory
+            $owner_weight = 0;
+            $owner_has_resource = false;
 
-                $raws = $redis->getJSON("raws:{$owner['id']}");
-                if ($raws) {
-                    foreach ($raws as $k => $raw) {
-                        $owner_weight += $raw;
-                        if ($k == $project['resource_id']) {
-                            $owner_has_resource = true;
-                        }
+            $raws = $redis->getJSON("raws:{$owner['id']}");
+            if ($raws) {
+                foreach ($raws as $k => $raw) {
+                    $owner_weight += $raw;
+                    if ($project['type_id'] == 'GetRaw' && $k == $project['resource_id']) {
+                        $owner_has_resource = true;
                     }
                 }
-                /**
-                 * @todo add items weight count (key: items:CHAR_ID
-                 */
+            }
+            
+            switch ($project['type_id']) {
                 
-                echo "Owner weight: $owner_weight, has resource: $owner_has_resource\n";
-                
-                if (($owner_weight + $project['amount']) <= EQ_MAX) {
-                    //dodaj do ekwipunku
-                    $event_type = 'GetRawEnd';
-                    if ($owner_has_resource) {
-                        //dodać do istniejącego surowca
-                        $raws[$project['resource_id']] += $project['amount'];
+                case 'Make':
+                    $event_type = 'MakeEnd';
+                    //utworzenie nowego przedmiotu:
+                    $points = 100;
+                    $query = mysql_query("insert into items values (0, {$project['itemtype_id']}, $points)");
+                    $new_item_id = mysql_insert_id();
+                    //na razie nie sprawdzam wagi przedmiotu, tylko czy jest obecny
+                    //właściciel czy na ziemię
+                    if ($is_owner_present) {
+                        $redis->sadd("items:{$owner['id']}", $new_item_id);
                     } else {
-                        //utworzyć nowy surowiec
-                        $raws[$project['resource_id']] = $project['amount'];
+                        $event_type .= 'Ground';
+                        $redis->sadd("locations:{$project['place_id']}:items", $new_item_id);
                     }
-                    $redis->setJSON("raws:{$owner['id']}", $raws);
-                } else {
-                    //połóż na ziemię
-                    $event_type = 'GetRawEndGround';
-                    
-                }
+                    break;
                 
-            } else {
-                //nieobecny inicjator projektu, na ziemię
-                $event_type = 'GetRawEndGround';
+                case 'GetRaw':
+                    $event_type = 'GetRawEnd';
+                    $ground = false;
+                    if ($is_owner_present) {
+                        if (($owner_weight + $project['amount']) <= EQ_MAX) {
+                            //dodaj do ekwipunku
+                            if ($owner_has_resource) {
+                                //dodać do istniejącego surowca
+                                $raws[$project['resource_id']] += $project['amount'];
+                            } else {
+                                //utworzyć nowy surowiec
+                                $raws[$project['resource_id']] = $project['amount'];
+                            }
+                            $redis->setJSON("raws:{$owner['id']}", $raws);
+                        } else {
+                            //połóż na ziemię
+                            $ground = true;
+                        }
+                    } else {
+                        $ground = true;
+                    }
+                    if ($ground) {
+                        $event_type .= 'Ground';
+                        $location_raws = $redis->getJSON("locations:{$project['place_id']}:raws");
+                        if (isset($location_raws[$project['resource_id']])) {
+                            $location_raws[$project['resource_id']] += $project['amount'];
+                        } else {
+                            $location_raws[$project['resource_id']] = $project['amount'];
+                        }
+                        $redis->setJSON("locations:{$project['place_id']}:raws", $location_raws);
+                    }
+                    break;
                 
             }
             
             echo "Event: $event_type\n";
-            
-//            if ($raws) {
-//                $raws = json_decode($raws, true);
-//                if (in_array($project['resource_id'], array_keys($raws))) {
-//                    $raws[$project['resource_id']] += $project['amount'];
-//                } else {
-//                    $raws[$project['resource_id']] = $project['amount'];
-//                }
-//            } else {
-//                $raws[$project['resource_id']] = $project['amount'];
-//            }
-
-//            System_Daemon::info('Raws: '.json_encode($raws));
 
             //zwolnij wszystkich pracowników
             
@@ -269,9 +282,16 @@ while(!System_Daemon::isDying() && $runningOK) {
                 'type'=>$event_type,
                 'name'=>$project['name'],
                 'sndr'=>$project['owner_id'],
-                'res_id'=>$project['resource_id'], //@todo: ujednolicić res_id/resource_id
-                'amount'=>$project['amount']
             );
+            switch ($project['type_id']) {
+                case 'GetRaw':
+                    $event['res_id'] = $project['resource_id']; //@todo: ujednolicić res_id/resource_id
+                    $event['amount'] = $project['amount'];
+                    break;
+                case 'Make':
+                    $event['itemtypeid'] = $project['itemtype_id'];
+                    break;
+            }
             $serialised_event = json_encode($event);
 
             //zapisać samo zdarzenie:

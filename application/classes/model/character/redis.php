@@ -135,32 +135,11 @@ class Model_Character_Redis {
 
     }
 
-    public function getItems() {
-        
-        $returned_items = array();
-        $dict = Model_Dict::getInstance($this->source);
-        $lang = $dict->getLang();
-        
-        $items_ids = $this->source->smembers("char_items:{$this->id}");
-        foreach ($items_ids as $item_id) {
-            $item = json_decode($this->source->get("global:items:$item_id"), true);
-            $itemtype = json_decode($this->source->get("itemtype:{$item['type']}"), true);
-            $itemkind = $this->source->get("kind:$lang:{$itemtype['name']}");
-            if (!$itemkind) {
-                $itemkind = 'm';
-            }
-            $state = Model_ItemType::getInstance($this->source)
-                ->getState($item['points'] / $itemtype['points']).":$itemkind";
-            
-            $returned_items[] = array(
-                'id' => $item_id,
-                'name' => Model_Dict::getInstance($this->source)->getString($state) .
-                ' ' .
-                Model_Dict::getInstance($this->source)->getString($itemtype['name']),
-            );
-        }
-        return $returned_items;
-    }
+    /**
+     * public function getItems() 
+     * 
+     * deleted - there is model->character->getItems() method instead
+     */
 
 
     public function getChnames() {

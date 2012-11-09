@@ -2,11 +2,9 @@
 
 class Model_Item extends ORM {
     
-    protected $_has_one = array(
+    protected $_belongs_to = array(
         'itemtype' => array(
             'model' => 'itemtype',
-            'foreign_key' => 'id',
-            'far_key' => 'itemtype_id'
         ),
     );
 

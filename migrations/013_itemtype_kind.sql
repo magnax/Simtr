@@ -1,0 +1,1 @@
+ALTER TABLE  `itemtypes` ADD  `kind` CHAR( 1 ) NOT NULL DEFAULT  'M' COMMENT  'typ odmiany męski/żeński/nijaki (M,K,N)';

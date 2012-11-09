@@ -217,4 +217,33 @@ $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
 $this->redis->rpush("$key:$person:params", 'locid');$loaded++;
 
+//MakeEnd
+$key = "global:event_tpl:MakeEnd";
+
+$person = 1;
+$this->redis->set("$key:$person", 'Projekt %s zakończony');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'name');$loaded++;
+$this->redis->rpush("$key:$person:params", 'itemtypeid');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Projekt %s zakończony');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'name');$loaded++;
+$this->redis->rpush("$key:$person:params", 'itemtypeid');$loaded++;
+
+//MakeEndGround
+$key = "global:event_tpl:MakeEndGround";
+
+$person = 1;
+$this->redis->set("$key:$person", 'Projekt %s zakończony');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'name');$loaded++;
+$this->redis->rpush("$key:$person:params", 'itemtypeid');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Projekt %s zakończony');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'name');$loaded++;
+$this->redis->rpush("$key:$person:params", 'itemtypeid');$loaded++;
 ?>

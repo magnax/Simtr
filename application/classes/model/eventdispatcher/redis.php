@@ -28,7 +28,7 @@ class Model_EventDispatcher_Redis extends Model_EventDispatcher {
         $args = $event_object->dispatchArgs($event, $args, $id_character, $this->lang);
 
         if (!$format) {
-            $event['text'] = 'coś nie tak...('.$id_event.')';
+            $event['text'] = 'coś nie tak...('.$id_event.', person: '.$person.')';
         } else {
             $event['text'] = @vsprintf($format, $args);
             if ($person == 2) {
