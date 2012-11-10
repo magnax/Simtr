@@ -12,6 +12,7 @@ class Model_Event {
     const SPAWN = 'Spawn';
     const GIVE_RAW = 'GiveRaw';
     const POINT_EXIT = 'PointExit';
+    const POINT_PERSON = 'PointPerson';
     const HIT_PERSON = 'HitPerson';
     const ENTER_LOCATION = 'EnterLocation';
 
