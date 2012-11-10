@@ -67,7 +67,7 @@
     </head>
     <body>
         <div id="main">
-            <div><?php echo html::anchor('/','Simtr 2'); ?></div>
+            <div><?php echo html::anchor('/','Fabular (pre-alpha)'); ?></div>
             <div id="statistics">
                 <?php include Kohana::find_file('views', 'common/stats') ?>
             </div>
@@ -81,11 +81,7 @@
                 <?php echo View::factory('user/userinfo', array('user'=>$user)); ?>
             <?php endif; ?>
             <?php echo $content; ?>
-            <?php if (isset($character)): ?>
-                <div id="buildmenu">
-                    <?php include Kohana::find_file('views', 'user/buildmenu') ?>
-                </div>
-            <?php endif; ?>
+
         </div>
     </body>
 </html>

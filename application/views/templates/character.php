@@ -108,7 +108,7 @@
             <?php if (isset($msg) && $msg): ?>
                 <div class="message"><?php echo $msg; ?></div>
             <?php endif; ?>
-            <div><?php echo html::anchor('/','Simtr 2'); ?></div>
+            <div><?php echo html::anchor('/','Fabular (pre-alpha)'); ?></div>
             <div id="statistics">
                 <?php include Kohana::find_file('views', 'common/stats') ?>
             </div>
@@ -120,6 +120,7 @@
             
             <?php echo $content; ?>
             
+            <div class="title_bar">Menu postaci</div>
             <div id="buildmenu">
                 <?php include Kohana::find_file('views', 'user/buildmenu') ?>
             </div>

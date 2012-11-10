@@ -66,7 +66,7 @@ a {
   padding: 20px; }
 
 label, input {
-  margin: 10px; }
+  margin: 10px 4px; }
 
 form li {
   display: list-item;
@@ -91,7 +91,20 @@ form label {
   margin: 20px 0; }
 
 #event_input_small {
-  width: 700px; }
+  width: 635px;
+  float: left;
+  padding: 3px;
+  border: 1px solid #081073;
+  background-color: #62d99c;
+  color: #2f3584;
+  margin-top: 13px; }
+
+#talk {
+  padding: 6px;
+  background-color: #ffa940;
+  color: #0969a2;
+  border: 1px solid #081073;
+  cursor: hand; }
 
 #actions {
   width: 780px;
@@ -130,7 +143,12 @@ form ul li {
   list-style: none; }
 
 .error {
-  color: #ff0000; }
+  color: #081073;
+  background-color: #ff0000; }
+
+#time {
+  display: inline-block;
+  padding: 0 6px; }
 
 .character {
   display: table-row;
@@ -161,3 +179,6 @@ form ul li {
 .new_event {
   background-color: #62d99c;
   color: #081073; }
+
+.clear {
+  clear: both; }

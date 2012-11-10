@@ -1,4 +1,3 @@
-<div id="time" class="error"><?php echo $current_date; ?> <?php echo $current_time; ?></div><br />
-There are 20 days in a year, 24 hours in a day, 60 minutes in an hour and
-60 seconds in a minute.<br />
-Active users in last 15 minutes: <?php echo $active_count; ?><br />
+Data/czas w grze: <div id="time" class="error"><?php echo $current_date; ?> <?php echo $current_time; ?></div>
+<div>(rok = 20 dni, doba: 24 godziny po 60 minut po 60 sekund)</div>
+<div>Liczba aktywnych graczy w ciągu ostatnich 15 minut: <?php echo $active_count; ?></div>

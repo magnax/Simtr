@@ -103,7 +103,7 @@ a {
 }
 
 label, input {
-    margin: 10px;
+    margin: 10px 4px;
 }
 
 form li {
@@ -137,9 +137,21 @@ form label {
 }
 
 #event_input_small {
-    width: 700px;
+    width: 635px;
+    float: left;
+    padding: 3px;
+    border: 1px solid $seca3;
+    background-color: $secb5;
+    color: $seca2;
+    margin-top: 13px;
 }
-
+#talk {
+    padding: 6px;
+    background-color: $com4;
+    color: $pri1;
+    border: 1px solid $seca3;
+    cursor: hand;
+}
 #actions {
     width: 780px;
     margin-bottom: 15px;
@@ -185,9 +197,13 @@ form ul li {
 }
 
 .error {
-    color: #ff0000;
+    color: $seca3;
+    background-color: #ff0000;
 }
-
+#time {
+    display: inline-block;
+    padding: 0 6px;
+}
 .character {
     display: table-row;
     height: 25px;
@@ -217,4 +233,7 @@ form ul li {
 .new_event {
     background-color: $secb5;
     color: $seca3;
+}
+.clear {
+    clear: both;
 }

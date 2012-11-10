@@ -1,4 +1,4 @@
-<div class="title_bar">Characters</div>
+<div class="title_bar">Postacie</div>
 <?php if (isset($characters) && count($characters)): ?>
     <?php foreach ($characters as $character): ?>
     <div class="character" id="character-<?=$character['id']?>">
