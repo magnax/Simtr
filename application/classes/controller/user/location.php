@@ -53,7 +53,8 @@ class Controller_User_Location extends Controller_Base_Character {
         foreach ($corpses as $corpse) {
             $name = ORM::factory('chname')->name($this->character->id, $corpse->character_id)->name;
             if (!$name) {
-                if ($ch == $this->character->id) {
+                //not necesary for own corpse, because character can't seen his corpse, but... :)
+                if ($corpse->character_id == $this->character->id) {
                     //myself
                     $name = $this->character->name;
                 } else {
