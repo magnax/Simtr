@@ -14,6 +14,7 @@ class Model_Event {
     const POINT_EXIT = 'PointExit';
     const POINT_PERSON = 'PointPerson';
     const HIT_PERSON = 'HitPerson';
+    const KILL_PERSON = 'KillPerson';
     const ENTER_LOCATION = 'EnterLocation';
 
     /**

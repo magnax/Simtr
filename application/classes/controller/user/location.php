@@ -46,6 +46,27 @@ class Controller_User_Location extends Controller_Base_Character {
     public function action_objects() {
         $this->view->raws = $this->location->getRaws();
         $this->view->items = $this->location->getItems();
+        $corpses = $this->location->getCorpses();
+       
+        $this->view->corpses = array();
+        
+        foreach ($corpses as $corpse) {
+            $name = ORM::factory('chname')->name($this->character->id, $corpse->character_id)->name;
+            if (!$name) {
+                if ($ch == $this->character->id) {
+                    //myself
+                    $name = $this->character->name;
+                } else {
+                    $name = ORM::factory('character')->getUnknownName($corpse->character_id, $this->lang);
+                }
+            }
+            $this->view->corpses[] = array(
+                'name' => $name,
+                'id' => $corpse->id,
+                'character_id' => $corpse->character_id,
+            );
+        }
+        
     }
 
     public function action_getitem() {

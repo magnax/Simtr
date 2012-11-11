@@ -6,6 +6,9 @@
             <?php echo $character['sex']; ?>
         </div>
         <div class="character_name">
+            <?php if ($character['rip']): ?>
+                R.I.P. 
+            <?php endif; ?>
             <?php echo html::anchor('character?id='.$character['id'], $character['name']); ?>
         </div>
         <div class="character_location">

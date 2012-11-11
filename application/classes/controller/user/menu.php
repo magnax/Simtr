@@ -36,6 +36,7 @@ class Controller_User_Menu extends Controller_Base_User {
                 'age' => $character->created,
                 'new_events' => $new_events,
                 'myproject' => $current_project ? $my_project : null,
+                'rip' => ($character->life == 0),
             );
             
         }

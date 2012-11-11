@@ -185,6 +185,14 @@ class Model_Location extends ORM {
         return $returned;
     }
     
+        public function getCorpses() {
+        
+        return ORM::factory('corpse')
+            ->where('location_id', '=', $this->id)
+            ->find_all();
+        
+    }
+    
 }
 
 ?>

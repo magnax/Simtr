@@ -59,29 +59,56 @@ class Controller_User_People extends Controller_Base_Character {
             $victim->setDamage($damage);
             
             if ($victim->isDying()) {
-                //generate KILL_PERSON event
-                //generate DIE_BY_PERSON event
-            }
-            
-            //generate event & message
-            $event_sender = Model_EventSender::getInstance(
-                Model_Event::getInstance(
-                    Model_Event::HIT_PERSON, $this->game->raw_time, $this->redis
-                )
-            );
+                
+                $victim->location_id = null;
+                $victim->life = 0;
+                $victim->save();
+                
+                $body = new Model_Corpse();
+                $body->character_id = $victim->id;
+                $body->location_id = $victim->location_id;
+                $body->created = $this->game->raw_time;
+                $body->weight = 60000;
+                
+                //todo: get victim's clothes and set to body
+                //todo: get all victim's items and put on the ground
+                
+                $body->save();
+                
+                //generate event & message
+                $event_sender = Model_EventSender::getInstance(
+                    Model_Event::getInstance(
+                        Model_Event::KILL_PERSON, $this->game->raw_time, $this->redis
+                    )
+                );
+                
+                $event_sender->setRecipient($character_id);           
+                $event_sender->setSender($this->character->id);
+                
+                //set fighting skill
+                $event_sender->setSkill($this->character->fighting);
+                $event_sender->setWeaponTypeID($_POST['weapon']);
 
-            $event_sender->setRecipient($character_id);           
-            $event_sender->setSender($this->character->id);
+            } else {
             
-            //set fighting skill
-            $event_sender->setSkill($this->character->fighting);
-            $event_sender->setWeaponTypeID($_POST['weapon']);
-            
-            $event_sender->setDamage($damage);
-            $event_sender->setShieldTypeID(-1);
-            $event_sender->setShield(0);
-            
-            $event_sender->addRecipients($this->location->getHearableCharacters());
+                //generate event & message
+                $event_sender = Model_EventSender::getInstance(
+                    Model_Event::getInstance(
+                        Model_Event::HIT_PERSON, $this->game->raw_time, $this->redis
+                    )
+                );
+
+                $event_sender->setRecipient($character_id);           
+                $event_sender->setSender($this->character->id);
+
+                
+
+                $event_sender->setDamage($damage);
+                $event_sender->setShieldTypeID(-1);
+                $event_sender->setShield(0);
+            }
+                
+            $event_sender->addRecipients($this->location->getHearableCharacters());    
             $event_sender->send();
         
             $this->request->redirect('events');

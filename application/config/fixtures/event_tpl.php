@@ -192,6 +192,30 @@ $this->redis->rpush("$key:$person:params", 'skill');$loaded++;
 $this->redis->rpush("$key:$person:params", 'rcpt');$loaded++;
 $this->redis->rpush("$key:$person:params", 'wpid');$loaded++;
 
+//KillPerson
+$key = "global:event_tpl:KillPerson";
+$person = 1;
+$this->redis->set("$key:$person", '%s zabijasz %s, używając %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'skill');$loaded++;
+$this->redis->rpush("$key:$person:params", 'rcpt');$loaded++;
+$this->redis->rpush("$key:$person:params", 'wpid');$loaded++;
+
+$person = 2;
+$this->redis->set("$key:$person", '%s %s zabija Cię, używając %s. To koniec.');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
+$this->redis->rpush("$key:$person:params", 'skill');$loaded++;
+$this->redis->rpush("$key:$person:params", 'wpid');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Widzisz jak %s %s zabija %s, używając %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
+$this->redis->rpush("$key:$person:params", 'skill');$loaded++;
+$this->redis->rpush("$key:$person:params", 'rcpt');$loaded++;
+$this->redis->rpush("$key:$person:params", 'wpid');$loaded++;
+
 //PutItem
 $key = "global:event_tpl:PutItem";
 $person = 1;

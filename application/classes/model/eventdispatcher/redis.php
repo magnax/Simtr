@@ -38,6 +38,8 @@ class Model_EventDispatcher_Redis extends Model_EventDispatcher {
                 $event['text'] = 'ERROR: <b>'.$format.'</b> L.arg.:'.count($args).' Person:'.$person. ' Event: '.$id_event;
             }
         }
+        
+        $event['text'][0] = strtoupper($event['text'][0]);
 
         return array(
             'id'  => $id_event,

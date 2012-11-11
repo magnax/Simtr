@@ -34,6 +34,11 @@ class Controller_Base_Character extends Controller_Base_User {
             Request::current()->redirect('user/menu');
         }
         
+        //redirect if character is dead
+        if (!$this->character->life && !(($this->request->action() == 'index') && ($this->request->controller() == 'events'))) {            
+            $this->redirectError('Jesteś martwy a martwi zazwyczaj nic już nie robią!', 'events');
+        }
+        
         $this->location = ORM::factory('location', $this->character->location_id);        
 
     }

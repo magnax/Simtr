@@ -102,13 +102,13 @@
     </head>
     <body>
         <div id="main">
+            <div><?php echo html::anchor('/','Fabular (pre-alpha)'); ?></div>
             <?php if (isset($err) && $err): ?>
                 <div class="error">Błąd: <?php echo $err; ?></div>
             <?php endif; ?>
             <?php if (isset($msg) && $msg): ?>
                 <div class="message"><?php echo $msg; ?></div>
             <?php endif; ?>
-            <div><?php echo html::anchor('/','Fabular (pre-alpha)'); ?></div>
             <div id="statistics">
                 <?php include Kohana::find_file('views', 'common/stats') ?>
             </div>
