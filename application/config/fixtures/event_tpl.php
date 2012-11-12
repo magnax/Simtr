@@ -288,4 +288,19 @@ $this->redis->set("$key:$person", 'Projekt %s zakończony');$loaded++;
 $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'name');$loaded++;
 $this->redis->rpush("$key:$person:params", 'itemtypeid');$loaded++;
+
+//Hungry
+$key = "global:event_tpl:Hungry";
+
+$person = 1;
+$this->redis->set("$key:$person", 'Głodujesz');$loaded++;
+$this->redis->del("$key:$person:params");
+
+//Eat
+$key = "global:event_tpl:Eat";
+
+$person = 1;
+$this->redis->set("$key:$person", 'Zjadasz %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'desc');$loaded++;
 ?>

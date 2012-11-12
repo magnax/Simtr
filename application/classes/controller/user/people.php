@@ -60,10 +60,6 @@ class Controller_User_People extends Controller_Base_Character {
             
             if ($victim->isDying()) {
                 
-                $victim->location_id = null;
-                $victim->life = 0;
-                $victim->save();
-                
                 $body = new Model_Corpse();
                 $body->character_id = $victim->id;
                 $body->location_id = $victim->location_id;
@@ -74,6 +70,10 @@ class Controller_User_People extends Controller_Base_Character {
                 //todo: get all victim's items and put on the ground
                 
                 $body->save();
+                
+                $victim->location_id = null;
+                $victim->life = 0;
+                $victim->save();
                 
                 //generate event & message
                 $event_sender = Model_EventSender::getInstance(

@@ -16,6 +16,8 @@ class Model_Event {
     const HIT_PERSON = 'HitPerson';
     const KILL_PERSON = 'KillPerson';
     const ENTER_LOCATION = 'EnterLocation';
+    const HUNGRY = 'Hungry';
+    const EAT = 'Eat';
 
     /**
      * wspólne właściwości

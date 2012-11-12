@@ -1,24 +1,24 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_Event_PointPerson extends Model_Event {
+class Model_Event_Hungry extends Model_Event {
 
     /**
-     * właściwości specyficzne dla zdarzenia POINT_PERSON
+     * właściwości specyficzne dla zdarzenia HUNGRY
      */
-    protected $recipient;
-
-    public function setRecipient($ch) {
-        $this->recipient = $ch;
-    }
+    protected $desc;
     
+    public function setDesc($desc) {
+        $this->desc = $desc;
+    }
+
     public function toArray() {
 
-        $arr = parent::toArray();
+    $arr = parent::toArray();
 
-        $arr['sndr'] = $this->sender;
-        $arr['rcpt'] = $this->recipient;
+    $arr['sndr'] = $this->sender;
+    $arr['desc'] = $this->desc;
 
-        return $arr;
+    return $arr;
 
     }
 
@@ -35,13 +35,8 @@ class Model_Event_PointPerson extends Model_Event {
                 $event_data['sndr'].'">'.$name.'</a>';
         }
         
-        if (in_array('rcpt', $args)) {
-            $name = ORM::factory('chname')->name($character_id, $event_data['rcpt'])->name;
-            if (!$name) {
-                $name = ORM::factory('character')->getUnknownName($event_data['rcpt'], $lang);
-            }
-            $returned['rcpt'] = '<a href="chname?id='.
-                $event_data['rcpt'].'">'.$name.'</a>';
+        if (in_array('desc', $args)) {
+            $returned['desc'] = $event_data['desc'];
         }
         
         return $returned;
@@ -53,4 +48,5 @@ class Model_Event_PointPerson extends Model_Event {
 }
 
 ?>
+
 

@@ -137,7 +137,7 @@ class Model_Character extends ORM {
             'sublocation' => $sublocation,
             'sublocation_id' => null, //for now, later it may be ie. vehicle
             'life' => $this->life,
-            'vitality' => 1000,
+            'fed' => $this->fed,
             'strength' => 1.2,
             'fighting' => $this->fighting,
             'eq_weight' => $this->calculateWeight(),
