@@ -5,6 +5,7 @@ abstract class Model_Project {
     // typy projektów
     const TYPE_GET_RAW = 'GetRaw'; //wydobycie surowców z ziemi
     const TYPE_MAKE = 'Make'; //produkcja przedmiotów
+    const TYPE_BURY = 'Bury'; //zakopywanie ciał
 
     //pola zapisywane metodą toArray()
     protected $id;

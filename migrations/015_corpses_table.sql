@@ -10,3 +10,5 @@ CREATE TABLE  `corpses` (
  * character's location ID can now be NULL to point that this character is dead
  */
 ALTER TABLE  `characters` CHANGE  `location_id`  `location_id` INT( 11 ) NULL;
+
+ALTER TABLE  `corpses` CHANGE  `location_id`  `location_id` INT( 11 ) NULL;

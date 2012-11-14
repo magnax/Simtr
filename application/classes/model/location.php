@@ -13,6 +13,11 @@ class Model_Location extends ORM {
             'foreign_key' => 'id',
             'far_key' => 'locationtype_id',
         ),
+        'locationclass' => array(
+            'model' => 'locationclass',
+            'foreign_key' => 'id',
+            'far_key' => 'class_id',
+        ),
     );
     
     protected $_has_many = array(

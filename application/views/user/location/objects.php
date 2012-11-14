@@ -1,4 +1,4 @@
-<div class="title_bar">Location name - [location type]: obiekty</div>
+<div class="title_bar"><?php echo html::anchor('lname?id='.$character['location_id'], '['.$character['location'].']'); ?> - [<?= $locationtype; ?>]: obiekty</div>
 
 <?php if (count($raws)): ?>
     <div class="objects-menu">Surowce</div>
@@ -18,6 +18,6 @@
 <?php if (count($corpses)): ?>
     <div class="objects-menu">Ciała</div>
     <?php foreach ($corpses as $corpse): ?>
-        Ciało <?php echo html::anchor('chname?id='.$corpse['character_id'], $corpse['name']); ?><br />
+        <?php echo html::anchor('user/location/bury/'.$corpse['id'], '[zakop]'); ?> Ciało <?php echo html::anchor('chname?id='.$corpse['character_id'], $corpse['name']); ?><br />
     <?php endforeach; ?>
 <?php endif; ?>

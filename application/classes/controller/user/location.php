@@ -44,6 +44,8 @@ class Controller_User_Location extends Controller_Base_Character {
     }
 
     public function action_objects() {
+        
+        $this->view->locationtype = $this->location->locationclass->name;
         $this->view->raws = $this->location->getRaws();
         $this->view->items = $this->location->getItems();
         $corpses = $this->location->getCorpses();
@@ -125,6 +127,43 @@ class Controller_User_Location extends Controller_Base_Character {
         
         $this->request->redirect('events');
         
+    }
+    
+    /**
+     * burying dead bodies
+     * I'm not sure whether this method should belongs to location controller
+     */
+    public function action_bury() {
+        
+        $body_id = $this->request->param('id');
+        
+        $body = new Model_Corpse($body_id);
+        $body->location_id = null;
+        $body->save();
+        
+        $project_manager = Model_ProjectManager::getInstance(
+            Model_Project::getInstance(Model_Project::TYPE_BURY, $this->redis)//;
+        );
+
+        $data = array(
+            'name'=>'Zakopywanie ciała',
+            'owner_id'=>$this->character->id,
+            'time'=>3600,
+            'type_id'=>Model_Project::TYPE_BURY,
+            'place_type'=>$this->location->locationtype_id,
+            'place_id'=>$this->location->id,
+            'body_id'=>$body_id,
+            'character_id' => $body->character_id,
+            'created_at'=>$this->game->getRawTime()
+        );
+
+        $project_manager->set($data);
+        $project_manager->save();
+
+        $this->location->addProject($project_manager->getId(), $this->redis);
+
+        $this->request->redirect('events');
+
     }
     
 }
