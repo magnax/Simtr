@@ -38,7 +38,7 @@
             console.log(exists);
             if (exists == 0) {
                 console.log('adding...');
-                $('#events ul').prepend('<li data-id="' + data.event_id + '">' + data.text.date + ': ' + data.text.text + '</li>');
+                $('#events ul').prepend('<li data-id="' + data.event_id + '" class="new_event">' + data.text.date + ': ' + data.text.text + '</li>');
             }
           });
 

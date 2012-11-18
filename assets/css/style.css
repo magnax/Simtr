@@ -91,7 +91,7 @@ form label {
   margin: 20px 0; }
 
 #event_input_small {
-  width: 635px;
+  width: 630px;
   float: left;
   padding: 3px;
   border: 1px solid #081073;
@@ -177,7 +177,7 @@ form ul li {
   width: 100px; }
 
 .new_event {
-  background-color: #62d99c;
+  background-color: #3d9ad1;
   color: #081073; }
 
 .clear {

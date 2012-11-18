@@ -30,7 +30,9 @@ class Model_Event_GetRawEndGround extends Model_Event {
         $returned = array();
         
         $returned['name'] = $event_data['name'];
-        $returned['res_id'] = $event_data['res_id'];
+        $res = new Model_Resource($event_data['res_id']);
+        
+        $returned['res_id'] = $res->d;
         
         if (in_array('amount', $args)) {
             $returned['amount'] = $event_data['amount'];
