@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class Model_Event_GetRawEnd extends Model_Event {
 
