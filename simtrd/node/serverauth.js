@@ -2,6 +2,7 @@
 var sio = require('socket.io');
 var fs = require('fs');
 var redis = require("./lib/redis-client").createClient();
+require('./config.js');
 
 // Start the server
 //var server = http.createServer(function(req, res){ 
@@ -12,16 +13,16 @@ var redis = require("./lib/redis-client").createClient();
 //server.listen(8000);
 
 // Create a Socket.IO instance, passing it port
-var io = sio.listen(8000);
+var io = sio.listen(config.port);
 
 var characters = {};
 var connected_chars = {};
 var users = {};
 var connected_users = {};
 
-var timeFile = '/home/magnax/www/simtrd/counter';
+var timeFile = config.counterFile;
 
-console.log('version 0.0.1 started');
+console.log('version 0.0.1 started on port: '+config.port+' with counter: '+config.counterFile);
 
 io.sockets.on('connection', function(socket) {
     console.log('connected');

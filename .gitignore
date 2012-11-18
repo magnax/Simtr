@@ -15,3 +15,5 @@
 /simtrd/config.php
 /simtrd/node/node_modules/
 /simtrd/node/nohup.out
+/.htaccess
+/simtrd/node/config.js
