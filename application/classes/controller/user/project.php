@@ -80,6 +80,7 @@ class Controller_User_Project extends Controller_Base_Character {
 
                 if ($project->getTypeId() == 'GetRaw') {
                     $used_slots = $this->location->countUsedSlots($this->redis);
+                    Session::instance()->set('error', $used_slots);
                     
                     if ($used_slots < $this->location->town->slots) {
                         $manager->addParticipant($this->character, $this->game->raw_time);
@@ -99,7 +100,7 @@ class Controller_User_Project extends Controller_Base_Character {
         }
 
         if ($errors) {
-            $this->session->set_flash('errors', json_encode($errors));
+            Session::instance()->set('errors', json_encode($errors));
         }
         
         $this->request->redirect('events');

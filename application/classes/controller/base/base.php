@@ -54,10 +54,10 @@ class Controller_Base_Base extends Controller_Template {
         /**
          * flash messages: error and info message
          */
-        $this->template->err = $this->session->get_once('err');
+        $this->template->error = $this->session->get_once('error');
         
         //flash message
-        $this->template->msg = $this->session->get_once('msg');
+        $this->template->message = $this->session->get_once('message');
         
         /**
          * Redis database init
