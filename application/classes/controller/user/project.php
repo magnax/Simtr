@@ -28,15 +28,18 @@ class Controller_User_Project extends Controller_Base_Character {
             }
             $name = '<a href="/chname?id='.$p['owner_id'].'">'.$name.'</a>';
             
-            $project_name = $p['name'];
-            if ($p['type_id'] == 'Bury') {
-                $buried_char = new Model_Character($p['character_id']);
-                $buried_name = ORM::factory('chname')->name($this->character->id, $buried_char)->name;
-                if (!$buried_name) {
-                    $buried_name = ORM::factory('character')->getUnknownName($buried_char, $this->lang);
-                }
-                $project_name .= ' '.'<a href="/chname?id='.$buried_char.'">'.$buried_name.'</a>';
-            } 
+            $project_name = Model_Project::getInstance($p['type_id'])
+                ->name($p, $this->character->id);
+            
+//            $project_name = $p['name'];
+//            if ($p['type_id'] == 'Bury') {
+//                $buried_char = new Model_Character($p['character_id']);
+//                $buried_name = ORM::factory('chname')->name($this->character->id, $buried_char)->name;
+//                if (!$buried_name) {
+//                    $buried_name = ORM::factory('character')->getUnknownName($buried_char, $this->lang);
+//                }
+//                $project_name .= ' '.'<a href="/chname?id='.$buried_char.'">'.$buried_name.'</a>';
+//            } 
             
             $this->view->projects[] = array(
                 'id' => $p['id'],

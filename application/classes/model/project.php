@@ -40,7 +40,7 @@ abstract class Model_Project {
         $this->source = $source;
     }
     
-    public static function getInstance($type, $source) {
+    public static function getInstance($type, $source = null) {
 
         $model = 'Model_Project_'.$type;
         return new $model($type, $source);

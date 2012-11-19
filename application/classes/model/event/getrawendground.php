@@ -29,10 +29,16 @@ class Model_Event_GetRawEndGround extends Model_Event {
         
         $returned = array();
         
-        $returned['name'] = $event_data['name'];
-        $res = new Model_Resource($event_data['res_id']);
+        /**
+         * @todo: res_id / resource_id inconsistency
+         */
+        $project_data = array(
+            'type_id'=>$event_data['type'],
+            'resource_id'=>$event_data['res_id']
+        );
         
-        $returned['res_id'] = $res->d;
+        $returned['name'] = Model_Project::getInstance('GetRaw')
+                ->name($project_data, $character_id);
         
         if (in_array('amount', $args)) {
             $returned['amount'] = $event_data['amount'];

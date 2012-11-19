@@ -123,6 +123,9 @@ class Model_Character extends ORM {
             $my_project['percent'] = number_format($my_project['time_elapsed'] / $my_project['time'] * 100, 2);
             $my_project['time_zero'] = $raw_time;
             $my_project['speed'] = 1; //for now, will be calculated
+            
+            $project_name = Model_Project::getInstance($my_project['type_id'])
+                ->name($my_project, $this->id);
         }
         
         return array(
@@ -143,6 +146,7 @@ class Model_Character extends ORM {
             'eq_weight' => $this->calculateWeight(),
             'project_id' => ($my_project_id) ? $my_project_id : 0,
             'myproject' => $my_project,
+            'project_name' => $my_project_id ? $project_name : '',
         );
     }
 
