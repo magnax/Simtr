@@ -81,13 +81,6 @@ class Controller_User_People extends Controller_Base_Character {
                         Model_Event::KILL_PERSON, $this->game->raw_time, $this->redis
                     )
                 );
-                
-                $event_sender->setRecipient($character_id);           
-                $event_sender->setSender($this->character->id);
-                
-                //set fighting skill
-                $event_sender->setSkill($this->character->fighting);
-                $event_sender->setWeaponTypeID($_POST['weapon']);
 
             } else {
             
@@ -98,18 +91,26 @@ class Controller_User_People extends Controller_Base_Character {
                     )
                 );
 
-                $event_sender->setRecipient($character_id);           
-                $event_sender->setSender($this->character->id);
-
-                
-
                 $event_sender->setDamage($damage);
                 $event_sender->setShieldTypeID(-1);
                 $event_sender->setShield(0);
             }
+            
+            $event_sender->setRecipient($character_id);           
+            $event_sender->setSender($this->character->id);
+                
+            //set fighting skill
+            $event_sender->setSkill($this->character->fighting);
+            $event_sender->setWeaponTypeID($_POST['weapon']);
                 
             $event_sender->addRecipients($this->location->getHearableCharacters());    
             $event_sender->send();
+            
+            Model_EventNotifier::notify(
+                $event_sender->getEvent()->getRecipients(), 
+                $event_sender->getEvent()->getId(), 
+                $this->redis, $this->lang
+            );
         
             $this->request->redirect('events');
         }

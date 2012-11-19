@@ -52,7 +52,13 @@ class Controller_User_Point extends Controller_Base_Character {
 
         $event_sender->addRecipients($this->location->getHearableCharacters());
         $event_sender->send();
-            
+         
+        //notify all recipients
+        Model_EventNotifier::notify(
+            $event_sender->getEvent()->getRecipients(), 
+            $event_sender->getEvent()->getId(), 
+            $this->redis, $this->lang
+        );
         //redirect to events page
         $this->request->redirect('events');
     }

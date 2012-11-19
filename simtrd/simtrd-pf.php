@@ -91,6 +91,7 @@ if (!$runmode['write-initd']) {
 require_once '../application/modules/redisent/classes/redisent.php';
 require_once '../application/modules/redisent/classes/redisexception.php';
 require_once '../application/classes/redisdb.php';
+
 $redis = RedisDB::getInstance()
     ->connect($config['database_dsn']);
 //    ->getConnectionObject();
@@ -158,10 +159,14 @@ while(!System_Daemon::isDying() && $runningOK) {
             
             $project = json_decode($redis->get("projects:$project_id"), true);
             
+            print_r($project);
+            
             //project initiator (owner)
             $query = mysql_query("select * from characters where id={$project['owner_id']}");
             $owner = mysql_fetch_array($query);
 
+            print_r($owner);
+            
             //is project owner present in location?
             $is_owner_present = ($owner['location_id'] == $project['place_id']);
 
@@ -307,6 +312,12 @@ while(!System_Daemon::isDying() && $runningOK) {
             foreach ($event_recipients as $r) {
                 $redis->lpush("characters:$r:events", $event_id);
             }
+            
+//            Model_EventNotifier::notify(
+//                $event_sender->getEvent()->getRecipients(), 
+//                $event_sender->getEvent()->getId(), 
+//                $this->redis, $this->lang
+//            );
 
         }
     }
