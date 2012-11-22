@@ -31,6 +31,14 @@ class Model_Project_Make extends Model_Project {
         return $tmp_arr;
 
     }
+    
+    public function name($project_data) {
+        
+        $item = new Model_ItemType($project_data['itemtype_id']);
+        
+        return 'Produkcja: '.$item->name;
+        
+    }
 
 }
 
