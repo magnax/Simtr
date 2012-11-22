@@ -13,8 +13,8 @@ class Model_Event_MakeEnd extends Model_Event {
      */
     protected $itemtype_id;
 
-    public function setResource($res_id, $amount) {
-        $this->res_id = $res_id;
+    public function setResource($itemtype, $amount) {
+        $this->itemtype = $itemtype;
         $this->amount = $amount;
     }
 

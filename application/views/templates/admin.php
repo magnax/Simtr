@@ -29,5 +29,6 @@
     <?php echo html::anchor('admin/menu/keys', 'DB Keys'); ?> 
     Node server: [<?php echo html::anchor('admin/server/check', 'Check server'); ?> 
     <?php echo html::anchor('admin/server/on', 'Turn on server'); ?>]
+    <?php echo html::anchor('admin/events/index', 'Events'); ?> 
 </div>
 <?php echo $content; ?>
