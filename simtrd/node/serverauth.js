@@ -75,6 +75,22 @@ io.sockets.on('connection', function(socket) {
     fs.watch(timeFile, function ( curr, prev ) {
         var time = fs.readFile(timeFile, 'utf-8', function(err, time) {
             if (time && (time % 5 == 0)) {
+                redis.keys("connected_user:*", function(err, data) {
+                    if (data) {
+                        console.log(data.length);
+                        socket.emit('usercount', {'usercount': data.length});
+                    } else {
+                        socket.emit('usercount', {'usercount': 0});
+                    }
+                });
+                redis.keys("connected_char:*", function(err, data) {
+                    if (data) {
+                        console.log(data.length);
+                        socket.emit('charcount', {'charcount': data.length});
+                    } else {
+                        socket.emit('charcount', {'charcount': 0});
+                    }
+                });
                 socket.emit('time', {'time': time});
             }
         });        

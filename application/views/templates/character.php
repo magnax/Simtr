@@ -55,6 +55,18 @@
             }
         });
         
+        //count connected users
+        socket.on('usercount', function(data) {
+            //console.log('connected users: '+data.usercount);
+            $('#count_active_users').html(data.usercount); 
+        });
+        
+        //count connected chars
+        socket.on('charcount', function(data) {
+            console.log('connected chars: '+data.charcount);
+            $('#count_active_chars').html(data.charcount); 
+        });
+        
         socket.on('disconnect', function () {
             console.log('disconnected!');
             $('#time').addClass('error');
@@ -102,7 +114,7 @@
     </head>
     <body>
         <div id="main">
-            <div><?php echo html::anchor('/','Fabular (pre-alpha)'); ?></div>
+            <div><?php echo html::anchor('/','Fabular (pre-alpha)'); ?> (U:<span id="count_active_users">0</span>, C:<span id="count_active_chars">0</span>)</div>
             <?php if (isset($error) && $error): ?>
                 <div class="error">Błąd: <?php echo $error; ?></div>
             <?php endif; ?>
