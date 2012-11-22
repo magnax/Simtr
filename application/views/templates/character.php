@@ -57,13 +57,11 @@
         
         //count connected users
         socket.on('usercount', function(data) {
-            //console.log('connected users: '+data.usercount);
             $('#count_active_users').html(data.usercount); 
         });
         
         //count connected chars
         socket.on('charcount', function(data) {
-            console.log('connected chars: '+data.charcount);
             $('#count_active_chars').html(data.charcount); 
         });
         

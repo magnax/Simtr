@@ -101,29 +101,41 @@ class Controller_User_Location extends Controller_Base_Character {
      */
     public function action_enter() {
         
-        $location_id = $this->request->param('id');
+        $dest_location_id = $this->request->param('id');
+        $exit_location_id = $this->character->location_id;
         /**
          * @todo check if user may enter this location
          * (locked, too much weight etc.)
          */
         
         //generate event
-        $event = Model_EventSender::getInstance(
+        $event_sender = Model_EventSender::getInstance(
             Model_Event::getInstance(
                 Model_Event::ENTER_LOCATION, $this->game->raw_time, $this->redis
             )
         );
         
         //first get recipients from current loc
-        $event->addRecipients($this->location->getVisibleCharacters());
+        $current_recipients = $this->location->getVisibleCharacters();
         
-        $this->character->location_id = $location_id;
+        $dest_location = new Model_Location($dest_location_id);
+        $dest_recipients = $dest_location->getVisibleCharacters();
+        
+        $recipients = array_merge($current_recipients, $dest_recipients);
+        
+        $event_sender->addRecipients($recipients);
+        
+        $this->character->location_id = $dest_location_id;
         $this->character->save();
         
-        $event->setSender($this->character->getId());
-        $event->setLocationId($location_id);
+        $event_sender->setSender($this->character->getId());
+        $event_sender->setLocationId($dest_location_id);
+        $event_sender->setExitLocationId($exit_location_id);
 
-        $event->send();
+        $event_sender->send();
+        
+        $event_id = $event_sender->getEvent()->getId();
+        Model_EventNotifier::notify($recipients, $event_id, $this->redis, $this->lang);
         
         $this->request->redirect('events');
         

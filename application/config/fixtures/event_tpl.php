@@ -245,15 +245,17 @@ $this->redis->rpush("$key:$person:params", 'itemid');$loaded++;
 //EnterLocation
 $key = "global:event_tpl:EnterLocation";
 $person = 1;
-$this->redis->set("$key:$person", 'Wchodzisz do %s');$loaded++;
+$this->redis->set("$key:$person", 'Wchodzisz do %s, opuszczając %s');$loaded++;
 $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'locid');$loaded++;
+$this->redis->rpush("$key:$person:params", 'exit_id');$loaded++;
 
 $person = 3;
-$this->redis->set("$key:$person", 'Widzisz jak %s wchodzi do %s');$loaded++;
+$this->redis->set("$key:$person", 'Widzisz jak %s wchodzi do %s, opuszczając %s');$loaded++;
 $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
 $this->redis->rpush("$key:$person:params", 'locid');$loaded++;
+$this->redis->rpush("$key:$person:params", 'exit_id');$loaded++;
 
 //MakeEnd
 $key = "global:event_tpl:MakeEnd";

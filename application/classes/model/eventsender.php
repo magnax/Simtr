@@ -75,6 +75,10 @@ abstract class Model_EventSender {
         $this->_event->setLocationId($location_id);
     }
     
+    public function setExitLocationId($location_id) {
+        $this->_event->setExitLocationId($location_id);
+    }
+    
     abstract public function send();
 
 }

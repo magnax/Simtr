@@ -99,7 +99,7 @@ class Utils {
         echo $amount.'/'.$full;
         $width_health = floor(200*($amount/$full));
         $width_rest = 200-$width_health;
-        echo ' <div style="border:1px solid #000;display:inline-block;"><div style="width:'.$width_health.'px;height:10px;background-color:0c0;display:inline-block;"></div><div style="width:'.$width_rest.'px;height:10px;border:1px 1px 0 1px solid #000;background-color:#c00;display:inline-block;"></div></div>';
+        echo ' <div style="border:1px solid #000;display:inline-block;"><div style="width:'.$width_health.'px;height:10px;background-color:#0c0;display:inline-block;"></div><div style="width:'.$width_rest.'px;height:10px;border:1px 1px 0 1px solid #000;background-color:#c00;display:inline-block;"></div></div>';
         
     }
 }
