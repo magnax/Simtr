@@ -30,6 +30,16 @@ class Controller_User_People extends Controller_Base_Character {
         
         $character_id = $this->request->param('id');
         
+        $hitted = $this->redis->get("hit:{$this->character->id}:{$character_id}");
+        
+        if ($hitted) {
+            
+            //$time = Model_GameTime::formatDateTime($this->game->raw_time - $hitted, 'h:m:s');
+            $time = gmdate('H:i:s', Model_User::HIT_GAP - ($this->game->raw_time - $hitted));
+            $this->redirectError('Możesz uderzyć tę postać za '.$time, 'events');
+            
+        }
+        
         //initialize form validation
         $post = Validation::factory($_POST);
         
@@ -94,6 +104,11 @@ class Controller_User_People extends Controller_Base_Character {
                 $event_sender->setDamage($damage);
                 $event_sender->setShieldTypeID(-1);
                 $event_sender->setShield(0);
+                
+                //set time of last attack
+                $key = "hit:{$this->character->id}:{$character_id}";
+                $this->redis->set($key, $this->game->raw_time);
+                $this->redis->expire($key, Model_User::HIT_GAP);
             }
             
             $event_sender->setRecipient($character_id);           

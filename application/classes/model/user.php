@@ -2,6 +2,9 @@
 
 class Model_User extends Model_Auth_User {
  
+    //time between two hits of the same person
+    const HIT_GAP = 7200;
+    
     /**
      * extend user class to have another relations in model
      */
