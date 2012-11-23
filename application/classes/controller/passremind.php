@@ -24,11 +24,11 @@ class Controller_PassRemind extends Controller_Base_Guest {
                     ->from('noreply@fabular.pl', 'Fabular.pl')
                     ->send();
 
-                $this->session->set('msg', 'New password sended, read email and log in');
+                Session::instance()->set('msg', 'New password sended, read email and log in');
                 
                 $this->request->redirect('login');
             } else {
-                $this->template->err = 'Cannot find user registered with this email address';
+                $this->template->error = 'Cannot find user registered with this email address';
             }
         }
         

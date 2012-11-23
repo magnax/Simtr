@@ -1,5 +1,5 @@
 <?= form::open(); ?>
-    <?= form::label('email', 'Your e-mail address:'); ?>
+    <?= form::label('email', 'Twój adres e-mail:'); ?>
     <?= form::input('email'); ?>
-    <?= form::submit('send', 'Send new password'); ?>
+    <?= form::submit('send', 'Wyślij mi nowe hasło'); ?>
 <?= form::close(); ?>
