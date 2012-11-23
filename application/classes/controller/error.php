@@ -5,7 +5,7 @@ class Controller_Error extends Controller_Template {
     public $template = 'templates/error';
     
     public function action_index() {
-        $this->template->error_message = Session::instance()->get_once('err');
+        $this->template->error_message = Session::instance()->get_once('error');
     }
     
 }

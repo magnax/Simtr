@@ -117,6 +117,12 @@ Kohana::modules(array(
  * defaults for the URI.
  */
 
+Route::set('activate', 'activate')
+	->defaults(array(
+		'controller' => 'login',
+		'action'     => 'activate'
+	));
+
 //default admin routes
 Route::set('admin_expanded', 'admin(/<controller>(/<action>(/<id>(/<param>))))')
 	->defaults(array(

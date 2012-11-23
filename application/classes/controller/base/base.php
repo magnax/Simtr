@@ -104,7 +104,7 @@ class Controller_Base_Base extends Controller_Template {
     public function redirectMessage($msg, $uri = '/') {
 
         $this->session->set('message', $msg);
-        Request::instance()->redirect($uri);
+        $this->request->redirect($uri);
 
     }
     

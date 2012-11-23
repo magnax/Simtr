@@ -57,8 +57,7 @@ class Controller_Login extends Controller_Base_Guest {
         }
         
         if ($user->active) {
-            $this->session->set('msg', 'User already active');
-            $this->request->redirect('login');
+            $this->redirectMessage('User already active', 'user');
         }
         
         $activateCode = $user->activation_code;
@@ -72,8 +71,7 @@ class Controller_Login extends Controller_Base_Guest {
             $user->active = 1;
             $user->activation_code = null;
             $user->save();
-            $this->session->set('msg', 'Your account is now activated.');
-            $this->request->redirect('login');
+            $this->redirectMessage('user', 'Your account is now activated.');
             
         } else {
             
