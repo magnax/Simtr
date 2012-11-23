@@ -24,7 +24,7 @@
                 Przebudzenie:
             </td>
             <td>
-                Day <?php echo Model_GameTime::formatDateTime($character['spawn_day'], 'd'); ?> w <?php echo html::anchor('lname?id='.$character['spawn_location_id'], $character['spawn_location']); ?>
+                Dnia <?php echo Model_GameTime::formatDateTime($character['spawn_day'], 'd'); ?> w <?php echo html::anchor('lname?id='.$character['spawn_location_id'], $character['spawn_location']); ?>
             </td>
         </tr>
         <tr>

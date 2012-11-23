@@ -3,7 +3,7 @@
 class Controller_User_Profil extends Controller_Base_User {
 
     public function action_index() {
-        $this->view->user_data = $this->user->toArray();
+        $this->view->user_data = $this->user;
     }
 
     public function action_save() {

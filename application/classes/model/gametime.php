@@ -70,7 +70,7 @@ class Model_GameTime {
     }
 
     public function getDate() {
-        return $this->year.'/'.$this->day.' ('.$this->day_of_year.')';
+        return $this->year.'-'.$this->day_of_year.' ('.$this->day.')';
     }
 
     public function getDateTime() {

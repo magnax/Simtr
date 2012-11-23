@@ -8,5 +8,5 @@ function decodeRawTime(raw_time) {
     var d = (r - h) / 24;
     var y = Math.floor(d / 20);
     var f = d % 20;
-    return y + '/' + d + ' (' + f + ') ' + ('0'+h).substr(-2) + ':' + ('0' + m).substr(-2) + ':'  + ('0' + s).substr(-2);
+    return y + '-' + f + ' (' + d + ') ' + ('0'+h).substr(-2) + ':' + ('0' + m).substr(-2) + ':'  + ('0' + s).substr(-2);
 }

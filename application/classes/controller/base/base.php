@@ -90,7 +90,7 @@ class Controller_Base_Base extends Controller_Template {
      */
     public function redirectError($err, $uri = 'error') {
 
-        $this->session->set('err', $err);
+        Session::instance()->set('error', $err);
         $this->request->redirect($uri);
 
     }
@@ -103,7 +103,7 @@ class Controller_Base_Base extends Controller_Template {
      */
     public function redirectMessage($msg, $uri = '/') {
 
-        $this->session->set('msg', $msg);
+        $this->session->set('message', $msg);
         Request::instance()->redirect($uri);
 
     }

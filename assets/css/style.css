@@ -29,6 +29,10 @@ body {
   background-color: #245a7a;
   color: #62d99c; }
 
+table, tr, td {
+  font-family: Verdana, sans-serif;
+  font-size: 10pt; }
+
 .title_bar {
   background-color: #7279d8;
   color: #081073;
@@ -49,7 +53,7 @@ a {
   padding: 10px; }
 
 #userinfo td {
-  width: 250px; }
+  min-width: 200px; }
 
 #main {
   width: 780px;
@@ -146,6 +150,10 @@ form ul li {
   color: #081073;
   background-color: #ff0000; }
 
+.message {
+  color: #081073;
+  background-color: #0c0; }
+
 #time {
   display: inline-block;
   padding: 0 6px; }
@@ -179,9 +187,6 @@ form ul li {
 .new_event {
   background-color: #3d9ad1;
   color: #081073; }
-
-.clear {
-  clear: both; }
 
 .objects-menu {
   width: 450px;

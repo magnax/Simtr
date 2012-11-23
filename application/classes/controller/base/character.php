@@ -39,6 +39,11 @@ class Controller_Base_Character extends Controller_Base_User {
             $this->redirectError('Jesteś martwy a martwi zazwyczaj nic już nie robią!', 'events');
         }
         
+        //redirect if user not activated
+        if (!$this->user->active) {
+            $this->redirectError('Twoje konto jest nieaktywne!!', 'user');
+        }
+        
         $this->location = ORM::factory('location', $this->character->location_id);        
 
     }

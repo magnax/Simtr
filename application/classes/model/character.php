@@ -131,7 +131,7 @@ class Model_Character extends ORM {
         return array(
             'id' => $this->id,
             'name' => $name ? $name : $this->name,
-            'age' => $this->countVisibleAge($raw_time),
+            'age' => $this->countRealAge($raw_time),
             'spawn_day' => $this->created,
             'location_id' => $location_id,
             'spawn_location_id' => $this->spawn_location_id,
@@ -198,6 +198,11 @@ class Model_Character extends ORM {
         } else {
             return floor($age / 10) * 10;
         }
+    }
+    
+    public function countRealAge($raw_time) {
+        $raw = $raw_time - $this->created;
+        return self::START_AGE+Model_GameTime::formatDateTime($raw, 'y');
     }
 
     public function getIDLocation() {

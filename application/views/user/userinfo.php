@@ -31,10 +31,10 @@
             </td>
             <td>
                <?php echo $user->active ? 'Active' : 'Inactive'; ?>
+                <?php if(!$user->active): ?>
+                <a href="<?php echo URL::base(); ?>user/menu/resend_email">Ponownie wyślij aktywacyjnego e-maila</a>
+                <?php endif; ?>
             </td>
         </tr>
     </table>
-    <form action="<?php echo url::site('user/profil'); ?>" method="GET">
-        <input type="submit" value="Zmień">
-    </form>
 </div>

@@ -74,14 +74,5 @@ class Controller_Register extends Controller_Base_Guest {
 
     }
     
-    public function action_email() {
-        $email = Email::factory('Activate your Fabular account')
-            ->message('To jest testowy email ze strony <a href="">jakiejś tam</a><h2>Testowy nagłów</h2>', 'text/html')
-            ->to('magnax@gmail.com')
-            ->bcc('mn@efemental.pl')
-            ->from('noreply@fabular.pl', 'Fabular.pl')
-            ->send();
-    }
-    
 }
 ?>

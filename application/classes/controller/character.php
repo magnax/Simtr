@@ -20,6 +20,11 @@ class Controller_Character extends Controller_Base_User {
     
     public function action_new() {
         
+        //redirect if user not activated
+        if (!$this->user->active) {
+            $this->redirectError('Twoje konto jest nieaktywne!!', 'user');
+        }
+        
         $this->view->bind('errors', $errors);
         
         if ($_POST) {

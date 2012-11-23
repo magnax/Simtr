@@ -43,29 +43,6 @@ class Controller_User_Menu extends Controller_Base_User {
         
         $this->view->characters = $returnedCharacters;
         $this->template->chars = $returnedCharacters;
-//        
-//        foreach($this->user->characters as $ch) {
-//            //get character data as array
-//            $char = Model_Character::getInstance($this->redis)
-//                ->fetchOne($ch, true);
-//            
-//            $location_name = Model_LNames::getInstance($this->redis)->getName($ch, $char['location_id']);
-//            $char['location'] = $location_name ? $location_name : $this->dict->getString('unnamed_location');
-//            
-//            $char['sex'] = $this->dict->getString($char['sex']);
-//            
-//            if ($char['project_id']) {
-//                $char['project'] = 'P '.Model_ProjectManager::getInstance(null, $this->redis)
-//                    ->findOneByID($char['project_id'])
-//                    ->getProject()->getPercent(1).'%';
-//                
-//            }
-//
-//            $this->view->characters[] = $char;
-//            
-//        }
-//
-//        $this->view->user = $this->user;
 
     }
 
@@ -87,6 +64,14 @@ class Controller_User_Menu extends Controller_Base_User {
             $this->redirectError('Cannot view events of other player', 'user/menu');
         }
 
+    }
+    
+    public function action_resend_email() {
+        
+        $this->user->send_activation_email();
+        Session::instance()->set('message', 'Email został wysłany, sprawdź skrzynkę');
+        Request::current()->redirect('user');    
+        
     }
     
 }
