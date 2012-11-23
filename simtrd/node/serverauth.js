@@ -62,10 +62,10 @@ io.sockets.on('connection', function(socket) {
     socket.on('push_user_event', function(data) {
         var socket_id = users[data.user_id];
         if (socket_id) {
-            redis.llen("new_events:"+data.char_id, function(err, data) {
-                console.log("new_events:"+data.char_id+' = '+data);
+            redis.llen("new_events:"+data.char_id, function(err, chdata) {
+                console.log("new_events:"+data.char_id+' = '+chdata);
                 console.log('sended to '+socket_id);
-                io.sockets.sockets[socket_id].emit('user_events', {'char_id': data.char_id, 'new': data});
+                io.sockets.sockets[socket_id].emit('user_events', {'char_id': data.char_id, 'new': chdata});
             });
         } else {
             console.log ('theres no registered user of '+data.user_id);

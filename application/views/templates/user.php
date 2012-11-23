@@ -62,7 +62,7 @@
             });
         
             socket.on('user_events', function (data) {
-                console.log('received user event: '+data);
+                //console.log('received user event: '+data.char_id);
                 var char_id = data.char_id;
                 $('#character-'+char_id+' .character_events').html(data['new'] + ' new');
             });
