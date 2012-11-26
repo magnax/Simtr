@@ -419,9 +419,6 @@ class System_Daemon
         'SIGPWR' => array('System_Daemon', 'defaultSigHandler'),
         'SIGSYS' => array('System_Daemon', 'defaultSigHandler'),
         SIGBABY => array('System_Daemon', 'defaultSigHandler'),
-        'SIG_BLOCK' => array('System_Daemon', 'defaultSigHandler'),
-        'SIG_UNBLOCK' => array('System_Daemon', 'defaultSigHandler'),
-        'SIG_SETMASK' => array('System_Daemon', 'defaultSigHandler'),
     );
 
 
@@ -503,16 +500,6 @@ class System_Daemon
                     self::$_logPhpMapping[constant($phpConstant)] = $props;
                 }
                 unset(self::$_logPhpMapping[$phpConstant]);
-            }
-        }
-        // Same goes for POSIX signals. Not all Constants are available on
-        // all platforms.
-        foreach (self::$_sigHandlers as $signal => $handler) {
-            if (is_string($signal) || !$signal) {
-                if (defined($signal) && ($const = constant($signal))) {
-                    self::$_sigHandlers[$const] = $handler;
-                }
-                unset(self::$_sigHandlers[$signal]);
             }
         }
 
@@ -666,6 +653,8 @@ class System_Daemon
 
     /**
      * Overrule or add signal handlers.
+     * When called without parameters, will only map string signals
+     * with available defined ones and return null.
      *
      * @param string $signal  Signal constant (e.g. SIGHUP)
      * @param mixed  $handler Which handler to call on signal
@@ -673,9 +662,26 @@ class System_Daemon
      * @return boolean
      * @see $_sigHandlers
      */
-    static public function setSigHandler($signal, $handler)
+    static public function setSigHandler($signal = null, $handler = null)
     {
-        if (!isset(self::$_sigHandlers[$signal])) {
+        // Not all POSIX signal constants are available on
+        // all platforms.
+        foreach (self::$_sigHandlers as $signal => $handler) {
+            if (is_string($signal) || !$signal) {
+                if (defined($signal) && ($const = constant($signal))) {
+                    self::$_sigHandlers[$const] = $handler;
+                }
+                unset(self::$_sigHandlers[$signal]);
+            }
+        }
+
+        // Was only called by ->start() to map string signals
+        // with available defined ones
+        if ($signal === null && $handler === null) {
+            return null;
+        }
+
+        if (!array_key_exists($signal, self::$_sigHandlers)) {
             // The signal should be defined already
             self::notice(
                 'Can only overrule on of these signal handlers: %s',
@@ -790,10 +796,12 @@ class System_Daemon
             return;
         }
 
+        $logLvl = self::LOG_ERR;
+        $phpLvl = 'Error';
+
         // Map PHP error level to System_Daemon log level
         if (!isset(self::$_logPhpMapping[$errno][0])) {
             self::warning('Unknown PHP errorno: %s', $errno);
-            $phpLvl = self::LOG_ERR;
         } else {
             list($logLvl, $phpLvl) = self::$_logPhpMapping[$errno];
         }
@@ -1087,8 +1095,8 @@ class System_Daemon
             $dbg_bt   = @debug_backtrace();
             $class    = (isset($dbg_bt[1]['class'])?$dbg_bt[1]['class']:'');
             $function = (isset($dbg_bt[1]['function'])?$dbg_bt[1]['function']:'');
-            $file     = $dbg_bt[0]['file'];
-            $line     = $dbg_bt[0]['line'];
+            $file     = @$dbg_bt[0]['file'];
+            $line     = @$dbg_bt[0]['line'];
         }
 
         // Determine what process the log is originating from and forge a logline
@@ -1292,11 +1300,43 @@ class System_Daemon
     }
 
 
+    /**
+     * Stops a previous process with same pidfile that was already running
+     *
+     * @return boolean
+     */
+    static public function stopRunning()
+    {
+        $appPidLocation = self::opt('appPidLocation');
+
+        if (!file_exists($appPidLocation)) {
+            unset($appPidLocation);
+            return false;
+        }
+
+        $pid = self::fileread($appPidLocation);
+        if (!$pid) {
+            return false;
+        }
+
+        // Ping app
+        if (!posix_kill(intval($pid), SIGTERM)) {
+            self::warning('No daemon responded to SIGTERM');
+            return false;
+        } else {
+            self::info('Stopping daemon with PID %s', $pid);
+        }
+
+        // Not responding so unlink pidfile
+        @unlink($appPidLocation);
+
+        return true;
+    }
 
     /**
      * Put the running script in background
      *
-     * @return void
+     * @return boolean
      */
     static protected function _summon()
     {
@@ -1358,6 +1398,7 @@ class System_Daemon
         // Setup signal handlers
         // Handlers for individual signals can be overrulled with
         // setSigHandler()
+        self::setSigHandler();
         foreach (self::$_sigHandlers as $signal => $handler) {
             if (!is_callable($handler) && $handler != SIG_IGN && $handler != SIG_DFL) {
                 return self::emerg(
@@ -1502,7 +1543,7 @@ class System_Daemon
             if (!file_exists($filePath)) {
                 continue;
             }
-            
+
             // Change File GID
             $doGid = (filegroup($filePath) != $gid ? $gid : false);
             if (false !== $doGid && !@chgrp($filePath, intval($gid))) {
