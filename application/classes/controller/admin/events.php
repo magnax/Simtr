@@ -8,7 +8,7 @@ class Controller_Admin_Events extends Controller_Base_Admin {
         //print_r($all_events);
         $events = array();
         foreach ($all_events as $event) {
-            $id = str_replace('event:', '', $event);
+            $id = str_replace('events:', '', $event);
             $events[$id] = RedisDB::getJSON($event);
         }
         ksort($events);
