@@ -12,7 +12,7 @@
 require_once "System/Daemon.php";                 // Include the Class
 //
 //version of this file
-define('VER', '0.0.4');
+define('VER', '0.0.5');
 
 /**
  * config file from framework
@@ -170,7 +170,7 @@ while(!System_Daemon::isDying() && $runningOK) {
             //is project owner present in location?
             $is_owner_present = ($owner['location_id'] == $project['place_id']);
 
-            echo "Owner present: $is_owner_present\n";
+            System_Daemon::info(microtime(true)."Owner present: $is_owner_present\n");
 
             //owner weight and existence of given resource in his inventory
             $owner_weight = 0;
@@ -242,7 +242,7 @@ while(!System_Daemon::isDying() && $runningOK) {
                     break;
             }
             
-            echo "Event: $event_type\n";
+            System_Daemon::info(microtime(true)."Event: $event_type\n");
 
             //zwolnij wszystkich pracowników
             
