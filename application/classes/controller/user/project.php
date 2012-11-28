@@ -83,20 +83,23 @@ class Controller_User_Project extends Controller_Base_Character {
         $workers = json_decode($this->redis->get("projects:{$project['id']}:workers"), true);
         $project['workers'] = array();
         
-        foreach ($workers as $worker) {
-            $name = ORM::factory('chname')->name($this->character->id, $worker)->name;
-            if (!$name) {
-                if ($worker == $this->character->id) {
-                    $name = $this->character->name;
-                } else {
-                    $name = ORM::factory('character')->getUnknownName($worker, $this->lang);
+        if (is_array($workers)) {
+            foreach ($workers as $worker) {
+                $name = ORM::factory('chname')->name($this->character->id, $worker)->name;
+                if (!$name) {
+                    if ($worker == $this->character->id) {
+                        $name = $this->character->name;
+                    } else {
+                        $name = ORM::factory('character')->getUnknownName($worker, $this->lang);
+                    }
                 }
+                $project['workers'][] = array(
+                    'id'=>$worker,
+                    'name'=>$name
+                );
             }
-            $project['workers'][] = array(
-                'id'=>$worker,
-                'name'=>$name
-            );
         }
+        
         $project['name'] = Model_Project::getInstance($project['type_id'])
             ->name($project, $this->character->id);
         $project['date'] = Model_GameTime::formatDateTime($project['created_at'], 'd-h');

@@ -1,5 +1,15 @@
 <?php
 
+//BuryEnd
+$key = "global:event_tpl:BuryEnd";
+$person = 1;
+$this->redis->set("$key:$person", 'Projekt: "zakopywanie ciała" został zakończony');$loaded++;
+$this->redis->del("$key:$person:params");
+
+$person = 3;
+$this->redis->set("$key:$person", 'Projekt: "zakopywanie ciała" został zakończony');$loaded++;
+$this->redis->del("$key:$person:params");
+
 //GetRaw
 $key = "global:event_tpl:GetRaw";
 $person = 1;

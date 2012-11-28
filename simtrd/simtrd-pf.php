@@ -237,6 +237,9 @@ while(!System_Daemon::isDying() && $runningOK) {
                     }
                     break;
                 
+                case 'Bury':
+                    $event_type = 'BuryEnd';
+                    break;
             }
             
             echo "Event: $event_type\n";
