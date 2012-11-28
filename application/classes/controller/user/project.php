@@ -61,7 +61,54 @@ class Controller_User_Project extends Controller_Base_Character {
         
         $manager = Model_ProjectManager::getInstance(null, $this->redis)
             ->findOneById($id);
-        $this->view->project = $manager->getProject()->toArray();
+        $project = $manager->getProject()->toArray();
+        
+        $characters = $this->location->getHearableCharacters();
+        if (in_array($project['owner_id'], $characters)) {
+            $owner = ORM::factory('user', $project['owner_id']);
+            $name = ORM::factory('chname')->name($this->character->id, $project['owner_id'])->name;
+            if (!$name) {
+                if ($project['owner_id'] == $this->character->id) {
+                    $name = $this->character->name;
+                } else {
+                    $name = ORM::factory('character')->getUnknownName($project['owner_id'], $this->lang);
+                }
+            }
+            $project['owner'] = '<a href="/chname?id='.$project['owner_id'].'">'.$name.'</a>';
+        } else {
+            $project['owner'] = 'Już go tu nie ma';
+        }
+        
+        //get all workers
+        $workers = json_decode($this->redis->get("projects:{$project['id']}:workers"), true);
+        $project['workers'] = array();
+        
+        foreach ($workers as $worker) {
+            $name = ORM::factory('chname')->name($this->character->id, $worker)->name;
+            if (!$name) {
+                if ($worker == $this->character->id) {
+                    $name = $this->character->name;
+                } else {
+                    $name = ORM::factory('character')->getUnknownName($worker, $this->lang);
+                }
+            }
+            $project['workers'][] = array(
+                'id'=>$worker,
+                'name'=>$name
+            );
+        }
+        $project['name'] = Model_Project::getInstance($project['type_id'])
+            ->name($project, $this->character->id);
+        $project['date'] = Model_GameTime::formatDateTime($project['created_at'], 'd-h');
+        $project['progress'] = number_format((100 * $project['time_elapsed'] / $project['time']), 2).' procent';
+        $project['materials'] = array();
+        if ($project['time'] < 86400) {
+            $project['time'] = gmdate('H:i:s', $project['time']);
+        } else {
+            $project['time'] = gmdate('d H:i', $project['time']);
+        }
+        //print_r($project);
+        $this->view->project = $project;
 
     }
 

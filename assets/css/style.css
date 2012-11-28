@@ -196,3 +196,13 @@ form ul li {
   background-color: #0969a2;
   color: #62d99c;
   margin: 3px auto; }
+
+.table_left {
+  width: 170px;
+  float: left;
+  text-align: left; }
+
+.table_right {
+  width: 370px;
+  float: left;
+  text-align: left; }
