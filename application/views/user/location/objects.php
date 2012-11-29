@@ -1,5 +1,14 @@
 <div class="title_bar"><?php echo html::anchor('lname?id='.$character['location_id'], '['.$character['location'].']'); ?> - [<?= $locationtype; ?>]: obiekty</div>
 
+<?php if (count($notes)): ?>
+    <div class="objects-menu">Notatki</div>
+    <?php foreach ($notes as $note): ?>
+        <?php echo html::anchor('user/notes/get/'.$note['id'], '[podnieś]'); ?>
+        <?= html::anchor('user/notes/view/'.$note['id'], '[czytaj]'); ?>
+        <?php echo $note['title']; ?><br />
+    <?php endforeach; ?>
+<?php endif; ?>
+        
 <?php if (count($raws)): ?>
     <div class="objects-menu">Surowce</div>
     <?php foreach ($raws as $r): ?>

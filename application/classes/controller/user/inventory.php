@@ -4,6 +4,8 @@ class Controller_User_Inventory extends Controller_Base_Character {
 
     public function action_index($type = 'raws') {
 
+        $type = Session::instance()->get_once('inventory', 'raws');
+        
         $types = array('raws', 'items', 'notes', 'keys', 'coins');
         if (!in_array($type, $types) && $type != 'all') {
             $type = 'raws';
@@ -24,14 +26,19 @@ class Controller_User_Inventory extends Controller_Base_Character {
     public function action_raws() {
         $raws = $this->character->getRaws();
         $this->template->content = View::factory('user/inventory/raws', array('raws'=>$raws));
+        Session::instance()->set('inventory', 'raws');
     }
 
     public function action_items() {
-        $this->view->items = $this->character->getItems();
+        $items = $this->character->getItems();
+        $this->template->content = View::factory('user/inventory/items', array('items'=>$items));
+        Session::instance()->set('inventory', 'items');
     }
 
     public function action_notes() {
-        
+        $notes = $this->character->getNotes();
+        $this->template->content = View::factory('user/inventory/notes', array('notes'=>$notes));
+        Session::instance()->set('inventory', 'notes');
     }
 
     public function action_keys() {

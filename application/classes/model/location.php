@@ -198,6 +198,29 @@ class Model_Location extends ORM {
         
     }
     
+        public function getNotes() {
+        
+        $notes = RedisDB::getInstance()->smembers("locations:{$this->id}:notes");
+        
+        $tmp = array();
+        if ($notes) {
+            
+            $db_notes = ORM::factory('note')->where('id', 'IN', DB::expr('('. join(',',$notes).')'))
+                ->find_all()->as_array();
+        
+            foreach ($db_notes as $note) {
+                $tmp[] = array(
+                    'id'=>$note->id,
+                    'title'=>$note->title,
+                );
+            }
+            
+        }
+        
+        return $tmp;
+        
+    }
+    
 }
 
 ?>

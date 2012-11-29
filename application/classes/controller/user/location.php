@@ -48,6 +48,7 @@ class Controller_User_Location extends Controller_Base_Character {
         $this->view->locationtype = $this->location->locationclass->name;
         $this->view->raws = $this->location->getRaws();
         $this->view->items = $this->location->getItems();
+        $this->view->notes = $this->location->getNotes();
         $corpses = $this->location->getCorpses();
        
         $this->view->corpses = array();

@@ -206,3 +206,11 @@ form ul li {
   width: 370px;
   float: left;
   text-align: left; }
+
+.note {
+  background-color: #0969a2;
+  color: #eee;
+  padding: 15px;
+  margin: 20px;
+  text-align: left;
+  font-family: "Courier New", monospaced; }

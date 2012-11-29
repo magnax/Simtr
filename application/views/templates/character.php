@@ -134,7 +134,7 @@
             <div id="buildmenu">
                 <?php include Kohana::find_file('views', 'user/buildmenu') ?>
             </div>
-            
+            <?php include Kohana::find_file('views', 'common/footer') ?>
         </div>
     </body>
 </html>
