@@ -11,5 +11,7 @@
 <?php endif; ?>
 Tytuł: <?= form::input('title', $note->title, array('size'=>40)); ?><br />
 <?= form::textarea('text', $note->text); ?><br />
+<?= form::label('editable', 'Edytowalna: '); ?>
+<?= form::checkbox('editable', '1', (($note->id) ? !!$note->editable : true)); ?><br />
 <?= form::submit('submit', 'Zapisz'); ?>
 <?= form::close(); ?>

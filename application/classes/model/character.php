@@ -460,15 +460,8 @@ class Model_Character extends ORM {
         
         $tmp = array();
         if ($notes) {
-            $db_notes = ORM::factory('note')->where('id', 'IN', DB::expr('('. join(',',$notes).')'))
+            $tmp = ORM::factory('note')->where('id', 'IN', DB::expr('('. join(',',$notes).')'))
                 ->find_all()->as_array();
-        
-            foreach ($db_notes as $note) {
-                $tmp[] = array(
-                    'id'=>$note->id,
-                    'title'=>$note->title,
-                );
-            }
         }
         return $tmp;
         

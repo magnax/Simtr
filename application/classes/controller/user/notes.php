@@ -24,6 +24,7 @@ class Controller_User_Notes extends Controller_Base_Character {
             }
             
             $note->values($this->request->post());
+            $note->editable = $this->request->post('editable') ? 1 : 0;
             $note->created_by = $this->character->id;
             $note->created_at = $this->game->raw_time;
             
