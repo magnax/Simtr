@@ -2,42 +2,62 @@
 
 class Controller_User_Inventory extends Controller_Base_Character {
 
+    public function before() {
+        
+        parent::before();
+        
+        $this->inventory_menu = View::factory('user/inventory/index');
+    }
+
     public function action_index($type = 'raws') {
 
         $type = Session::instance()->get_once('inventory', 'raws');
         
-        $types = array('raws', 'items', 'notes', 'keys', 'coins');
-        if (!in_array($type, $types) && $type != 'all') {
+        $types = array('all', 'raws', 'items', 'notes', 'keys', 'coins');
+        if (!in_array($type, $types)) {
             $type = 'raws';
         }
+        
+        $action = 'action_'.$type;
+        $this->$action();
 
-        if ($type == 'all') {
-            foreach ($types as $t) {
-                $action = 'action_'.$t;
-                $this->$action();
-            }
-        } else {
-            $action = 'action_'.$type;
-            $this->$action();
-        }
+    }
 
+    public function action_all() {
+        $raws = $this->character->getRaws();
+        $items = $this->character->getItems();
+        $notes = $this->character->getNotes();
+        $this->template->content = View::factory('user/inventory/all', array(
+            'raws'=>$raws,
+            'items'=>$items,
+            'notes'=>$notes,
+            'inventory_menu'=>  $this->inventory_menu,
+        ));
+        Session::instance()->set('inventory', 'all');
     }
 
     public function action_raws() {
         $raws = $this->character->getRaws();
-        $this->template->content = View::factory('user/inventory/raws', array('raws'=>$raws));
+        $this->template->content = View::factory('user/inventory/raws', array(
+            'raws'=>$raws,
+            'inventory_menu'=>  $this->inventory_menu,
+        ));
         Session::instance()->set('inventory', 'raws');
     }
 
     public function action_items() {
         $items = $this->character->getItems();
-        $this->template->content = View::factory('user/inventory/items', array('items'=>$items));
+        $this->template->content = View::factory('user/inventory/items', array('items'=>$items,
+            'inventory_menu'=>  $this->inventory_menu,
+        ));
         Session::instance()->set('inventory', 'items');
     }
 
     public function action_notes() {
         $notes = $this->character->getNotes();
-        $this->template->content = View::factory('user/inventory/notes', array('notes'=>$notes));
+        $this->template->content = View::factory('user/inventory/notes', array('notes'=>$notes,
+            'inventory_menu'=>  $this->inventory_menu,
+        ));
         Session::instance()->set('inventory', 'notes');
     }
 

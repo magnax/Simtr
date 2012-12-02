@@ -9,6 +9,7 @@ class Controller_User_People extends Controller_Base_Character {
         $this->view->characters = array();
         
         foreach ($characters as $ch) {
+            $character = ORM::factory('character', $ch);
             $name = ORM::factory('chname')->name($this->character->id, $ch)->name;
             if (!$name) {
                 if ($ch == $this->character->id) {
@@ -21,6 +22,7 @@ class Controller_User_People extends Controller_Base_Character {
             $this->view->characters[] = array(
                 'name' => $name,
                 'id' => $ch,
+                'gender' => $character->sex,
             );
         }
 
