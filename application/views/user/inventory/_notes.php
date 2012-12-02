@@ -14,6 +14,9 @@
     <? if ($note->editable || ($note->created_by == $character['id'])): ?>
         <?= html::anchor('user/notes/new/'.$note->id, '[edytuj]'); ?>
     <? endif; ?>
+    <? if ($note->created_by == $character['id']): ?>
+        <?= html::anchor('user/notes/delete/'.$note->id, '[usuń]'); ?>
+    <? endif; ?>
     <?= $note->title; ?>
     <? if ($note->created_by == $character['id']): ?>
         (moja)

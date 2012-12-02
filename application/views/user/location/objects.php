@@ -1,12 +1,23 @@
 <div class="title_bar"><?php echo html::anchor('lname?id='.$character['location_id'], '['.$character['location'].']'); ?> - [<?= $locationtype; ?>]: obiekty</div>
 
 <?php if (count($notes)): ?>
+<div class="list">
     <div class="objects-menu">Notatki</div>
     <?php foreach ($notes as $note): ?>
-        <?php echo html::anchor('user/notes/get/'.$note['id'], '[podnieś]'); ?>
-        <?= html::anchor('user/notes/view/'.$note['id'], '[czytaj]'); ?>
-        <?php echo $note['title']; ?><br />
+    <div>
+        <a href="/user/notes/get/<?=$note['id']; ?>" title="Podnieś notatkę">
+            <img src="/assets/images/get.png" height=32 width=32>
+        </a>
+        <a href="/user/notes/copy/<?=$note['id']; ?>" title="Kopiuj notatkę">
+            <img src="/assets/images/copy.png" height=32 width=32>
+        </a>
+        <a href="/user/notes/view/<?=$note['id']; ?>" title="Czytaj notatkę">
+            <img src="/assets/images/view.png" height=32 width=32>
+        </a>
+        <?php echo $note['title']; ?>
+    </div>
     <?php endforeach; ?>
+</div>
 <?php endif; ?>
         
 <?php if (count($raws)): ?>

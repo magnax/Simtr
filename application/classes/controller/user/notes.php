@@ -88,6 +88,38 @@ class Controller_User_Notes extends Controller_Base_Character {
         
     }
     
+    public function action_copy() {
+        
+        $note = new Model_Note($this->request->param('id'));
+        if ($note->id) {
+            $note_array = $note->as_array();
+            
+            $new_note = new Model_Note();
+            array_shift($note_array); // To remove ID 
+            //print_r($note_array);
+            $new_note->values($note_array);
+            $new_note->created_by = $this->character->id;
+            $new_note->created_at = $this->game->raw_time;
+            $new_note->save();
+            $this->redis->sadd("notes:{$this->character->id}", $new_note->id);
+            $this->request->redirect('/user/inventory');
+        }
+        
+    }
+    
+    public function action_delete() {
+        
+        $note = new Model_Note($this->request->param('id'));
+        if ($note->id && $note->created_by == $this->character->id) {
+                        
+            $this->redis->srem("notes:{$this->character->id}", $note->id);
+            $note->delete();
+            
+            $this->request->redirect('/user/inventory');
+        }
+        
+    }
+    
 }
 
 ?>
