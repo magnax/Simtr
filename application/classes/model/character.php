@@ -467,6 +467,21 @@ class Model_Character extends ORM {
         
     }
     
+    public function leaveCurrentProject($redis, $raw_time) {
+        
+        $project_id = RedisDB::get("characters:{$this->id}:current_project");
+        
+        if ($project_id) {
+            $manager = Model_ProjectManager::getInstance(null, $redis)
+                ->findOneById($project_id);
+
+            $manager->removeParticipant($this, $raw_time);
+            $manager->save();
+
+            RedisDB::getInstance()->del("characters:{$this->id}:current_project");
+        }
+        
+    }
     
 }
 

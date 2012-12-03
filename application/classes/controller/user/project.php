@@ -127,7 +127,6 @@ class Controller_User_Project extends Controller_Base_Character {
 
                 if ($project->getTypeId() == 'GetRaw') {
                     $used_slots = $this->location->countUsedSlots($this->redis);
-                    Session::instance()->set('error', $used_slots);
                     
                     if ($used_slots < $this->location->town->slots) {
                         $manager->addParticipant($this->character, $this->game->raw_time);
@@ -136,7 +135,9 @@ class Controller_User_Project extends Controller_Base_Character {
                          * @todo move this stuff to character model, or to project model
                          */
                         $this->redis->set("characters:{$this->character->id}:current_project", $project->getId());
-                    }      
+                    } else {
+                        Session::instance()->set('error', $used_slots);
+                    }  
 
                 } else {
                     $manager->addParticipant($this->character, $this->game->raw_time);                 
@@ -155,16 +156,7 @@ class Controller_User_Project extends Controller_Base_Character {
 
     public function action_leave() {
 
-        $id = $this->request->param('id');
-        
-        $manager = Model_ProjectManager::getInstance(null, $this->redis)
-            ->findOneById($id);
-        $project = $manager->getProject();
-
-        $manager->removeParticipant($this->character, $this->game->raw_time);
-        $manager->save();
-
-        RedisDB::getInstance()->del("characters:{$this->character->id}:current_project");
+        $this->character->leaveCurrentProject($this->redis, $this->game->raw_time);
         
         $this->request->redirect('events');
 

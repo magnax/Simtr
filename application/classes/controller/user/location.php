@@ -109,6 +109,10 @@ class Controller_User_Location extends Controller_Base_Character {
          * (locked, too much weight etc.)
          */
         
+        //if user is working on the project, leave it before enter
+        
+        $this->character->leaveCurrentProject($this->redis, $this->game->raw_time);
+        
         //generate event
         $event_sender = Model_EventSender::getInstance(
             Model_Event::getInstance(
