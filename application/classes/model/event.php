@@ -2,10 +2,12 @@
 
 class Model_Event {
 
+    const GET_NOTE = 'GetNote';
     const TALK_ALL = 'TalkAll';
     const TALK_TO = 'TalkTo';
     const PUT_RAW = 'PutRaw';
     const PUT_ITEM = 'PutItem';
+    const PUT_NOTE = 'PutNote';
     const GET_ITEM = 'GetItem';
     const GET_RAW = 'GetRaw';
     const GET_RAW_END = 'GetRawEnd';

@@ -79,6 +79,10 @@ abstract class Model_EventSender {
         $this->_event->setExitLocationId($location_id);
     }
     
+    public function setNote($note_title) {
+        $this->_event->setNote($note_title);
+    }
+    
     abstract public function send();
 
 }

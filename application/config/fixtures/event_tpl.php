@@ -311,4 +311,33 @@ $person = 1;
 $this->redis->set("$key:$person", 'Zjadasz %s');$loaded++;
 $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'desc');$loaded++;
+
+//PutNote
+$key = "global:event_tpl:PutNote";
+
+$person = 1;
+$this->redis->set("$key:$person", 'Odkładasz notatkę "%s"');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'note_title');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Widzisz jak %s odkłada notatkę "%s"');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
+$this->redis->rpush("$key:$person:params", 'note_title');$loaded++;
+
+//GetNote
+$key = "global:event_tpl:GetNote";
+
+$person = 1;
+$this->redis->set("$key:$person", 'Podnosisz notatkę "%s"');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'note_title');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Widzisz jak %s podnosi notatkę "%s"');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
+$this->redis->rpush("$key:$person:params", 'note_title');$loaded++;
+
 ?>

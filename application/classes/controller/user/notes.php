@@ -68,6 +68,20 @@ class Controller_User_Notes extends Controller_Base_Character {
         if ($note->id) {
             $this->redis->srem("notes:{$this->character->id}", $note->id);
             $this->redis->sadd("locations:{$this->location->id}:notes", $note->id);
+            
+            //generate event
+            $event = Model_EventSender::getInstance(
+                Model_Event::getInstance(
+                    Model_Event::PUT_NOTE, $this->game->raw_time, $this->redis
+                )
+            );
+
+            $event->setSender($this->character->getId());
+            $event->setNote($note->title);
+
+            $event->addRecipients($this->location->getVisibleCharacters());
+            $event->send();
+
             $this->request->redirect('/events');
         } else {
             $this->redirectError('Nieprawidłowa notatka', '/events');
@@ -78,9 +92,24 @@ class Controller_User_Notes extends Controller_Base_Character {
     public function action_get() {
         
         $note = new Model_Note($this->request->param('id'));
+        
         if ($note->id) {
             $this->redis->srem("locations:{$this->location->id}:notes", $note->id);
             $this->redis->sadd("notes:{$this->character->id}", $note->id);
+            
+            //generate event
+            $event = Model_EventSender::getInstance(
+                Model_Event::getInstance(
+                    Model_Event::GET_NOTE, $this->game->raw_time, $this->redis
+                )
+            );
+
+            $event->setSender($this->character->getId());
+            $event->setNote($note->title);
+
+            $event->addRecipients($this->location->getVisibleCharacters());
+            $event->send();
+            
             $this->request->redirect('/events');
         } else {
             $this->redirectError('Nieprawidłowa notatka', '/events');
