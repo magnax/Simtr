@@ -47,6 +47,11 @@ class Model_Location extends ORM {
         
     }
     
+    public function isHearable($character_id) {
+        $all = $this->characters->find_all()->as_array('id', 'id');
+        return in_array($character_id, $all);
+    }
+
     public function getVisibleCharacters() {
         
         $returned = array();

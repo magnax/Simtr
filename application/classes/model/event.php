@@ -2,25 +2,26 @@
 
 class Model_Event {
 
+    const EAT = 'Eat';
+    const ENTER_LOCATION = 'EnterLocation';
+    const GET_ITEM = 'GetItem';
     const GET_NOTE = 'GetNote';
-    const TALK_ALL = 'TalkAll';
-    const TALK_TO = 'TalkTo';
+    const GET_RAW = 'GetRaw';
+    const GET_RAW_END = 'GetRawEnd';
+    const GIVE_ITEM = 'GiveItem';
+    const GIVE_RAW = 'GiveRaw';
+    const HIT_PERSON = 'HitPerson';
+    const HUNGRY = 'Hungry';
+    const KILL_PERSON = 'KillPerson';
+    const POINT_EXIT = 'PointExit';
+    const POINT_PERSON = 'PointPerson';
     const PUT_RAW = 'PutRaw';
     const PUT_ITEM = 'PutItem';
     const PUT_NOTE = 'PutNote';
-    const GET_ITEM = 'GetItem';
-    const GET_RAW = 'GetRaw';
-    const GET_RAW_END = 'GetRawEnd';
     const SPAWN = 'Spawn';
-    const GIVE_RAW = 'GiveRaw';
-    const POINT_EXIT = 'PointExit';
-    const POINT_PERSON = 'PointPerson';
-    const HIT_PERSON = 'HitPerson';
-    const KILL_PERSON = 'KillPerson';
-    const ENTER_LOCATION = 'EnterLocation';
-    const HUNGRY = 'Hungry';
-    const EAT = 'Eat';
-
+    const TALK_ALL = 'TalkAll';
+    const TALK_TO = 'TalkTo';
+    
     /**
      * wspólne właściwości
      */

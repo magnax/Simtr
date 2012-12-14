@@ -35,12 +35,9 @@ class Model_Character extends ORM {
     }
 
     const START_AGE = 20;
-    //protected $id = null;
-    //protected $name;
-    //protected $sex;
+    
     protected $spawn_date;
     protected $age;
-    //public $location_id;
     protected $eq_weight;
     protected $place_type;
     protected $place_id;
@@ -295,7 +292,6 @@ class Model_Character extends ORM {
     }
 
     public function connectedUser($redis) {
-        echo "=={$this->id}={$this->user_id}==";
         return $redis->get("connected_user:{$this->user_id}");
     }
     
@@ -480,6 +476,34 @@ class Model_Character extends ORM {
 
             RedisDB::getInstance()->del("characters:{$this->id}:current_project");
         }
+        
+    }
+    
+    public function has_item($item_id) {
+        $items = RedisDB::getInstance()->smembers("items:{$this->id}");
+        return in_array($item_id, $items);
+    }
+    
+    public function giveItemTo($item_id, $character_id) {
+        
+        RedisDB::getInstance()->srem("items:{$this->id}", $item_id);
+        RedisDB::getInstance()->sadd("items:$character_id", $item_id);
+        
+    }
+
+    public function charactersSelect(array $characters_ids, $with_self = false) {
+        
+        $returned = array();
+        foreach ($characters_ids as $ch) {
+            if ($ch != $this->id || $with_self) {
+                $name = ORM::factory('chname')->name($this->id, $ch)->name;
+                if (!$name) {
+                    $name = $this->getUnknownName($ch, $this->lang);
+                }
+                $returned[$ch] = $name;
+            }
+        }
+        return $returned;
         
     }
     

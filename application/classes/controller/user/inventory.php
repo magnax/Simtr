@@ -80,21 +80,78 @@ class Controller_User_Inventory extends Controller_Base_Character {
         $this->character->putItem($item_id);
         $this->location->addItem($item_id);
         //generate event
-        $event = Model_EventSender::getInstance(
+        $event_sender = Model_EventSender::getInstance(
             Model_Event::getInstance(
                 Model_Event::PUT_ITEM, $this->game->raw_time, $this->redis
             )
         );
 
-        $event->setSender($this->character->getId());
-        $event->setItem($item_id);
+        $event_sender->setSender($this->character->getId());
+        $event_sender->setItem($item_id);
 
-        $event->addRecipients($this->location->getVisibleCharacters());
-        $event->send();
+        $event_sender->addRecipients($this->location->getVisibleCharacters());
+        $event_sender->send();
+        
+        Model_EventNotifier::notify(
+            $event_sender->getEvent()->getRecipients(), 
+            $event_sender->getEvent()->getId(), 
+            $this->redis, $this->lang
+        );
         
         $this->request->redirect('events');
         
     }
+    
+    public function action_give() {
+    
+        $item_id = $this->request->param('id');
+        
+        if (!$this->character->has_item($item_id)) {
+            $this->redirectError('Nie posiadasz tego przedmiotu!', 'events');
+        }
+        
+        if (HTTP_Request::POST == $this->request->method()) {
+            $recipient = $this->request->post('character_id');
+            if (!$this->location->isHearable($recipient)) {
+                $this->redirectError('Tej osoby już tu nie ma', 'events');
+            }
+            if ($this->request->post('item_id') != $item_id || !$this->character->has_item($item_id)) {
+                $this->redirectError('Nie posiadasz tego przedmiotu!', 'events');
+            }
+            $this->character->giveItemTo($item_id, $recipient);
+            
+            //generate event
+            $event_sender = Model_EventSender::getInstance(
+                Model_Event::getInstance(
+                    Model_Event::GIVE_ITEM, $this->game->raw_time, $this->redis
+                )
+            );
+
+            $event_sender->setSender($this->character->getId());
+            $event_sender->setRecipient($recipient);
+            $event_sender->setItem($item_id);
+
+            $event_sender->addRecipients($this->location->getVisibleCharacters());
+            $event_sender->send();
+        
+            Model_EventNotifier::notify(
+                $event_sender->getEvent()->getRecipients(), 
+                $event_sender->getEvent()->getId(), 
+                $this->redis, $this->lang
+            );
+            
+            $this->request->redirect('events');
+            
+        }
+        
+        $item = new Model_Item($item_id);
+        $characters = $this->location->getHearableCharacters();
+        $this->view->characters = $this->character->charactersSelect($characters, false);
+
+        $this->view->item = $item;
+        
+    }
+    
 }
 
 ?>
