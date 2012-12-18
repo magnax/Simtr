@@ -400,6 +400,7 @@ class Model_Character extends ORM {
     public function getWeaponsList() {
         
         $items = RedisDB::getInstance()->smembers("items:{$this->id}");
+        $weapon_list = array();
         
         if (count($items)) {
             $weapons = ORM::factory('item')
@@ -410,8 +411,6 @@ class Model_Character extends ORM {
                 ->find_all()
                 ->as_array();
 
-            $weapon_list = array();
-
             foreach ($weapons as $weapon) {
                 if (!in_array($weapon->itemtype->id, array_keys($weapon_list))) {
                     $weapon_list[$weapon->itemtype->id] = $weapon->itemtype->name;
@@ -420,7 +419,6 @@ class Model_Character extends ORM {
         }
         
         $weapon_list[0] = 'goła pięść';
-        arsort($weapon_list);
         
         return $weapon_list;
             

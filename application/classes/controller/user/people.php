@@ -4,26 +4,22 @@ class Controller_User_People extends Controller_Base_Character {
 
     public function action_index() {
 
-        $characters = $this->location->getHearableCharacters($this->character);
+        $characters_ids = $this->location->getHearableCharacters($this->character);
        
         $this->view->characters = array();
         
+        $characters = ORM::factory('character')
+            ->where('id', 'IN', DB::expr('('. join(',',$characters_ids).')'))
+            ->find_all();
+        
         foreach ($characters as $ch) {
-            $character = ORM::factory('character', $ch);
-            $name = ORM::factory('chname')->name($this->character->id, $ch)->name;
-            if (!$name) {
-                if ($ch == $this->character->id) {
-                    //myself
-                    $name = $this->character->name;
-                } else {
-                    $name = ORM::factory('character')->getUnknownName($ch, $this->lang);
-                }
-            }
+;
             $this->view->characters[] = array(
-                'name' => $name,
-                'id' => $ch,
-                'gender' => $character->sex,
+                'name' => $this->character->getChname($ch->id),
+                'id' => $ch->id,
+                'gender' => $ch->sex,
             );
+            
         }
 
     }
@@ -36,9 +32,15 @@ class Controller_User_People extends Controller_Base_Character {
         
         if ($hitted) {
             
-            //$time = Model_GameTime::formatDateTime($this->game->raw_time - $hitted, 'h:m:s');
-            $time = gmdate('H:i:s', Model_User::HIT_GAP - ($this->game->raw_time - $hitted));
-            $this->redirectError('Możesz uderzyć tę postać za '.$time, 'events');
+            $time_elapsed = $this->game->raw_time - $hitted;
+            
+            //in case the key not expired at given time
+            if ($time_elapsed > Model_User::HIT_GAP) {
+                $this->redis->del("hit:{$this->character->id}:{$character_id}");
+            } else {
+                $time = gmdate('H:i:s', Model_User::HIT_GAP - ($this->game->raw_time - $hitted));
+                $this->redirectError('Możesz uderzyć tę postać za '.$time . ', '. $time_elapsed, 'events');
+            }
             
         }
         
@@ -53,14 +55,13 @@ class Controller_User_People extends Controller_Base_Character {
         $post->rule('weapon', 'digit');
         $post->rule('strength', 'numeric');
         
-        if ($_POST) {
+        if (HTTP_Request::POST == $this->request->method()) {
             
             //get victim character
             $victim = new Model_Character($character_id);
             
             //get attack strength of weapon
             $weapon_attack = ORM::factory('itemtype', $_POST['weapon'])
-//                ->find()
                 ->attack;
             
             //damage calculate
@@ -132,10 +133,10 @@ class Controller_User_People extends Controller_Base_Character {
             $this->request->redirect('events');
         }
         
-        $this->view->weapons = array();
+        //$this->view->weapons = array();
             
-        $weapons_list = $this->character->getWeaponsList();
-        $this->view->weapons = $weapons_list;
+        $this->view->weapons = $this->character->getWeaponsList();
+        //$this->view->weapons = $weapons_list;
         
         $this->view->strengths = array(
             '0' => 'bez siły',
