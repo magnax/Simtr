@@ -15,13 +15,7 @@ class Controller_ChName extends Controller_Base_Character {
         if ($_POST) {
             
             $chname = ORM::factory('chname')
-                ->where('char_id', '=', $this->character->id)
-                ->and_where('lookup_id', '=', $_POST['character_id'])
-                ->find();
-            
-            if (!$chname) {
-                $chname = new Model_ChName;
-            }
+                ->name($this->character->id, $_POST['character_id']);
             
             if ($_POST['name']) {
                 if (!$chname->id) {
@@ -35,7 +29,7 @@ class Controller_ChName extends Controller_Base_Character {
                 $chname->delete();
             }
             
-            Request::current()->redirect('events');
+            $this->request->redirect('events');
             
         }
         
@@ -44,18 +38,12 @@ class Controller_ChName extends Controller_Base_Character {
         if ($character->id) {
             
             $this->view->character_id = $_GET['id'];
-            $name = ORM::factory('chname')->name($this->character->id, $_GET['id'])->name;
-            if (!$name) {
-                $name = ($this->character->id == $_GET['id']) 
-                    ? $this->character->name 
-                    : $this->character->getUnknownName($_GET['id'], $this->lang);
-            }
-            $this->view->name = $name;
+            $this->view->name = $this->character->getChname($_GET['id']);
             $this->view->character = $character;
             
         } else {
             $this->session->set('err', 'Bad character');
-            Request::current()->redirect('events');
+            $this->request->redirect('events');
         }
         
     }

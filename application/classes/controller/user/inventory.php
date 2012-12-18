@@ -106,7 +106,7 @@ class Controller_User_Inventory extends Controller_Base_Character {
     
         $item_id = $this->request->param('id');
         
-        if (!$this->character->has_item($item_id)) {
+        if (!$this->character->hasItem($item_id)) {
             $this->redirectError('Nie posiadasz tego przedmiotu!', 'events');
         }
         
@@ -115,7 +115,7 @@ class Controller_User_Inventory extends Controller_Base_Character {
             if (!$this->location->isHearable($recipient)) {
                 $this->redirectError('Tej osoby już tu nie ma', 'events');
             }
-            if ($this->request->post('item_id') != $item_id || !$this->character->has_item($item_id)) {
+            if ($this->request->post('item_id') != $item_id || !$this->character->hasItem($item_id)) {
                 $this->redirectError('Nie posiadasz tego przedmiotu!', 'events');
             }
             $this->character->giveItemTo($item_id, $recipient);

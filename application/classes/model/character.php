@@ -79,20 +79,11 @@ class Model_Character extends ORM {
     
     public $lang = 'pl';
 
-    //private $spawn_day;
+    public function setSource($source) {
+        $this->source = $source;
+    }
 
-//    public function  __construct($source) {
-//        $this->source = $source;
-//    }
-//    
-//    public static function getInstance($source) {
-//        //if ($source instanceof Redisent) {
-//        if ($source instanceof Redis) {
-//            return new Model_Character_Redis($source);
-//        }
-//    }
-    
-    public function get_info($raw_time) {
+    public function getInfo($raw_time) {
         
         $name = ORM::factory('chname')->name($this->id, $this->id)->name;
         $location = ORM::factory('location', $this->location_id);
@@ -260,15 +251,14 @@ class Model_Character extends ORM {
 
     }
     
-    public function getChname($for_user_id) {
-        if ($this->character_names && isset($this->character_names[$for_user_id])) {
-            return $this->character_names[$for_user_id];
-        } else {
-            if ($for_user_id == $this->id) {
-                return $this->name;
-            }
+    public function getChname($dest_character_id) {
+        $name = ORM::factory('chname')->name($this->id, $dest_character_id)->name;
+        if (!$name) {
+            $name = ($this->id == $dest_character_id) 
+                ? $this->name 
+                : $this->getUnknownName($dest_character_id, $this->lang);
         }
-        return null;
+        return $name;
     }
 
     public function getLname($for_location_id) {
@@ -479,7 +469,7 @@ class Model_Character extends ORM {
         
     }
     
-    public function has_item($item_id) {
+    public function hasItem($item_id) {
         $items = RedisDB::getInstance()->smembers("items:{$this->id}");
         return in_array($item_id, $items);
     }
@@ -505,6 +495,40 @@ class Model_Character extends ORM {
         }
         return $returned;
         
+    }
+    
+    public function getEvents($page = 1) {
+        
+        //ile na stronę 
+        $pagesize = 20;
+        
+        $size = $this->source->llen("characters:{$this->id}:events");
+        if ($size) {
+            $from = ($page - 1) * $pagesize;
+            $events = $this->source->lrange("characters:{$this->id}:events", $from, $from + $pagesize - 1);
+        } else {
+            return array();
+        }
+        $return_events = array();
+
+        $event_dispatcher = Model_EventDispatcher::getInstance($this->source, $this->lang);
+
+        foreach ($events as $id_event) {
+
+            $return_events[] = $event_dispatcher->formatEvent($id_event, $this->id);
+            
+        }
+        
+        //"pagination" ;) just info 
+        $return_events[] = array(
+            'id' => -1,
+            'date' => '',
+            'prev' => ($page > 1) ? $page - 1 : '',
+            'current' => $page,
+            'next' => ($from + $pagesize < $size) ? $page + 1 : '',
+        );
+        
+        return $return_events;
     }
     
 }

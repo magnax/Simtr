@@ -37,16 +37,19 @@ class Model_Event_GiveItem extends Model_Event {
 
     public function dispatchArgs($event_data, $args, $character_id, $lang) {
         
+        $character = ORM::factory('character', $character_id);
+        
         $item = ORM::factory('item')->where('id', '=', $event_data['itemid'])
             ->find();
         
         $returned = array();
         
         if (in_array('sndr', $args)) {
-            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
-            if (!$name) {
-                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
-            }
+//            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
+//            if (!$name) {
+//                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
+//            }
+            $name = $character->getChname($event_data['sndr']);
             $returned['sndr'] = '<a href="chname?id='.
                 $event_data['sndr'].'">'.$name.'</a>';
         }

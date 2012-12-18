@@ -24,10 +24,8 @@ class Controller_Base_Character extends Controller_Base_User {
         
         parent::before();
         
-        if ($this->session->get('current_character')) {
-            $this->character = ORM::factory('character', $this->session->get('current_character'));
-            $this->template->set_global('character', $this->character->get_info($this->raw_time));
-        }
+        $this->character = new Model_Character($this->session->get('current_character'));
+        $this->character->setSource($this->redis);
         
         //redirect if no current character
         if (!$this->character) {
@@ -35,7 +33,7 @@ class Controller_Base_Character extends Controller_Base_User {
         }
         
         //redirect if character is dead
-        if (!$this->character->life && !(($this->request->action() == 'index') && ($this->request->controller() == 'events'))) {            
+        if (!$this->character->life && !($this->request->uri() == 'events')) {            
             $this->redirectError('Jesteś martwy a martwi zazwyczaj nic już nie robią!', 'events');
         }
         
@@ -44,7 +42,9 @@ class Controller_Base_Character extends Controller_Base_User {
             $this->redirectError('Twoje konto jest nieaktywne!!', 'user');
         }
         
-        $this->location = ORM::factory('location', $this->character->location_id);        
+        //set character for all views
+        $this->template->set_global('character', $this->character->getInfo($this->raw_time));
+        $this->location = new Model_Location($this->character->location_id);        
 
     }
 

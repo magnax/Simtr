@@ -37,10 +37,6 @@ class Model_Event_PointExit extends Model_Event {
         
         if (in_array('sndr', $args)) {
             $name = $character->getChname($event_data['sndr']);
-            if (!$name) {
-                $name = $character->getUnknownName($event_data['sndr']);
-                $name = Model_Dict::getInstance($this->source)->getString($name);
-            }
             $returned['sndr'] = '<a href="/user/char/nameform/'.
                 $event_data['sndr'].'">'.$name.'</a>';
         }

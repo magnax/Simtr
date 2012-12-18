@@ -13,32 +13,6 @@ class Model_Character_Redis {
 
     }
 
-    public function fetchOne($id, $as_array = false) {
-
-        $char = $this->source->get("characters:$id");
-        
-        if ($char) {
-            
-            $tmp_char = json_decode($char, true);
-            if ($as_array) {
-                return $tmp_char;
-            }
-            //"hydration":
-            foreach ($tmp_char as $key => $val) {
-                $this->{$key} = $val;
-            }
-
-            $this->getChnames();
-            $this->getLnames();
-            
-            return $this;
-            
-        }
-        
-        return null;
-        
-    }
-
     public function getInfo(array $characters) {
 
         $chars = array();
@@ -55,39 +29,39 @@ class Model_Character_Redis {
         
     }
 
-    public static function getEvents($character_id, $source, $lang, $page = 1) {
-        
-        //ile na stronę 
-        $pagesize = 20;
-        
-        $size = $source->llen("characters:{$character_id}:events");
-        if ($size) {
-            $from = ($page - 1) * $pagesize;
-            $events = $source->lrange("characters:{$character_id}:events", $from, $from + $pagesize - 1);
-        } else {
-            return array();
-        }
-        $return_events = array();
-
-        $event_dispatcher = Model_EventDispatcher::getInstance($source, $lang);
-
-        foreach ($events as $id_event) {
-
-            $return_events[] = $event_dispatcher->formatEvent($id_event, $character_id);
-            
-        }
-        
-        //"pagination" ;) just info 
-        $return_events[] = array(
-            'id' => -1,
-            'date' => '',
-            'prev' => ($page > 1) ? $page - 1 : '',
-            'current' => $page,
-            'next' => ($from + $pagesize < $size) ? $page + 1 : '',
-        );
-        
-        return $return_events;
-    }
+//    public static function getEvents($character_id, $source, $lang, $page = 1) {
+//        
+//        //ile na stronę 
+//        $pagesize = 20;
+//        
+//        $size = $source->llen("characters:{$character_id}:events");
+//        if ($size) {
+//            $from = ($page - 1) * $pagesize;
+//            $events = $source->lrange("characters:{$character_id}:events", $from, $from + $pagesize - 1);
+//        } else {
+//            return array();
+//        }
+//        $return_events = array();
+//
+//        $event_dispatcher = Model_EventDispatcher::getInstance($source, $lang);
+//
+//        foreach ($events as $id_event) {
+//
+//            $return_events[] = $event_dispatcher->formatEvent($id_event, $character_id);
+//            
+//        }
+//        
+//        //"pagination" ;) just info 
+//        $return_events[] = array(
+//            'id' => -1,
+//            'date' => '',
+//            'prev' => ($page > 1) ? $page - 1 : '',
+//            'current' => $page,
+//            'next' => ($from + $pagesize < $size) ? $page + 1 : '',
+//        );
+//        
+//        return $return_events;
+//    }
 
     public function calculateEqWeight() {
         

@@ -9,7 +9,8 @@ class Controller_Events extends Controller_Base_Character {
         
         $page = $this->request->param('page', 1);
 
-        $events = Model_Character_Redis::getEvents($this->character->id, $this->redis, $this->lang, $page);
+        //$events = Model_Character_Redis::getEvents($this->character->id, $this->redis, $this->lang, $page);
+        $events = $this->character->getEvents($page);
         $this->view->first_new_event = $this->redis->lpop("new_events:{$this->character->id}");
         $this->redis->del("new_events:{$this->character->id}");
         $this->view->events = $events;

@@ -3,19 +3,20 @@
 class Controller_Character extends Controller_Base_User {
     
     public function action_index() {
-        if ($_GET && $_GET['id']) {
-            $character = ORM::factory('character', $_GET['id']);
-            if (!$character || $character->user_id != $this->user->id) {
-                $error_msg = 'It is not valid character';
-            } else {
-                $this->session->set('current_character', $character->id);
-                Request::current()->redirect('events');
-            }
+        
+        $character = new Model_Character(Arr::get($_GET, 'id'));
+        
+        if (!$character || $character->user_id != $this->user->id) {
+            
+            $this->redirectError('It is not valid character', 'user/menu');
+            
         } else {
-            $error_msg = 'You didn\'t choose character';
+            
+            $this->session->set('current_character', $character->id);
+            $this->request->redirect('events');
+            
         }
         
-        $this->redirectError($error_msg, 'user/menu');
     }
     
     public function action_new() {
@@ -27,7 +28,7 @@ class Controller_Character extends Controller_Base_User {
         
         $this->view->bind('errors', $errors);
         
-        if ($_POST) {
+        if (HTTP_Request::POST == $this->request->method()) {
             
             try {
                 

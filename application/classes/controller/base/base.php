@@ -62,15 +62,6 @@ class Controller_Base_Base extends Controller_Template {
         /**
          * Redis database init
          */
-//        try {
-//        
-//            $this->redis = new Redisent(Kohana::$config->load('database.dsn'));
-//            $this->template->active_count = count($this->redis->keys('active:*'));
-//            
-//        } catch (RedisException $e) {
-//            $this->redirectError($e->getMessage());
-//        }
-
         $this->redis = RedisDB::getInstance()
             ->connect(Kohana::$config->load('database.dsn'))
             ->getConnectionObject();
