@@ -2,8 +2,8 @@
 
 class Model_Project_Make extends Model_Project {
 
-    protected $amount;
-    protected $itemtype_id;
+    public $amount;
+    public $itemtype_id;
 
     /**
      * Identyfikator przedmiotu produkcji
@@ -16,7 +16,7 @@ class Model_Project_Make extends Model_Project {
     public function getProjectRequirements() {
         return null;
     }
-    
+
     public function getUserRequirements($character_id) {
         return null;
     }
@@ -37,6 +37,17 @@ class Model_Project_Make extends Model_Project {
         $item = new Model_ItemType($project_data['itemtype_id']);
         
         return 'Produkcja: '.$item->name;
+        
+    }
+    
+     /**
+     * gets resources, items needed to starting this project
+     * 
+     * @return Array
+     */
+    public function getSpecs($simple = false) {
+        
+        return Model_Spec_Raw::getRaws($this->itemtype_id, $simple);
         
     }
 

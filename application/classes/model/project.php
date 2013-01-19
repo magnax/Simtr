@@ -8,9 +8,9 @@ abstract class Model_Project {
     const TYPE_BURY = 'Bury'; //zakopywanie ciał
 
     //pola zapisywane metodą toArray()
-    protected $id;
+    public $id;
     protected $owner_id;
-    protected $type_id;
+    public $type_id;
     protected $place_type;
     protected $place_id;
     protected $time;
@@ -51,6 +51,10 @@ abstract class Model_Project {
         return round(($this->time_elapsed / $this->time * 100), $accuracy);
     }
 
+    public function calculateProgress($decimals = 0) {
+        return number_format(100 * $this->time_elapsed / $this->time, $decimals) . '%';
+    }
+    
     public function getSource() {
         return $this->source;
     }
@@ -157,14 +161,71 @@ abstract class Model_Project {
         }
 
     }
+    
+    /**
+     * gets already addes resources and items
+     */    
+    public function getRaws($simple = false) {
+        
+        return Model_Project_Raw::getRaws($this->id, $simple);
+        
+    }
 
-    //abstract function save();
-    //abstract public function find($place_type, $place_id);
-    //abstract public function findOneById($id);
-    //abstract public function addParticipant(Model_Character $character, $time);
-    //abstract public function removeParticipant(Model_Character $character, $time);
-    //abstract public function getName();
+    /**
+     * gets all resources and items needed and already added to project
+     * and calculates amounts
+     */
+    public function getAllSpecs() {
+        
+        $specs = $this->getSpecs(false);
+        
+        if ($specs) {
+            $raws = $this->getRaws(true);
 
+            $all_specs = array();
+
+            foreach ($specs as $spec) {
+
+                if (in_array($spec->resource_id, array_keys($raws))) {
+                    $added = $raws[$spec->resource_id];
+                } else {
+                    $added = 0;
+                }
+
+                $all_specs[] = array(
+                    'name' => $spec->resource->name,
+                    'needed' => $spec->amount,
+                    'added' => $added
+                );
+
+            }
+
+            return $all_specs;
+        } else {
+            return null;
+        }
+        
+    }
+    
+    public function hasAllSpecs() {
+        
+        $specs = $this->getSpecs(true);
+        
+        if ($specs) {
+            $raws = $this->getRaws(true);
+
+            foreach ($specs as $spec_key => $spec_value) {
+
+                if (!in_array($spec_key, array_keys($raws)) || 
+                    $raws[$spec_key] < $spec_value) {
+                    return false;
+                } 
+
+            }
+        }
+
+        return true;
+    }
 }
 
 ?>

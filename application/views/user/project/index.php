@@ -5,10 +5,12 @@ Projekty:<br />
         <?php if ($character['project_id'] == $project['id']): ?>
             <?php echo html::anchor('user/project/leave/'.$project['id'], '[Porzuć]'); ?>
         <?php elseif (!$character['project_id']): ?>
-            <?php echo html::anchor('user/project/join/'.$project['id'], '[Dołącz]'); ?>
+            <?php if ($project['can_join']): ?>
+                <?php echo html::anchor('user/project/join/'.$project['id'], '[Dołącz]'); ?>
+            <?php endif; ?>
         <?php endif; ?>
         <?php echo $project['name']; ?>
-        (<?php echo $project['progress']; ?>%, <?php echo Model_GameTime::formatDateTime($project['created_at'], "d-h:m"); ?>
+        (<?php echo $project['progress']; ?>, <?php echo Model_GameTime::formatDateTime($project['created_at'], "d-h:m"); ?>
         <?php echo $project['owner']; ?>)
         <?php if ($project['running']): ?>
             R (<?php echo $project['workers']; ?>)

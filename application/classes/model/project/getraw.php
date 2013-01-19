@@ -28,6 +28,17 @@ class Model_Project_GetRaw extends Model_Project {
         return 'Kopanie lub zbieranie '.$res->d;
     }
     
+    /**
+     * gets resources, items needed to starting this project
+     * 
+     * @return null as there's nothing needed to get raw resources
+     */
+    public function getSpecs($simple = false) {
+        
+        return null;
+        
+    }
+    
 }
 
 ?>

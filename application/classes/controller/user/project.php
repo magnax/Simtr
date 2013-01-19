@@ -9,10 +9,11 @@ class Controller_User_Project extends Controller_Base_Character {
     public function action_index() {
 
         $this->view->character = $this->template->character;
+        
+        $manager = Model_ProjectManager::getInstance(
+            null, $this->redis);
 
-        $projects = Model_ProjectManager::getInstance(
-            null, $this->redis)
-                ->find($this->location->id);
+        $projects = $manager->find($this->location->id);
         
         $this->view->projects = array();
         
@@ -33,15 +34,24 @@ class Controller_User_Project extends Controller_Base_Character {
             
             $workers = json_decode($this->redis->get("projects:{$p['id']}:workers"));
             
+            $project = $manager->findOneById($p['id'], true);
+            
+            if ($project->type_id == 'Make') {    
+                if (!$project->hasAllSpecs()) {
+                    $progress = '-';
+                }
+            }
+            
             $this->view->projects[] = array(
                 'id' => $p['id'],
                 'owner_id' => $p['owner_id'],
                 'owner' => $name,
                 'name' => $project_name,
                 'created_at' => $p['created_at'],
-                'progress' => number_format(100 * $p['time_elapsed'] / $p['time'], 0),
+                'progress' => (isset($progress)) ? $progress : $project->calculateProgress(),
                 'running' => !!$workers,
                 'workers' => count($workers),
+                'can_join' => !(isset($progress) && $progress == '-'),
             );
 
         }
@@ -107,6 +117,10 @@ class Controller_User_Project extends Controller_Base_Character {
         //print_r($project);
         $this->view->project = $project;
 
+        $project_for_specs = Model_ProjectManager::getInstance(null, $this->redis)->findOneById($project['id'], true);
+        $this->view->project_specs = $project_for_specs->getAllSpecs();
+        $this->view->can_join = $project_for_specs->hasAllSpecs();
+        
     }
 
     public function action_join() {
@@ -204,11 +218,16 @@ class Controller_User_Project extends Controller_Base_Character {
 
     public function action_builditem() {
         
+        $itemtype = ORM::factory('itemtype', $this->request->param('id'));
+        $project_type = ORM::factory('projecttype', $itemtype->projecttype_id);
+        
         $spec = ORM::factory('spec')
             ->where('itemtype_id', '=', $this->request->param('id'))
             ->find();
         
-        if ($_POST) {
+        $raws = Model_Spec_Raw::getRaws($itemtype->id);
+        
+        if (HTTP_Request::POST == $this->request->method()) {
             
             $project_manager = Model_ProjectManager::getInstance(
                 Model_Project::getInstance(Model_Project::TYPE_MAKE, $this->redis)//;
@@ -235,6 +254,7 @@ class Controller_User_Project extends Controller_Base_Character {
         }
         
         $this->view->spec = $spec;
+        $this->view->raws = $raws;
         
     }
     

@@ -43,7 +43,7 @@ class Model_ProjectManager_Redis extends Model_ProjectManager {
 
     }
 
-    public function findOneById($id) {
+    public function findOneById($id, $return_project = false) {
 
         $tmp_proj = $this->source->get("projects:$id");
         if ($tmp_proj) {
@@ -68,8 +68,12 @@ class Model_ProjectManager_Redis extends Model_ProjectManager {
 
             $p->setActive($this->source->get("active_projects:$id"));
                 
-            $this->_project = $p;
-            return $this;
+            if ($return_project) {
+                return $p;
+            } else {
+                $this->_project = $p;
+                return $this;
+            }
         }
         return null;
 

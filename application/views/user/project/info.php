@@ -46,9 +46,13 @@
     Materiały:
 </div>
 <div class="table_right">
-    <?php foreach($project['materials'] as $material): ?>
-        <?php echo $material['name']; ?> (Musisz jeszcze dodać <?php echo $material['needed']; ?> z potrzebnych <?php echo $material['amount']; ?> gram)
-    <?php endforeach; ?>
+    <?php if (!isset($project_specs) || !$project_specs): ?>
+        Nie potrzeba żadnych do tego projektu.
+    <?php else: ?>
+        <?php foreach($project_specs as $spec): ?>
+            <?php echo $spec['name']; ?> (Musisz jeszcze dodać <?php echo ($spec['needed'] - $spec['added']); ?> z potrzebnych <?php echo $spec['needed']; ?> gram)
+        <?php endforeach; ?>
+    <?php endif; ?>
 </div>
 <div class="clear"></div> 
 
@@ -81,5 +85,9 @@
 <?php if ($character['project_id'] == $project['id']): ?>
     <?php echo html::anchor('user/project/leave/'.$project['id'], '[Porzuć]'); ?>
 <?php elseif (!$character['project_id']): ?>
-    <?php echo html::anchor('user/project/join/'.$project['id'], '[Dołącz]'); ?>
+    <?php if ($can_join): ?>
+        <?php echo html::anchor('user/project/join/'.$project['id'], '[Dołącz]'); ?>
+    <?php else: ?>
+        Nie można rozpocząć projektu, póki nie są spełnione wszystkie wymagania.
+    <?php endif; ?>
 <?php endif; ?>
