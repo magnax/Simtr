@@ -8,6 +8,9 @@
         <a href="/events/give_raw/<?=$r['id']; ?>" title="Podaj surowiec">
             <img src="/assets/images/give.png" height=32 width=32>
         </a>
+        <a href="/events/use_raw/<?=$r['id']; ?>" title="Użyj do projektu">
+            <img src="/assets/images/use.png" height=32 width=32>
+        </a>
         <?php echo $r['amount']; ?> gram <?php echo $r['name']; ?><br />
         </div>
     <?php endforeach; ?>

@@ -24,13 +24,15 @@ class Controller_Base_Character extends Controller_Base_User {
         
         parent::before();
         
+        //get current character
         $this->character = new Model_Character($this->session->get('current_character'));
-        $this->character->setSource($this->redis);
         
         //redirect if no current character
-        if (!$this->character) {
-            Request::current()->redirect('user/menu');
+        if (!$this->character->id) {
+            $this->request->redirect('user/menu');
         }
+        
+        $this->character->setSource($this->redis);
         
         //redirect if character is dead
         if (!$this->character->life && !($this->request->uri() == 'events')) {            

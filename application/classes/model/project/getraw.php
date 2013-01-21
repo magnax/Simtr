@@ -23,6 +23,11 @@ class Model_Project_GetRaw extends Model_Project {
         
     }
 
+    public function getName() {
+        $res = new Model_Resource($this->resource_id);
+        return 'Kopanie lub zbieranie '.$res->d;
+    }
+    
     public function name($project_data) {
         $res = new Model_Resource($project_data['resource_id']);
         return 'Kopanie lub zbieranie '.$res->d;

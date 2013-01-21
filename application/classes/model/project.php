@@ -9,13 +9,13 @@ abstract class Model_Project {
 
     //pola zapisywane metodą toArray()
     public $id;
-    protected $owner_id;
+    public $owner_id;
     public $type_id;
     protected $place_type;
     protected $place_id;
     protected $time;
     protected $time_elapsed;
-    protected $created_at;
+    public $created_at;
     protected $name;
 
     //pozostałe pola
@@ -226,6 +226,18 @@ abstract class Model_Project {
 
         return true;
     }
+    
+    /**
+     * this method would be overriden in child classes
+     * 
+     * @return boolean
+     */
+    public function hasAllResources() {
+        
+        return true;
+        
+    }
+    
 }
 
 ?>

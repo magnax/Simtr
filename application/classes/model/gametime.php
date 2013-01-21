@@ -5,7 +5,7 @@ class Model_GameTime {
     /**
      * path to game time deamon
      */
-    const PATH = '/home/local/lib/simtr/d.py';
+    const PATH = '/home/magnax/www/simtrd/d.py';
     //on server: 
     //const PATH = 'python /home/magnax/domains/magnax.pl/public_html/game/simtrd/d.py';
 
@@ -49,7 +49,7 @@ class Model_GameTime {
             $daemon_path = $this->path ? $this->path : self::PATH;
         }
         
-        $output = shell_exec($daemon_path.' say');
+        $output = @shell_exec($daemon_path.' say');
         
         if (strpos($output, 'Error:') !== false) {
             throw new DaemonNotRunningException('Not running!');

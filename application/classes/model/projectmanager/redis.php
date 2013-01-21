@@ -29,6 +29,12 @@ class Model_ProjectManager_Redis extends Model_ProjectManager {
 
     }
 
+    /**
+     * @deprecated
+     * 
+     * @param type $place_id
+     * @return type
+     */
     public function find($place_id) {
 
         $projects = array();
@@ -98,6 +104,13 @@ class Model_ProjectManager_Redis extends Model_ProjectManager {
         return $this->source->get("project_types:{$this->type_id}").': '.$res['name'];
 
     }
+    
+    public function getWorkersIds($project_id) {
+        
+        return json_decode($this->source->get("projects:{$project_id}:workers"));
+        
+    }
+    
 }
 
 ?>

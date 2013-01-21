@@ -188,6 +188,23 @@ class Controller_Events extends Controller_Base_Character {
         $this->view->character = $this->template->character;
     }
 
+    public function action_use_raw() {
+     
+        $this->view->resource = new Model_Resource($this->request->param('id'));
+        $manager = Model_ProjectManager::getInstance(null, $this->redis);
+        
+        $projects_ids = $this->location->getProjectsIds();
+        $this->view->projects = array();
+        
+        foreach ($projects_ids as $project_id) {
+            $project = $manager->findOneById($project_id, true);
+            if (!$project->hasAllResources()) {
+                $this->view->projects[$project_id] = $project->getName();
+            }
+        }
+        
+    }
+    
 
 }
 

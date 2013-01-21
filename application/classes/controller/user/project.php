@@ -1,40 +1,45 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
+/**
+ * controller for projects:
+ * - list of projects in location
+ * - join/leave project
+ * - create projects: MAKE, GET_RAW
+ */
 class Controller_User_Project extends Controller_Base_Character {
+    
+    /**
+     * project manager object - manages project get/save
+     */
+    protected $manager = null;
+    
+    public function before() {
+        
+        parent::before();
+        
+        //create manager
+        $this->manager = Model_ProjectManager::getInstance(null, $this->redis);
+    }
 
     /**
-     * lista projektów w danej lokacji
+     * lists all projects in current location
      */
-
     public function action_index() {
 
-        $this->view->character = $this->template->character;
-        
-        $manager = Model_ProjectManager::getInstance(
-            null, $this->redis);
-
-        $projects = $manager->find($this->location->id);
+        $projects = $this->location->getProjectsIds();
         
         $this->view->projects = array();
         
-        foreach ($projects as $p) {
+        foreach ($projects as $project_id) {
             
-            $name = ORM::factory('chname')->name($this->character->id, $p['owner_id'])->name;
-            if (!$name) {
-                if ($p['owner_id'] == $this->character->id) {
-                    $name = $this->character->name;
-                } else {
-                    $name = ORM::factory('character')->getUnknownName($p['owner_id'], $this->lang);
-                }
-            }
-            $name = '<a href="/chname?id='.$p['owner_id'].'">'.$name.'</a>';
+            $project = $this->manager->findOneById($project_id, true);
             
-            $project_name = Model_Project::getInstance($p['type_id'])
-                ->name($p, $this->character->id);
+            $name = $this->character->getChname($project->owner_id);
+            $name = '<a href="/chname?id='.$project->owner_id.'">'.$name.'</a>';
             
-            $workers = json_decode($this->redis->get("projects:{$p['id']}:workers"));
+            $project_name = $project->getName();
             
-            $project = $manager->findOneById($p['id'], true);
+            $workers = $this->manager->getWorkersIds($project_id);
             
             if ($project->type_id == 'Make') {    
                 if (!$project->hasAllSpecs()) {
@@ -43,11 +48,11 @@ class Controller_User_Project extends Controller_Base_Character {
             }
             
             $this->view->projects[] = array(
-                'id' => $p['id'],
-                'owner_id' => $p['owner_id'],
+                'id' => $project->id,
+                'owner_id' => $project->owner_id,
                 'owner' => $name,
                 'name' => $project_name,
-                'created_at' => $p['created_at'],
+                'created_at' => $project->created_at,
                 'progress' => (isset($progress)) ? $progress : $project->calculateProgress(),
                 'running' => !!$workers,
                 'workers' => count($workers),
@@ -56,7 +61,6 @@ class Controller_User_Project extends Controller_Base_Character {
 
         }
 
-        $this->view->character = $this->template->character;
     }
 
     public function action_info() {

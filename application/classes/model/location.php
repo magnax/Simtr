@@ -226,6 +226,12 @@ class Model_Location extends ORM {
         
     }
     
+    public function getProjectsIds() {
+        
+        return RedisDB::getInstance()->smembers("locations:{$this->id}:projects");
+        
+    }
+    
 }
 
 ?>

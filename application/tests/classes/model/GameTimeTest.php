@@ -1,26 +1,23 @@
 <?php defined('SYSPATH') or die('No direct script access');
 
-//include_once APPPATH.'classes/model/GameTime.php';
+include_once APPPATH.'classes/model/GameTime.php';
 
-class GameTimeTest extends Kohana_UnitTest_TestCase {
-  
-    protected $gametime = null;
+class Model_GameTimeTest extends Kohana_UnitTest_TestCase {
     
-    public function setUp() {
-        $this->gametime = new Model_GameTime();
+    public function testAdd() {
+        $this->assertEquals(2, 2);
     }
     
     public function testModelLoaded() {
-        $this->assertNotNull($this->gametime);
+        $gametime = null;
+        $this->assertNull($gametime);
+        $gametime = new Model_GameTime();
+        $this->assertNotNull($gametime);
     }
     
     public function testGetRawTimeType() {
-        $rawTime = $this->gametime->getRawTime();
-        $this->assertType('int', $rawTime);
-    }
-    
-    public function testGetRawTimeValue() {
-        $rawTime = $this->gametime->getRawTime();
+        $gametime = new Model_GameTime();
+        $rawTime = $gametime->getRawTime();
         $this->assertGreaterThan(0, $rawTime);
     }
 
@@ -29,8 +26,9 @@ class GameTimeTest extends Kohana_UnitTest_TestCase {
      */
     public function testGetRawTimeExceptionBadDaemon() {
         
+        $gametime = new Model_GameTime();
         //bad daemon
-        $rawTime = $this->gametime->getRawTime('/usr/local/lib/simtr/d_bad.py');
+        $rawTime = $gametime->getRawTime('/home/magnax/www/simtrd/d_bad.py');
 
     }
     
@@ -40,31 +38,36 @@ class GameTimeTest extends Kohana_UnitTest_TestCase {
     public function testGetRawTimeExceptionDaemonNotRunning() {
         
         //not running daemon
-        $rawTime = $this->gametime->getRawTime('/usr/local/lib/simtr/d_test.py');
+        $gametime = new Model_GameTime();
+        $rawTime = $gametime->getRawTime('/home/magnax/www/simtrd/d_test.py');
 
     }
     
     public function testGetTime() {
-        $t = $this->gametime->getTime();
-        $this->assertType('string', $t);
+        $gametime = new Model_GameTime();
+        $t = $gametime->getTime();
+        $this->assertInternalType('string', $t);
         $this->assertRegExp('/[0-9]{1,2}:[0-9]{2}:[0-9]{2}/', $t);
     }
     
     public function testGetDate() {
-        $t = $this->gametime->getDate();
-        $this->assertType('string', $t);
+        $gametime = new Model_GameTime();
+        $t = $gametime->getDate();
+        $this->assertInternalType('string', $t);
         $this->assertRegExp('/[0-9]{1,4}-([0-1][0-9])|[0-9]/', $t);
     }
  
     public function testGetDateTime() {
-        $t = $this->gametime->getDateTime();
-        $this->assertType('string', $t);
+        $gametime = new Model_GameTime();
+        $t = $gametime->getDateTime();
+        $this->assertInternalType('string', $t);
         $this->assertRegExp('/[0-9]{1,4}-([0-1][0-9])|[0-9] [0-9]{1,2}:[0-9]{2}:[0-9]{2}/', $t);
     }
     
     public function testDecodeRawTime() {
+        $gametime = new Model_GameTime();
         $rawtime = 2116726; //
-        $timeArray = $this->gametime->decodeRawTime($rawtime);
+        $timeArray = $gametime->decodeRawTime($rawtime);
         $this->assertEquals(46, $timeArray['s']); //seconds
         $this->assertEquals(58, $timeArray['m']); //minutes
         $this->assertEquals(11, $timeArray['h']); //hours
@@ -75,6 +78,9 @@ class GameTimeTest extends Kohana_UnitTest_TestCase {
     }
     
     public function testFormatDateTime() {
+        
+        $gametime = new Model_GameTime();
+        
         $year = 1728000; //seconds
         $day = 86400; //seconds
         $hour = 3600;
@@ -82,47 +88,47 @@ class GameTimeTest extends Kohana_UnitTest_TestCase {
         
         $d = array(0,0,0,0,0);
         $rt = ($d[0]*$year)+($d[1]*$day)+($d[2]*$hour)+($d[3]*$minute)+$d[4];
-        $this->assertEquals('0-0 0:0:0', $this->gametime->formatDateTime($rt, 'y-f h:m:s'));
+        $this->assertEquals('0-0 0:0:0', $gametime->formatDateTime($rt, 'y-f h:m:s'));
         
         $d = array(0,0,0,0,59);
         $rt = ($d[0]*$year)+($d[1]*$day)+($d[2]*$hour)+($d[3]*$minute)+$d[4];
-        $this->assertEquals('0-0 0:0:59', $this->gametime->formatDateTime($rt, 'y-f h:m:s'));
+        $this->assertEquals('0-0 0:0:59', $gametime->formatDateTime($rt, 'y-f h:m:s'));
         
         $d = array(0,0,0,1,0);
         $rt = ($d[0]*$year)+($d[1]*$day)+($d[2]*$hour)+($d[3]*$minute)+$d[4];
-        $this->assertEquals('0-0 0:1:0', $this->gametime->formatDateTime($rt, 'y-f h:m:s'));
+        $this->assertEquals('0-0 0:1:0', $gametime->formatDateTime($rt, 'y-f h:m:s'));
         
         $d = array(0,0,2,59,0);
         $rt = ($d[0]*$year)+($d[1]*$day)+($d[2]*$hour)+($d[3]*$minute)+$d[4];
-        $this->assertEquals('0-0 2:59:0', $this->gametime->formatDateTime($rt, 'y-f h:m:s'));
+        $this->assertEquals('0-0 2:59:0', $gametime->formatDateTime($rt, 'y-f h:m:s'));
         
         $d = array(0,1,0,0,0);
         $rt = ($d[0]*$year)+($d[1]*$day)+($d[2]*$hour)+($d[3]*$minute)+$d[4];
-        $this->assertEquals('0-1 0:0:0', $this->gametime->formatDateTime($rt, 'y-f h:m:s'));
+        $this->assertEquals('0-1 0:0:0', $gametime->formatDateTime($rt, 'y-f h:m:s'));
         
         $d = array(0,0,23,59,59);
         $rt = ($d[0]*$year)+($d[1]*$day)+($d[2]*$hour)+($d[3]*$minute)+$d[4];
-        $this->assertEquals('0-0 23:59:59', $this->gametime->formatDateTime($rt, 'y-f h:m:s'));
+        $this->assertEquals('0-0 23:59:59', $gametime->formatDateTime($rt, 'y-f h:m:s'));
         
         $d = array(0,19,0,0,0);
         $rt = ($d[0]*$year)+($d[1]*$day)+($d[2]*$hour)+($d[3]*$minute)+$d[4];
-        $this->assertEquals('0-19 0:0:0', $this->gametime->formatDateTime($rt, 'y-f h:m:s'));
+        $this->assertEquals('0-19 0:0:0', $gametime->formatDateTime($rt, 'y-f h:m:s'));
         
         $d = array(0,19,23,59,59);
         $rt = ($d[0]*$year)+($d[1]*$day)+($d[2]*$hour)+($d[3]*$minute)+$d[4];
-        $this->assertEquals('0-19 23:59:59', $this->gametime->formatDateTime($rt, 'y-f h:m:s'));
+        $this->assertEquals('0-19 23:59:59', $gametime->formatDateTime($rt, 'y-f h:m:s'));
         
         $d = array(1,0,0,0,0);
         $rt = ($d[0]*$year)+($d[1]*$day)+($d[2]*$hour)+($d[3]*$minute)+$d[4];
-        $this->assertEquals('1-0 0:0:0', $this->gametime->formatDateTime($rt, 'y-f h:m:s'));
+        $this->assertEquals('1-0 0:0:0', $gametime->formatDateTime($rt, 'y-f h:m:s'));
         
         $d = array(1,4,12,45,3);
         $rt = ($d[0]*$year)+($d[1]*$day)+($d[2]*$hour)+($d[3]*$minute)+$d[4];
-        $this->assertEquals('1-4 12:45:3', $this->gametime->formatDateTime($rt, 'y-f h:m:s'));
+        $this->assertEquals('1-4 12:45:3', $gametime->formatDateTime($rt, 'y-f h:m:s'));
         
         $d = array(112,14,5,7,54);
         $rt = ($d[0]*$year)+($d[1]*$day)+($d[2]*$hour)+($d[3]*$minute)+$d[4];
-        $this->assertEquals('2254 5:7:54', $this->gametime->formatDateTime($rt, 'd h:m:s'));
+        $this->assertEquals('2254 5:7:54', $gametime->formatDateTime($rt, 'd h:m:s'));
         
     }
     

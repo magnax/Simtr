@@ -105,11 +105,12 @@ Kohana::$config->attach(new Config_File);
  */
 Kohana::modules(array(
     'email'         => APPPATH.'modules/email',
-    //'unittest'      => MODPATH.'unittest',   // Unit testing
+    'unittest'      => MODPATH.'unittest',   // Unit testing
     'redisent'      => APPPATH.'modules/redisent',   // redisent library
 	'orm'           => MODPATH.'orm',        // Object Relationship Mapping
 	'auth'          => MODPATH.'auth', // Auth module
 	'database'      => MODPATH.'database',  // Database
+    'cache'         => MODPATH.'cache',     //cache module
 	));
 
 /**

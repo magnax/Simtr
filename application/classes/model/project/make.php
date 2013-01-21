@@ -32,6 +32,14 @@ class Model_Project_Make extends Model_Project {
 
     }
     
+    public function getName() {
+        
+        $item = new Model_ItemType($this->itemtype_id);
+        return 'Produkcja: '.$item->name;
+        
+    }
+
+
     public function name($project_data) {
         
         $item = new Model_ItemType($project_data['itemtype_id']);
@@ -48,6 +56,17 @@ class Model_Project_Make extends Model_Project {
     public function getSpecs($simple = false) {
         
         return Model_Spec_Raw::getRaws($this->itemtype_id, $simple);
+        
+    }
+    
+    /**
+     * this method would be overriden in child classes
+     * 
+     * @return boolean
+     */
+    public function hasAllResources() {
+        
+        return false;
         
     }
 
