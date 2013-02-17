@@ -307,7 +307,7 @@ class Model_Character extends ORM {
         
     }
 
-        /**
+    /**
      * gets inventory raws for character
      */
     public function getRaws() {
@@ -329,6 +329,20 @@ class Model_Character extends ORM {
 
     }
     
+    public function getRawAmount($raw_id) {
+    
+        $raws = RedisDB::getInstance()->getJSON("raws:{$this->id}");
+        
+        foreach ($raws as $k => $v) {
+            if ($k == $raw_id) {
+                return $v;
+            }
+        }
+        
+        return 0;
+        
+    }
+
     public function addRaw($id, $amount) {
         
         $raws = RedisDB::getInstance()->getJSON("raws:{$this->id}");

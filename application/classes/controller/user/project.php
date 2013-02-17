@@ -57,6 +57,8 @@ class Controller_User_Project extends Controller_Base_Character {
                 'running' => !!$workers,
                 'workers' => count($workers),
                 'can_join' => !(isset($progress) && $progress == '-'),
+                'can_delete' => !$workers && (($project->owner_id == $this->character->id) || 
+                        ($project->created_at - $this->game->raw_time >= 20*Model_GameTime::DAY_LENGTH)),
             );
 
         }

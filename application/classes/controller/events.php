@@ -193,6 +193,68 @@ class Controller_Events extends Controller_Base_Character {
         $this->view->resource = new Model_Resource($this->request->param('id'));
         $manager = Model_ProjectManager::getInstance(null, $this->redis);
         
+        if (HTTP_Request::POST == $this->request->method()) {
+        
+            $project = $manager->findOneById($this->request->post('project_id'), TRUE);
+            $resource = new Model_Resource($this->request->param('id'));
+                
+            if ($this->request->post('submit_project')) {
+                //project is selected, now show form to set amount
+                
+                $specs = $project->getAllSpecs();
+                
+                $needed_amount = 0;
+                
+                foreach ($specs as $spec) {
+                    if ($spec['id'] = $this->request->param('id')) {
+                        $needed_amount = $spec['needed'] - $spec['added'];
+                    }
+                }
+                
+                $got_amount = $this->character->getRawAmount($resource->id);
+                
+                $this->template->content = View::factory('events/use_raw_add')
+                    ->bind('needed_amount', $needed_amount)
+                    ->bind('got_amount', $got_amount)
+                    ->bind('resource', $resource)
+                    ->bind('project_id', $project->id);
+                return;
+                
+            } elseif ($this->request->post('submit_raw')) {
+                
+                $amount = $this->request->post('amount');
+                
+                //dodanie materiału do projektu
+                $project->addRaw($_POST['resource_id'], $_POST['amount']);
+                
+                //odjęcie postaci podanej ilości materiału
+                $this->character->putRaw($_POST['resource_id'], $_POST['amount']);
+                
+                //wysłanie eventu
+                $event_sender = Model_EventSender::getInstance(
+                    Model_Event::getInstance(
+                        Model_Event::USE_RAW, $this->game->raw_time, $this->redis
+                    )
+                );
+                $event_sender->setResource($_POST['resource_id'], $_POST['amount']);
+                $event_sender->setProject($project);
+                //recipients to lista obiektów klasy Character
+                $event_sender->addRecipients($this->location->getVisibleCharacters());
+                $event_sender->setSender($this->character->id);
+                $event_sender->send();
+
+                Model_EventNotifier::notify(
+                    $event_sender->getEvent()->getRecipients(), 
+                    $event_sender->getEvent()->getId(), 
+                    $this->redis, $this->lang
+                );
+
+                $this->request->redirect('events');
+                
+            }
+            
+        }
+        
         $projects_ids = $this->location->getProjectsIds();
         $this->view->projects = array();
         

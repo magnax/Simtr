@@ -9,6 +9,11 @@ Projekty:<br />
                 <?php echo html::anchor('user/project/join/'.$project['id'], '[Dołącz]'); ?>
             <?php endif; ?>
         <?php endif; ?>
+        
+        <?php if ($project['can_delete']): ?>
+            <?php echo html::anchor('user/project/destroy/'.$project['id'], '[Usuń]'); ?>
+        <?php endif; ?>
+    
         <?php echo $project['name']; ?>
         (<?php echo $project['progress']; ?>, <?php echo Model_GameTime::formatDateTime($project['created_at'], "d-h:m"); ?>
         <?php echo $project['owner']; ?>)

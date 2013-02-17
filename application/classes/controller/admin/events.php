@@ -22,8 +22,7 @@ class Controller_Admin_Events extends Controller_Base_Admin {
             RedisDB::set($this->request->param('id'), $this->request->post('event'));
             $this->request->redirect('/admin/events');
         }
-        $event = RedisDB::get($this->request->param('id'));
-        
+        $event = RedisDB::get("events:{$this->request->param('id')}");
         $this->view->event = $event;
         
     }

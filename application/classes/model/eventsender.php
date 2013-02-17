@@ -83,6 +83,10 @@ abstract class Model_EventSender {
         $this->_event->setNote($note_title);
     }
     
+    public function setProject(Model_Project $project) {
+        $this->_event->setProject($project);
+    }
+    
     abstract public function send();
 
 }

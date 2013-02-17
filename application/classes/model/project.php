@@ -193,6 +193,7 @@ abstract class Model_Project {
                 }
 
                 $all_specs[] = array(
+                    'resource_id' => $spec->resource_id,
                     'name' => $spec->resource->name,
                     'needed' => $spec->amount,
                     'added' => $added
@@ -227,7 +228,24 @@ abstract class Model_Project {
         return true;
     }
     
-    /**
+    public function addRaw($res_id, $amount) {
+        
+        $raw = ORM::factory('Project_Raw')
+            ->where('project_id', '=', $this->id)
+            ->and_where('resource_id', '=', $res_id)
+            ->find();
+        
+        if ($raw->loaded()) {
+            $raw->amount += $amount;
+            $raw->save();
+            return true;
+        }
+        
+        return false;
+        
+    }
+
+        /**
      * this method would be overriden in child classes
      * 
      * @return boolean

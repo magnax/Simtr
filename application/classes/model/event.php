@@ -21,6 +21,7 @@ class Model_Event {
     const SPAWN = 'Spawn';
     const TALK_ALL = 'TalkAll';
     const TALK_TO = 'TalkTo';
+    const USE_RAW = 'UseRaw';
     
     /**
      * wspólne właściwości

@@ -1,9 +1,9 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_Event_PutRaw extends Model_Event {
+class Model_Event_UseRaw extends Model_Event {
 
     /**
-     * właściwości specyficzne dla zdarzenia PUT_RAW
+     * właściwości specyficzne dla zdarzenia USE_RAW
      */
 
     /**
@@ -20,9 +20,22 @@ class Model_Event_PutRaw extends Model_Event {
      */
     protected $amount;
 
+    /**
+     * nazwa projektu
+     * 
+     * @var string 
+     */
+    protected $project_name;
+    
     public function setResource($res_id, $amount) {
         $this->res_id = $res_id;
         $this->amount = $amount;
+    }
+
+    public function setProject(Model_Project $project) {
+        
+        $this->project_name = $project->getName();
+        
     }
 
     public function toArray() {
@@ -31,6 +44,7 @@ class Model_Event_PutRaw extends Model_Event {
 
         $arr['res_id'] = $this->res_id;
         $arr['amount'] = $this->amount;
+        $arr['project_name'] = $this->project_name;
         $arr['sndr'] = $this->sender;
 
         return $arr;
@@ -57,6 +71,8 @@ class Model_Event_PutRaw extends Model_Event {
         }
         
         $returned['res_id'] = $res;
+        
+        $returned['project_name'] = $event_data['project_name'];
         
         return $returned;
         
