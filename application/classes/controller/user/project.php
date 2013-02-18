@@ -178,6 +178,23 @@ class Controller_User_Project extends Controller_Base_Character {
 
     }
 
+    public function action_destroy() {
+        
+        $project_id = $this->request->param('id');
+        
+        $project = $this->manager->findOneById($project_id, true);
+        if (!$project->id || $project->owner_id != $this->character->id) {
+            Session::instance()->set('error', 'Bad project!');
+        } else {
+        
+            RedisDB::del("projects:{$project->id}");
+            RedisDB::srem("locations:{$this->location->id}:projects", $project->id);
+        }
+        $this->request->redirect('events');
+        
+    }
+
+
     public function action_get_raw() {
         
         if ($_POST) {
