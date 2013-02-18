@@ -30,6 +30,7 @@
     Node server: [<?php echo html::anchor('admin/server/check', 'Check server'); ?> 
     <?php echo html::anchor('admin/server/on', 'Turn on server'); ?>]
     <?php echo html::anchor('admin/events/index', 'Events'); ?> 
+    <?php echo html::anchor('admin/projects/index', 'Projects'); ?> 
     <?php echo html::anchor('admin/system', 'System'); ?> 
 </div>
 <?php echo $content; ?>

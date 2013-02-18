@@ -1,9 +1,9 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_Event_MakeEnd extends Model_Event {
+class Model_Event_BuildEnd extends Model_Event {
 
     /**
-     * właściwości specyficzne dla zdarzenia MAKE_END
+     * właściwości specyficzne dla zdarzenia BUILD_END
      */
 
     /**

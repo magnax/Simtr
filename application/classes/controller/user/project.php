@@ -41,11 +41,7 @@ class Controller_User_Project extends Controller_Base_Character {
             
             $workers = $this->manager->getWorkersIds($project_id);
             
-            if ($project->type_id == 'Make') {    
-                if (!$project->hasAllSpecs()) {
-                    $progress = '-';
-                }
-            }
+            $progress = $project->calculateProgress();
             
             $this->view->projects[] = array(
                 'id' => $project->id,
@@ -53,7 +49,7 @@ class Controller_User_Project extends Controller_Base_Character {
                 'owner' => $name,
                 'name' => $project_name,
                 'created_at' => $project->created_at,
-                'progress' => (isset($progress)) ? $progress : $project->calculateProgress(),
+                'progress' => $progress,
                 'running' => !!$workers,
                 'workers' => count($workers),
                 'can_join' => !(isset($progress) && $progress == '-'),
@@ -236,7 +232,7 @@ class Controller_User_Project extends Controller_Base_Character {
         if (HTTP_Request::POST == $this->request->method()) {
             
             $project_manager = Model_ProjectManager::getInstance(
-                Model_Project::getInstance(Model_Project::TYPE_MAKE, $this->redis)//;
+                Model_Project::getInstance($project_type->key, $this->redis)//;
             );
 
             $data = array(
@@ -244,7 +240,7 @@ class Controller_User_Project extends Controller_Base_Character {
                 'owner_id'=>$this->character->id,
                 'amount'=>1,
                 'time'=>$spec->time,
-                'type_id'=>Model_Project::TYPE_MAKE,
+                'type_id'=>$project_type->key,
                 'place_type'=>$this->location->locationtype_id,
                 'place_id'=>$this->location->id,
                 'itemtype_id'=>$spec->itemtype_id,
@@ -255,6 +251,17 @@ class Controller_User_Project extends Controller_Base_Character {
             $project_manager->save();
 
             $this->location->addProject($project_manager->getId(), $this->redis);
+            
+            foreach ($raws as $raw) {
+                
+                $project_raw = new Model_Project_Raw();
+                $project_raw->project_id = $project_manager->getId();
+                $project_raw->resource_id = $raw->resource_id;
+                $project_raw->amount = 0;
+                
+                $project_raw->save();
+                
+            }
 
             $this->request->redirect('events');
         }

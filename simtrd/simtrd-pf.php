@@ -5,14 +5,14 @@
 /**
  * Demon rozliczający zakończone projekty
  * 
- * Version: 0.0.4
- * Changes: Dodane rozliczanie projektów produkcji przedmiotów
+ * Version: 0.0.6
+ * Changes: Dodane rozliczanie projektów produkcji budynków
  */
 
 require_once "System/Daemon.php";                 // Include the Class
 //
 //version of this file
-define('VER', '0.0.5');
+define('VER', '0.0.6');
 
 /**
  * config file from framework
@@ -188,6 +188,31 @@ while(!System_Daemon::isDying() && $runningOK) {
             
             switch ($project['type_id']) {
                 
+                case 'Build':
+                    //budowanie - obiekt (budynek) do listy budynków w lokacji
+                    $event_type = 'BuildEnd';
+                    
+                    //dodać lokację (locationtype_id => 2 dla budynków, class_id => z tabeli locationclasses)
+                    //
+                    
+                    //parametry budynku
+                    $query = mysql_query("select * from buildings_attrs where locationclass_id={$project['itemtype_id']}") or die (mysql_error());
+                    $result = mysql_fetch_array($query);
+                    
+                    $capacity = $result['capacity_person'];
+                    $max_weight = $result['max_weight'];
+                    $building_name = str_replace('Produkcja: ', '', $project['name']);
+                    
+                    $query = mysql_query("insert into locations values (0, 2, {$project['itemtype_id']}, 
+                        {$project['place_id']}, '$building_name')") or die (mysql_error());
+                    $location_id = mysql_insert_id();
+                    
+                    $sql = "insert into buildings values (0, $location_id, $capacity, $max_weight)";
+                    $query = mysql_query($sql) 
+                        or die ('3: ' . mysql_error(). ' SQL: ' . $sql);
+                    $building_id = mysql_insert_id();
+                    break;
+                
                 case 'Make':
                     $event_type = 'MakeEnd';
                     //utworzenie nowego przedmiotu:
@@ -292,6 +317,9 @@ while(!System_Daemon::isDying() && $runningOK) {
                 'sndr'=>$project['owner_id'],
             );
             switch ($project['type_id']) {
+                case 'Build':
+                    $event['itemtypeid'] = $project['itemtype_id'];
+                    break;
                 case 'GetRaw':
                     $event['res_id'] = $project['resource_id']; //@todo: ujednolicić res_id/resource_id
                     $event['amount'] = $project['amount'];
@@ -322,8 +350,9 @@ while(!System_Daemon::isDying() && $runningOK) {
 //                $this->redis, $this->lang
 //            );
 
-        }
-    }
+        } // end foreach 
+        
+    } // end if (count($projects_ids))
 
     $end_time = microtime(true);
 
@@ -332,9 +361,9 @@ while(!System_Daemon::isDying() && $runningOK) {
         System_Daemon::info('Count: '.count($projects_ids).'; time: '.($end_time-$start_time));
     }
 
-    System_Daemon::iterate(SLEEP_TIME);
+  System_Daemon::iterate(SLEEP_TIME);
 
-}
+} //end while
 
 System_Daemon::stop();
 

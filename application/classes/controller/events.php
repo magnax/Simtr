@@ -261,7 +261,7 @@ class Controller_Events extends Controller_Base_Character {
         foreach ($projects_ids as $project_id) {
             $project = $manager->findOneById($project_id, true);
             if (!$project->hasAllResources()) {
-                $this->view->projects[$project_id] = $project->getName();
+                $this->view->projects[$project_id] = Model_GameTime::formatDateTime($project->created_at, "d-h:m"). ' ' . $project->getName() . ' ('. $this->character->getChname($project->owner_id) . ')';
             }
         }
         

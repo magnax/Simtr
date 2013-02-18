@@ -3,9 +3,11 @@
 abstract class Model_Project {
 
     // typy projektów
+    const TYPE_BUILD = 'Build'; //produkcja budynków
+    const TYPE_BURY = 'Bury'; //zakopywanie ciał
     const TYPE_GET_RAW = 'GetRaw'; //wydobycie surowców z ziemi
     const TYPE_MAKE = 'Make'; //produkcja przedmiotów
-    const TYPE_BURY = 'Bury'; //zakopywanie ciał
+    
 
     //pola zapisywane metodą toArray()
     public $id;
@@ -52,7 +54,15 @@ abstract class Model_Project {
     }
 
     public function calculateProgress($decimals = 0) {
+        
+        if (in_array($this->type_id, array('Make', 'Build'))) {    
+            if (!$this->hasAllSpecs()) {
+                return '-';
+            }
+        }
+        
         return number_format(100 * $this->time_elapsed / $this->time, $decimals) . '%';
+        
     }
     
     public function getSource() {
@@ -236,9 +246,11 @@ abstract class Model_Project {
             ->find();
         
         if ($raw->loaded()) {
+            
             $raw->amount += $amount;
             $raw->save();
             return true;
+            
         }
         
         return false;

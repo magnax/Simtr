@@ -19,7 +19,7 @@ class Controller_Admin_Events extends Controller_Base_Admin {
     public function action_edit() {
         
         if (HTTP_Request::POST == $this->request->method()) {
-            RedisDB::set($this->request->param('id'), $this->request->post('event'));
+            RedisDB::set("events:{$this->request->param('id')}", $this->request->post('event'));
             $this->request->redirect('/admin/events');
         }
         $event = RedisDB::get("events:{$this->request->param('id')}");
