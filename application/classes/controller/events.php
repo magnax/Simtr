@@ -27,16 +27,30 @@ class Controller_Events extends Controller_Base_Character {
         
         if (isset($_POST['text']) && $_POST['text']) {
             
-            $event_sender = Model_EventSender::getInstance(
-                Model_Event::getInstance(
-                    Model_Event::TALK_ALL, $this->game->raw_time, $this->redis
-                )
-            );
+            if (Auth::instance()->logged_in('admin') && $_POST['text'][0] == '!') {
+                $event_sender = Model_EventSender::getInstance(
+                    Model_Event::getInstance(
+                        Model_Event::GOD_TALK, $this->game->raw_time, $this->redis
+                    )
+                );
+                $_POST['text'] = substr($_POST['text'], 1, strlen($_POST['text'])-1);
+                $godmode = true;
+            } else {
+                $event_sender = Model_EventSender::getInstance(
+                    Model_Event::getInstance(
+                        Model_Event::TALK_ALL, $this->game->raw_time, $this->redis
+                    )
+                );
+            }
 
             $event_sender->setText($_POST['text']);
             
             //recipients to lista obiektów klasy Character
-            $recipients = $this->location->getHearableCharacters($this->character);
+            if (isset($godmode) && $godmode) {
+                $recipients = Model_Character::getAllCharactersIds();
+            } else {
+                $recipients = $this->location->getHearableCharacters($this->character);
+            }
             $event_sender->addRecipients($recipients);
             $event_sender->setSender($this->character->id);
 

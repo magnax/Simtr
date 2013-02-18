@@ -10,6 +10,7 @@ class Model_Event {
     const GET_RAW_END = 'GetRawEnd';
     const GIVE_ITEM = 'GiveItem';
     const GIVE_RAW = 'GiveRaw';
+    const GOD_TALK = 'GodTalk';
     const HIT_PERSON = 'HitPerson';
     const HUNGRY = 'Hungry';
     const KILL_PERSON = 'KillPerson';

@@ -239,6 +239,8 @@ class Controller_User_Project extends Controller_Base_Character {
         
         $itemtype = ORM::factory('itemtype', $this->request->param('id'));
         $project_type = ORM::factory('projecttype', $itemtype->projecttype_id);
+        print_r($project_type);
+        exit;
         
         $spec = ORM::factory('spec')
             ->where('itemtype_id', '=', $this->request->param('id'))

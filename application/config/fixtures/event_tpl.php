@@ -155,6 +155,18 @@ $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
 $this->redis->rpush("$key:$person:params", 'text');$loaded++;
 
+//GodTalk
+$key = "global:event_tpl:GodTalk";
+$person = 1;
+$this->redis->set("$key:$person", 'Mówisz: "%s"');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'text');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", '<span style="font-weight:bold;color:#36D986;background-color:#fff;padding:3px;">Słyszysz głos potężny, z nieba się rozlegający, który oznajmia: </span><span style="font-weight:bold;color:#ff0000;background-color:#fff;padding:3px;">%s</span>');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'text');$loaded++;
+
 //PointExit
 $key = "global:event_tpl:PointExit";
 $person = 1;

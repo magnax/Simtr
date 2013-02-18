@@ -543,6 +543,12 @@ class Model_Character extends ORM {
         return $return_events;
     }
     
+    public static function getAllCharactersIds() {
+        
+        return array_keys(ORM::factory('character')->find_all()->as_array('id', 'id'));
+        
+    }
+    
 }
 
 ?>
