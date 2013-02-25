@@ -18,6 +18,13 @@ class Model_Character extends ORM {
         )
     );
 
+    protected $_has_many = array(
+        'keys' => array(
+            'model' => 'key',
+            'foreign_key' => 'character_id',
+            'far_key' => 'id',
+        )
+    );
 
     public function rules() {
         return array(
@@ -43,19 +50,6 @@ class Model_Character extends ORM {
     protected $place_id;
     protected $project_id;
     protected $travel_id;
-    
-    /**
-     * współczynniki
-     */
-    
-     //jedzenie (0-100)
-     protected $food;
-     
-     //żywotność (800-1200) 
-     protected $vitality;
-
-     //siła (0.6 ... 1.8)
-     protected $strength;
 
      /**
       * kolekcje
@@ -546,6 +540,12 @@ class Model_Character extends ORM {
     public static function getAllCharactersIds() {
         
         return array_keys(ORM::factory('character')->find_all()->as_array('id', 'id'));
+        
+    }
+    
+    public function hasKey($lock_nr) {
+        
+        return $this->keys->where('nr', '=', $lock_nr)->find()->loaded();
         
     }
     

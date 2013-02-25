@@ -45,6 +45,18 @@ class Controller_User_Location extends Controller_Base_Character {
 
     public function action_objects() {
         
+        $location_lockable = $this->location->locationtype->lockable;
+
+        if ($location_lockable) {
+            
+            $this->view->lock = $this->location->lock;
+            $this->view->has_key = $this->character->hasKey($this->location->lock->nr);
+            
+        }
+        
+        $this->view->lockable = $location_lockable;
+        $this->view->max_lock_level = $this->location->locationtype->max_lock_level;
+        
         $this->view->locationtype = $this->location->locationclass->name;
         $this->view->raws = $this->location->getRaws();
         $this->view->items = $this->location->getItems();
@@ -102,6 +114,8 @@ class Controller_User_Location extends Controller_Base_Character {
      */
     public function action_enter() {
         
+        $error = null;
+        
         $dest_location_id = $this->request->param('id');
         $exit_location_id = $this->character->location_id;
         /**
@@ -109,38 +123,55 @@ class Controller_User_Location extends Controller_Base_Character {
          * (locked, too much weight etc.)
          */
         
-        //if user is working on the project, leave it before enter
-        
-        $this->character->leaveCurrentProject($this->redis, $this->game->raw_time);
-        
-        //generate event
-        $event_sender = Model_EventSender::getInstance(
-            Model_Event::getInstance(
-                Model_Event::ENTER_LOCATION, $this->game->raw_time, $this->redis
-            )
-        );
-        
-        //first get recipients from current loc
-        $current_recipients = $this->location->getVisibleCharacters();
-        
         $dest_location = new Model_Location($dest_location_id);
-        $dest_recipients = $dest_location->getVisibleCharacters();
+        $exit_location = new Model_Location($exit_location_id);
+        $lock = $exit_location->lock;
         
-        $recipients = array_merge($current_recipients, $dest_recipients);
+        if ($lock->locked && !$this->character->hasKey($lock->nr)) {
+            $error = 'Nie możesz wyjść, zamknięte';
+        }
         
-        $event_sender->addRecipients($recipients);
+        if ($dest_location->lock->locked && !$this->character->hasKey($dest_location->lock->nr)) {
+            $error = 'Nie możesz wejść, zamknięte';
+        }
         
-        $this->character->location_id = $dest_location_id;
-        $this->character->save();
+        if (!$error) {
         
-        $event_sender->setSender($this->character->getId());
-        $event_sender->setLocationId($dest_location_id);
-        $event_sender->setExitLocationId($exit_location_id);
+            //if user is working on the project, leave it before enter
+            $this->character->leaveCurrentProject($this->redis, $this->game->raw_time);
 
-        $event_sender->send();
+            //generate event
+            $event_sender = Model_EventSender::getInstance(
+                Model_Event::getInstance(
+                    Model_Event::ENTER_LOCATION, $this->game->raw_time, $this->redis
+                )
+            );
+
+            //first get recipients from current loc
+            $current_recipients = $this->location->getVisibleCharacters();
+
+            $dest_recipients = $dest_location->getVisibleCharacters();
+
+            $recipients = array_merge($current_recipients, $dest_recipients);
+
+            $event_sender->addRecipients($recipients);
+
+            $this->character->location_id = $dest_location_id;
+            $this->character->save();
+
+            $event_sender->setSender($this->character->getId());
+            $event_sender->setLocationId($dest_location_id);
+            $event_sender->setExitLocationId($exit_location_id);
+
+            $event_sender->send();
+
+            $event_id = $event_sender->getEvent()->getId();
+            Model_EventNotifier::notify($recipients, $event_id, $this->redis, $this->lang);
         
-        $event_id = $event_sender->getEvent()->getId();
-        Model_EventNotifier::notify($recipients, $event_id, $this->redis, $this->lang);
+        } else {
+            //there was some error, set error message
+            Session::instance()->set('error', $error);
+        }
         
         $this->request->redirect('events');
         

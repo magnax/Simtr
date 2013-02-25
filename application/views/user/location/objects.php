@@ -1,4 +1,30 @@
-<div class="title_bar"><?php echo html::anchor('lname?id='.$character['location_id'], '['.$character['location'].']'); ?> - [<?= $locationtype; ?>]: obiekty</div>
+<div class="title_bar">
+    <?php echo html::anchor('lname?id='.$character['location_id'], '['.$character['location'].']'); ?> - 
+    [<?= $locationtype; ?>]: obiekty
+</div>
+
+<?php if ($lockable): ?>
+    <div>Drzwi, poziom zamka: <?php echo ($lock->level > 0)? $lock->level : 'brak'; ?>
+        <?php if ($lock->level > 0): ?>
+            (nr: <?php echo $lock->nr; ?>)
+            <?php if ($lock->locked): ?>
+                zamknięte
+            <?php else: ?>
+                otwarte
+            <?php endif; ?>
+                
+            <?php if ($has_key): ?>
+                <?php echo ($lock->locked)? HTML::anchor('unlock','[otwórz]'):HTML::anchor('lock', '[zamknij]'); ?>
+            <?php endif; ?>
+                
+            <?php if ($lock->level < $max_lock_level): ?>
+                <?php echo HTML::anchor('lock/upgrade','[ulepsz]'); ?>
+            <?php endif; ?>
+        <?php else: ?>
+            <?php echo HTML::anchor('lock/upgrade','[wstaw zamek]'); ?>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
 
 <?php if (count($notes)): ?>
 <div class="list">

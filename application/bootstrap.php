@@ -118,6 +118,28 @@ Kohana::modules(array(
  * defaults for the URI.
  */
 
+/**
+ * lock/unlock buildings, vehicles, rooms
+ */
+Route::set('lock', 'lock(/<lock_nr>)', array('lock_nr' => '[0-9a-f]{4,12}'))
+	->defaults(array(
+        'directory' => 'user',
+		'controller' => 'lock',
+		'action'     => 'lock'
+	));
+Route::set('unlock', 'unlock(/<lock_nr>)', array('lock_nr' => '[0-9a-f]{4,12}'))
+	->defaults(array(
+        'directory' => 'user',
+		'controller' => 'lock',
+		'action'     => 'lock'
+	));
+Route::set('lock_default', 'lock(/<action>)')
+	->defaults(array(
+        'directory' => 'user',
+		'controller' => 'lock',
+		'action'     => 'index'
+	));
+
 Route::set('activate', 'activate')
 	->defaults(array(
 		'controller' => 'login',

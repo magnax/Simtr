@@ -2,7 +2,7 @@
 
 class Model_Location extends ORM {  
     
-    protected $_has_one = array(
+    protected $_belongs_to = array(
         'town' => array(
             'model' => 'town',
             'foreign_key' => 'location_id',
@@ -10,8 +10,8 @@ class Model_Location extends ORM {
         ),
         'locationtype' => array(
             'model' => 'locationtype',
-            'foreign_key' => 'id',
-            'far_key' => 'locationtype_id',
+            'foreign_key' => 'locationtype_id',
+            'far_key' => 'id',
         ),
         'locationclass' => array(
             'model' => 'locationclass',
@@ -34,6 +34,15 @@ class Model_Location extends ORM {
         ),
     );
     
+    protected $_has_one = array(
+        'lock' => array(
+            'model' => 'lock',
+            'foreign_key' => 'location_id',
+            'far_key' => 'id'
+        )
+    );
+
+
     public function getHearableCharacters() {
         
         $returned = array();
@@ -229,6 +238,12 @@ class Model_Location extends ORM {
     public function getProjectsIds() {
         
         return RedisDB::getInstance()->smembers("locations:{$this->id}:projects");
+        
+    }
+    
+    public function getLock() {
+        
+        return 0;
         
     }
     
