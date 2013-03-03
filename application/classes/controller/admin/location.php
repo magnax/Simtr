@@ -54,7 +54,7 @@ class Controller_Admin_Location extends Controller_Base_Admin {
             $this->redis->set("locations:{$_POST['building_id']}", json_encode($building));
             $this->redis->sadd("twn:$location_id:bld", $_POST['building_id']);
             
-            $this->request->redirect('admin/location/edit/'.$location_id);
+            $this->redirect('admin/location/edit/'.$location_id);
             
         }
         
@@ -153,7 +153,7 @@ class Controller_Admin_Location extends Controller_Base_Admin {
         $this->redis->set("locations:$location_id", json_encode($location_data));
         $this->redis->sadd($key, $location_id);
         //redirect to get rid of POST
-        $this->request->redirect('admin/location');
+        $this->redirect('admin/location');
 
     }
     
@@ -165,7 +165,7 @@ class Controller_Admin_Location extends Controller_Base_Admin {
         $this->redis->set("locations:$building_id", json_encode($building));
         $this->redis->srem("twn:$location_id:bld", $building_id);
         
-        $this->request->redirect('admin/location/edit/'.$location_id);
+        $this->redirect('admin/location/edit/'.$location_id);
         
     }
     

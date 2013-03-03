@@ -102,7 +102,7 @@ class Controller_Base_User extends Controller_Base_Base {
         }
 
         if ($this->user->setCurrentCharacter($id)) {
-            $this->request->redirect('user/event');
+            $this->redirect('user/event');
         } else {
             $this->redirectError('Cannot view events of other player', 'user/menu');
         }
@@ -113,7 +113,7 @@ class Controller_Base_User extends Controller_Base_Base {
 
         if ($this->user->logout()) {
             $this->session->delete('authkey');
-            $this->request->redirect('/');
+            $this->redirect('/');
         }
 
     }

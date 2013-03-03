@@ -50,7 +50,9 @@
         Nie potrzeba żadnych do tego projektu.
     <?php else: ?>
         <?php foreach($project_specs as $spec): ?>
-            <?php echo $spec['name']; ?> (Musisz jeszcze dodać <?php echo ($spec['needed'] - $spec['added']); ?> z potrzebnych <?php echo $spec['needed']; ?> gram)
+            <div>
+                <?php echo $spec['name']; ?> (Musisz jeszcze dodać <?php echo ($spec['needed'] - $spec['added']); ?> z potrzebnych <?php echo $spec['needed']; ?> gram)
+            </div>
         <?php endforeach; ?>
     <?php endif; ?>
 </div>
@@ -88,6 +90,8 @@
     <?php if ($can_join): ?>
         <?php echo html::anchor('user/project/join/'.$project['id'], '[Dołącz]'); ?>
     <?php else: ?>
-        Nie można rozpocząć projektu, póki nie są spełnione wszystkie wymagania.
+        <div class="error">
+            Nie można rozpocząć projektu, póki nie są spełnione wszystkie wymagania.
+        </div>
     <?php endif; ?>
 <?php endif; ?>

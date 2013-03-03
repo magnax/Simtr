@@ -43,7 +43,7 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
         }
         
         //redirect to characters menu
-        $this->request->redirect('/admin/characters/menu');
+        $this->redirect('/admin/characters/menu');
         
     }
 
@@ -63,7 +63,7 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
         }
         
         //redirect to characters menu
-        $this->request->redirect('/admin/characters/menu');
+        $this->redirect('/admin/characters/menu');
         
     }
     
@@ -92,7 +92,7 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
         $this->redis->del("characters:$user_id:equipment:raws");
         $this->redis->srem("global:characters", $user_id);
         
-        $this->request->redirect('/admin/characters/all');
+        $this->redirect('/admin/characters/all');
         
     }
     
@@ -105,7 +105,7 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
             $user['name'] = $_POST['name'];
             $user['life'] = $_POST['life'];
             $this->redis->set("characters:$user_id", json_encode($user));
-            $this->request->redirect('/admin/characters/all');
+            $this->redirect('/admin/characters/all');
             
         }
         
@@ -175,7 +175,7 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
         
         $this->redis->set("raws:$character_id", json_encode($raws));
        
-        $this->request->redirect('/admin/characters/edit/'.$character_id);
+        $this->redirect('/admin/characters/edit/'.$character_id);
         
     }
     
@@ -189,7 +189,7 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
         $this->redis->set("global:items:{$item['id']}", json_encode($item));
         $this->redis->sadd("char_items:$character_id", $item['id']);
         
-        $this->request->redirect('/admin/characters/edit/'.$character_id);
+        $this->redirect('/admin/characters/edit/'.$character_id);
     }
     
 }

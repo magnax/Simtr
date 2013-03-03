@@ -82,7 +82,7 @@ class Controller_User_Notes extends Controller_Base_Character {
             $event->addRecipients($this->location->getVisibleCharacters());
             $event->send();
 
-            $this->request->redirect('/events');
+            $this->redirect('/events');
         } else {
             $this->redirectError('Nieprawidłowa notatka', '/events');
         }
@@ -110,7 +110,7 @@ class Controller_User_Notes extends Controller_Base_Character {
             $event->addRecipients($this->location->getVisibleCharacters());
             $event->send();
             
-            $this->request->redirect('/events');
+            $this->redirect('/events');
         } else {
             $this->redirectError('Nieprawidłowa notatka', '/events');
         }
@@ -131,7 +131,7 @@ class Controller_User_Notes extends Controller_Base_Character {
             $new_note->created_at = $this->game->raw_time;
             $new_note->save();
             $this->redis->sadd("notes:{$this->character->id}", $new_note->id);
-            $this->request->redirect('/user/inventory');
+            $this->redirect('/user/inventory');
         }
         
     }
@@ -144,7 +144,7 @@ class Controller_User_Notes extends Controller_Base_Character {
             $this->redis->srem("notes:{$this->character->id}", $note->id);
             $note->delete();
             
-            $this->request->redirect('/user/inventory');
+            $this->redirect('/user/inventory');
         }
         
     }

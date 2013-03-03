@@ -19,7 +19,7 @@ class Controller_Login extends Controller_Base_Guest {
             // If successful, redirect user
             if ($user) {
                 
-                Request::current()->redirect('user');
+                $this->redirect('user');
                 
             } else {
                 
@@ -36,7 +36,7 @@ class Controller_Login extends Controller_Base_Guest {
         Auth::instance()->logout();
          
         // Redirect to login page
-        $this->request->redirect('login');
+        $this->redirect('login');
  
     }
     

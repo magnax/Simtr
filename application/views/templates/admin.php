@@ -25,7 +25,7 @@
     Manufacturing [<?php echo html::anchor('admin/tools', 'Tools'); ?>]
     <?php echo html::anchor('admin/fixtures/menu', 'Fixtures menu'); ?>
     <?php echo html::anchor('admin/characters/menu', 'Characters menu'); ?> 
-    <?php echo html::anchor('admin/itemtypes/menu', 'Item types'); ?> 
+    <?php echo html::anchor('admin/itemtypes', 'Item types'); ?> 
     <?php echo html::anchor('admin/menu/keys', 'DB Keys'); ?> 
     Node server: [<?php echo html::anchor('admin/server/check', 'Check server'); ?> 
     <?php echo html::anchor('admin/server/on', 'Turn on server'); ?>]

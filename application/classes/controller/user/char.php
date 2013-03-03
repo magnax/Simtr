@@ -34,7 +34,7 @@ class Controller_User_Char extends Controller_Base_Character {
             
         }
 
-        $this->request->redirect('events');
+        $this->redirect('events');
     }
 }
 

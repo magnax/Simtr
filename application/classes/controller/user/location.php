@@ -49,13 +49,21 @@ class Controller_User_Location extends Controller_Base_Character {
 
         if ($location_lockable) {
             
-            $this->view->lock = $this->location->lock;
-            $this->view->has_key = $this->character->hasKey($this->location->lock->nr);
+            $lock = $this->location->lock;
+            $max_lock_level = $this->location->locationtype->max_lock_level;
+            $this->view->lock = $lock;
+            $this->view->has_key = $this->character->hasKey($lock->nr);
             
+            //one can upgrade lock only if it's not on highest level
+            //and when there's no upgrading project
+            $this->view->can_upgrade_lock = 
+                ($lock->locktype->level < $max_lock_level) && 
+                !$this->location->hasProjectType(Model_Project::TYPE_LOCKBUILD);
+                        
         }
         
         $this->view->lockable = $location_lockable;
-        $this->view->max_lock_level = $this->location->locationtype->max_lock_level;
+        $this->view->max_lock_level = $max_lock_level;
         
         $this->view->locationtype = $this->location->locationclass->name;
         $this->view->raws = $this->location->getRaws();
@@ -106,7 +114,7 @@ class Controller_User_Location extends Controller_Base_Character {
         $event->addRecipients($this->location->getVisibleCharacters());
         $event->send();
         
-        $this->request->redirect('events');
+        $this->redirect('events');
     }
     
     /**
@@ -173,7 +181,7 @@ class Controller_User_Location extends Controller_Base_Character {
             Session::instance()->set('error', $error);
         }
         
-        $this->request->redirect('events');
+        $this->redirect('events');
         
     }
     
@@ -210,7 +218,7 @@ class Controller_User_Location extends Controller_Base_Character {
 
         $this->location->addProject($project_manager->getId(), $this->redis);
 
-        $this->request->redirect('events');
+        $this->redirect('events');
 
     }
     

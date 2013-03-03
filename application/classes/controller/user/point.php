@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 /**
  * 'pointing' controller, responsible for generating events triggered by pointing
@@ -28,7 +28,7 @@ class Controller_User_Point extends Controller_Base_Character {
         $event_sender->send();
         
         //redirect to events page
-        $this->request->redirect('events');
+        $this->redirect('events');
         
     }
     
@@ -60,7 +60,7 @@ class Controller_User_Point extends Controller_Base_Character {
             $this->redis, $this->lang
         );
         //redirect to events page
-        $this->request->redirect('events');
+        $this->redirect('events');
     }
     
 }

@@ -23,7 +23,7 @@ class Controller_Admin_Projects extends Controller_Base_Admin {
         
         if (HTTP_Request::POST == $this->request->method()) {
             RedisDB::set("projects:{$this->request->param('id')}", $this->request->post('project'));
-            $this->request->redirect('/admin/projects');
+            $this->redirect('/admin/projects');
         }
         $project = RedisDB::get("projects:{$this->request->param('id')}");
         $this->view->project = $project;

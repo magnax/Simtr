@@ -59,7 +59,7 @@ class Controller_User_Menu extends Controller_Base_User {
         }
 
         if ($this->user->setCurrentCharacter($id)) {
-            $this->request->redirect('user/event');
+            $this->redirect('user/event');
         } else {
             $this->redirectError('Cannot view events of other player', 'user/menu');
         }

@@ -26,7 +26,7 @@ class Controller_PassRemind extends Controller_Base_Guest {
 
                 Session::instance()->set('msg', 'New password sended, read email and log in');
                 
-                $this->request->redirect('login');
+                $this->redirect('login');
             } else {
                 $this->template->error = 'Cannot find user registered with this email address';
             }

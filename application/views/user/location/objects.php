@@ -4,25 +4,12 @@
 </div>
 
 <?php if ($lockable): ?>
-    <div>Drzwi, poziom zamka: <?php echo ($lock->level > 0)? $lock->level : 'brak'; ?>
-        <?php if ($lock->level > 0): ?>
-            (nr: <?php echo $lock->nr; ?>)
-            <?php if ($lock->locked): ?>
-                zamknięte
-            <?php else: ?>
-                otwarte
-            <?php endif; ?>
-                
-            <?php if ($has_key): ?>
-                <?php echo ($lock->locked)? HTML::anchor('unlock','[otwórz]'):HTML::anchor('lock', '[zamknij]'); ?>
-            <?php endif; ?>
-                
-            <?php if ($lock->level < $max_lock_level): ?>
-                <?php echo HTML::anchor('lock/upgrade','[ulepsz]'); ?>
-            <?php endif; ?>
-        <?php else: ?>
-            <?php echo HTML::anchor('lock/upgrade','[wstaw zamek]'); ?>
-        <?php endif; ?>
+    <div>Drzwi, poziom zamka: <? Helper_Lock::show_lock_level($lock)?>
+        <? if ($lock->locktype->level): ?>
+            <?= Helper_Lock::show_lock_status($lock)?>
+            <?= Helper_Lock::show_lock_action($lock, $has_key)?>
+        <? endif; ?>
+        <? Helper_Lock::show_lock_upgrade($lock, $can_upgrade_lock) ?>
     </div>
 <?php endif; ?>
 

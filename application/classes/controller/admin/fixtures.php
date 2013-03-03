@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Admin_Fixtures extends Controller_Base_Admin {
 

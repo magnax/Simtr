@@ -4,17 +4,17 @@ class Model_Location extends ORM {
     
     protected $_belongs_to = array(
         'town' => array(
-            'model' => 'town',
+            'model' => 'Town',
             'foreign_key' => 'location_id',
             'far_key' => 'id',
         ),
         'locationtype' => array(
-            'model' => 'locationtype',
+            'model' => 'LocationType',
             'foreign_key' => 'locationtype_id',
             'far_key' => 'id',
         ),
         'locationclass' => array(
-            'model' => 'locationclass',
+            'model' => 'LocationClass',
             'foreign_key' => 'id',
             'far_key' => 'class_id',
         ),
@@ -22,12 +22,12 @@ class Model_Location extends ORM {
     
     protected $_has_many = array(
         'characters' => array(
-            'model' => 'character',
+            'model' => 'Character',
             'foreign_key' => 'location_id',
             'far_key' => 'id'
         ),
         'resources' => array(
-            'model' => 'resource',
+            'model' => 'Resource',
             'through' => 'locations_resources',
             'foreign_key' => 'location_id',
             'far_key' => 'resource_id'
@@ -36,12 +36,19 @@ class Model_Location extends ORM {
     
     protected $_has_one = array(
         'lock' => array(
-            'model' => 'lock',
+            'model' => 'Lock',
             'foreign_key' => 'location_id',
             'far_key' => 'id'
         )
     );
 
+    public function getCharacters(Model_Character $character = null) {
+        $characters = $this->characters->find_all()->as_array();
+        foreach($characters as &$ch) {
+            $ch->chname = $character->getChname($ch->id);
+        }
+        return $characters;
+    }
 
     public function getHearableCharacters() {
         
@@ -244,6 +251,21 @@ class Model_Location extends ORM {
     public function getLock() {
         
         return 0;
+        
+    }
+    
+    public function hasProjectType($type_id) {
+        
+        //check if there is project of lock making
+        $projects_ids = $this->getProjectsIds();
+        foreach ($projects_ids as $project_id) {
+            $project = RedisDB::getJSON("projects:$project_id");
+            if ($type_id == $project['type_id']) {
+                return true;
+            }
+        }
+        
+        return false;
         
     }
     

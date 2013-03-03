@@ -29,7 +29,7 @@ class Controller_ChName extends Controller_Base_Character {
                 $chname->delete();
             }
             
-            $this->request->redirect('events');
+            $this->redirect('events');
             
         }
         
@@ -43,7 +43,7 @@ class Controller_ChName extends Controller_Base_Character {
             
         } else {
             $this->session->set('err', 'Bad character');
-            $this->request->redirect('events');
+            $this->redirect('events');
         }
         
     }

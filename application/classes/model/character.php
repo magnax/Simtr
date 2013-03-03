@@ -43,20 +43,20 @@ class Model_Character extends ORM {
 
     const START_AGE = 20;
     
-    protected $spawn_date;
-    protected $age;
-    protected $eq_weight;
-    protected $place_type;
-    protected $place_id;
-    protected $project_id;
-    protected $travel_id;
+    public $chname = 'asdfg';
+//    protected $age;
+//    protected $eq_weight;
+//    protected $place_type;
+//    protected $place_id;
+//    protected $project_id;
+//    protected $travel_id;
 
      /**
       * kolekcje
       */
-     protected $items = array(); //asocjacyjna ID:stan, np: 928:98
-     protected $resources = array(); //asocjacyjna np: RES_SAND : 20000
-     protected $events = array(); //osobna struktura
+//     protected $items = array(); //asocjacyjna ID:stan, np: 928:98
+//     protected $resources = array(); //asocjacyjna np: RES_SAND : 20000
+//     protected $events = array(); //osobna struktura
 
     /**
      * źródło danych (Redis, RDBMS, other)

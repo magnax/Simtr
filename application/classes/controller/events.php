@@ -25,15 +25,16 @@ class Controller_Events extends Controller_Base_Character {
 
     public function action_talkall() {
         
-        if (isset($_POST['text']) && $_POST['text']) {
+        if (HTTP_Request::POST == $this->request->method() && $this->request->post('text')) {
             
-            if (Auth::instance()->logged_in('admin') && $_POST['text'][0] == '!') {
+            $text = strip_tags($this->request->post('text'));
+            if (Auth::instance()->logged_in('admin') && $text[0] == '!') {
                 $event_sender = Model_EventSender::getInstance(
                     Model_Event::getInstance(
                         Model_Event::GOD_TALK, $this->game->raw_time, $this->redis
                     )
                 );
-                $_POST['text'] = substr($_POST['text'], 1, strlen($_POST['text'])-1);
+                $text = substr($text, 1, strlen($text)-1);
                 $godmode = true;
             } else {
                 $event_sender = Model_EventSender::getInstance(
@@ -43,7 +44,7 @@ class Controller_Events extends Controller_Base_Character {
                 );
             }
 
-            $event_sender->setText($_POST['text']);
+            $event_sender->setText($text);
             
             //recipients to lista obiektów klasy Character
             if (isset($godmode) && $godmode) {
@@ -70,7 +71,7 @@ class Controller_Events extends Controller_Base_Character {
             return;
         }
         
-        $this->request->redirect('events');
+        $this->redirect('events');
         
     }
 
@@ -102,7 +103,7 @@ class Controller_Events extends Controller_Base_Character {
                 $this->redis, $this->lang
             );
             
-            $this->request->redirect('events');
+            $this->redirect('events');
             
         }
         
@@ -141,7 +142,7 @@ class Controller_Events extends Controller_Base_Character {
                 $this->redis, $this->lang
             );
             
-            $this->request->redirect('events');
+            $this->redirect('events');
             
         }
         
@@ -181,7 +182,7 @@ class Controller_Events extends Controller_Base_Character {
                 $this->redis, $this->lang
             );
             
-            $this->request->redirect('events');
+            $this->redirect('events');
         }
         
         $id = $this->request->param('id');
@@ -216,11 +217,10 @@ class Controller_Events extends Controller_Base_Character {
                 //project is selected, now show form to set amount
                 
                 $specs = $project->getAllSpecs();
-                
                 $needed_amount = 0;
                 
                 foreach ($specs as $spec) {
-                    if ($spec['id'] = $this->request->param('id')) {
+                    if ($spec['resource_id'] == $this->request->param('id')) {
                         $needed_amount = $spec['needed'] - $spec['added'];
                     }
                 }
@@ -263,7 +263,7 @@ class Controller_Events extends Controller_Base_Character {
                     $this->redis, $this->lang
                 );
 
-                $this->request->redirect('events');
+                $this->redirect('events');
                 
             }
             

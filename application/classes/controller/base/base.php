@@ -48,7 +48,7 @@ class Controller_Base_Base extends Controller_Template {
             $this->view = $this->template->content;
             
         } else {
-            $this->template->content = 'brakuje pliku views/'.$page.'.php :)';
+            $this->template->content = 'brakuje pliku views/'.strtolower($page).'.php :)';
         }
         
         /**
@@ -82,7 +82,7 @@ class Controller_Base_Base extends Controller_Template {
     public function redirectError($err, $uri = 'error') {
 
         Session::instance()->set('error', $err);
-        $this->request->redirect($uri);
+        $this->redirect($uri);
 
     }
 
@@ -95,7 +95,7 @@ class Controller_Base_Base extends Controller_Template {
     public function redirectMessage($msg, $uri = '/') {
 
         $this->session->set('message', $msg);
-        $this->request->redirect($uri);
+        $this->redirect($uri);
 
     }
     

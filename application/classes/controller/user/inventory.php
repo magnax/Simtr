@@ -98,7 +98,7 @@ class Controller_User_Inventory extends Controller_Base_Character {
             $this->redis, $this->lang
         );
         
-        $this->request->redirect('events');
+        $this->redirect('events');
         
     }
     
@@ -140,7 +140,7 @@ class Controller_User_Inventory extends Controller_Base_Character {
                 $this->redis, $this->lang
             );
             
-            $this->request->redirect('events');
+            $this->redirect('events');
             
         }
         

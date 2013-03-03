@@ -3,9 +3,21 @@ Możesz rozbudować ten zamek do:
 <?php echo Form::open(); ?>
 <?php echo Form::hidden('lock_id', $lock->id); ?>
 <?php foreach ($levels as $level): ?>
-    <?php echo Form::radio('level', $level->level); ?>
-    <?php echo Form::label('level', $level->name); ?>
+    <div>
+        <?php echo Form::radio('level', $level->level); ?>
+        <?php echo Form::label('level', $level->name); ?>
+        <?php if (isset($specs[$level->itemtype_id]['specs'])): ?>
+            <br />Czas potrzebny:<?=$specs[$level->itemtype_id]['specs']->time;?><br />
+        <?php endif; ?>
+        <?php if (isset($specs[$level->itemtype_id]['raws'])): ?>
+            Materiały:<br />
+            <?php foreach ($specs[$level->itemtype_id]['raws'] as $raw): ?>
+                <?php echo $raw->resource->name; ?>: <?php echo $raw->amount;?> gram <br />
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
 <?php endforeach; ?>
+<?php echo Form::submit('upgrade', 'Wstaw zamek'); ?>
 <?php echo Form::close(); ?>
 
 INFO: będzie kilka poziomów zamków. Najprostszy (poziom 1) będzie drewniany (+ trochę żelaza na klucz).

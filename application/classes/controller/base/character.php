@@ -29,7 +29,7 @@ class Controller_Base_Character extends Controller_Base_User {
         
         //redirect if no current character
         if (!$this->character->id) {
-            $this->request->redirect('user/menu');
+            $this->redirect('user/menu');
         }
         
         $this->character->setSource($this->redis);

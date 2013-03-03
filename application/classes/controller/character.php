@@ -13,7 +13,7 @@ class Controller_Character extends Controller_Base_User {
         } else {
             
             $this->session->set('current_character', $character->id);
-            $this->request->redirect('events');
+            $this->redirect('events');
             
         }
         
@@ -61,7 +61,7 @@ class Controller_Character extends Controller_Base_User {
                 //upon creation with possibility to change later
                 Model_EventNotifier::notify($recipients, $event_id, $this->redis, 'pl');
                 
-                $this->request->redirect('user');
+                $this->redirect('user');
                 
             } catch (ORM_Validation_Exception $e) {
                 $errors = $e->errors('');

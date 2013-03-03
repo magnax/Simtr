@@ -167,14 +167,14 @@ class Controller_User_Project extends Controller_Base_Character {
             Session::instance()->set('errors', json_encode($errors));
         }
         
-        $this->request->redirect('events');
+        $this->redirect('events');
     }
 
     public function action_leave() {
 
         $this->character->leaveCurrentProject($this->redis, $this->game->raw_time);
         
-        $this->request->redirect('events');
+        $this->redirect('events');
 
     }
 
@@ -190,7 +190,7 @@ class Controller_User_Project extends Controller_Base_Character {
             RedisDB::del("projects:{$project->id}");
             RedisDB::srem("locations:{$this->location->id}:projects", $project->id);
         }
-        $this->request->redirect('events');
+        $this->redirect('events');
         
     }
 
@@ -226,7 +226,7 @@ class Controller_User_Project extends Controller_Base_Character {
 
             $this->location->addProject($project_manager->getId(), $this->redis);
 
-            $this->request->redirect('events');
+            $this->redirect('events');
         }
         
         $id = $this->request->param('id');
@@ -280,7 +280,7 @@ class Controller_User_Project extends Controller_Base_Character {
                 
             }
 
-            $this->request->redirect('events');
+            $this->redirect('events');
         }
         
         $this->view->spec = $spec;

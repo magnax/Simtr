@@ -6,8 +6,10 @@ abstract class Model_Project {
     const TYPE_BUILD = 'Build'; //produkcja budynków
     const TYPE_BURY = 'Bury'; //zakopywanie ciał
     const TYPE_GET_RAW = 'GetRaw'; //wydobycie surowców z ziemi
+    const TYPE_LOCKBUILD = 'Lockbuild'; //wstawianie i rozbudowa zamków
     const TYPE_MAKE = 'Make'; //produkcja przedmiotów
     
+    protected static $checkSpecsArray = array('Make', 'Build', 'Lockbuild');
 
     //pola zapisywane metodą toArray()
     public $id;
@@ -55,7 +57,7 @@ abstract class Model_Project {
 
     public function calculateProgress($decimals = 0) {
         
-        if (in_array($this->type_id, array('Make', 'Build'))) {    
+        if (in_array($this->type_id, self::$checkSpecsArray)) {    
             if (!$this->hasAllSpecs()) {
                 return '-';
             }

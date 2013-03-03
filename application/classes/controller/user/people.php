@@ -4,24 +4,8 @@ class Controller_User_People extends Controller_Base_Character {
 
     public function action_index() {
 
-        $characters_ids = $this->location->getHearableCharacters($this->character);
-       
-        $this->view->characters = array();
+        $this->view->characters = $this->location->getCharacters($this->character);
         
-        $characters = ORM::factory('character')
-            ->where('id', 'IN', DB::expr('('. join(',',$characters_ids).')'))
-            ->find_all();
-        
-        foreach ($characters as $ch) {
-;
-            $this->view->characters[] = array(
-                'name' => $this->character->getChname($ch->id),
-                'id' => $ch->id,
-                'gender' => $ch->sex,
-            );
-            
-        }
-
     }
 
     public function action_hit() {
@@ -130,13 +114,10 @@ class Controller_User_People extends Controller_Base_Character {
                 $this->redis, $this->lang
             );
         
-            $this->request->redirect('events');
+            $this->redirect('events');
         }
-        
-        //$this->view->weapons = array();
             
         $this->view->weapons = $this->character->getWeaponsList();
-        //$this->view->weapons = $weapons_list;
         
         $this->view->strengths = array(
             '0' => 'bez siły',

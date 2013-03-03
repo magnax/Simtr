@@ -23,7 +23,7 @@ class Controller_User_Lock extends Controller_Base_Character {
             Session::instance()->set('error', 'Nie masz klucza!');
         }
         
-        $this->request->redirect('user/location/objects');
+        $this->redirect('user/location/objects');
         
     }
     
@@ -36,32 +36,90 @@ class Controller_User_Lock extends Controller_Base_Character {
         $lock = $this->location->lock;
         
         if (!$lock->loaded()) {
-            Session::instance()->set('error', 'Bad lock!');
+            //location has not lock yet
+            $lock = new Model_Lock();
         }
         
         //lock upgrade is possible only when one has proper key
-        if ($this->character->hasKey($lock->nr)) {
+        if ($this->character->hasKey($lock->nr) || !$lock->id) {
+        
+            if (HTTP_Request::POST == $this->request->method()) {
+
+                $locktype = ORM::factory('Locktype')
+                    ->where('level', '=', $this->request->post('level'))
+                    ->find();
+                                
+                $spec = ORM::factory('spec')
+                    ->where('itemtype_id', '=', $locktype->itemtype_id)
+                    ->find();
+                
+                $raws = Model_Spec_Raw::getRaws($locktype->itemtype_id);
+                
+                $key = Model_Project::TYPE_LOCKBUILD;
+                
+                $project_manager = Model_ProjectManager::getInstance(
+                    Model_Project::getInstance($key, $this->redis)//;
+                );
+
+                $data = array(
+                    'name'=>'Wstawianie zamka: '.$spec->item->name,
+                    'owner_id'=>$this->character->id,
+                    'amount'=>1,
+                    'time'=>$spec->time,
+                    'type_id'=>$key,
+                    'place_type'=>$this->location->locationtype_id,
+                    'place_id'=>$this->location->id,
+                    'itemtype_id'=>$spec->itemtype_id,
+                    'created_at'=>$this->game->getRawTime()
+                );
+
+                $project_manager->set($data);
+                $project_manager->save();
+
+                $this->location->addProject($project_manager->getId(), $this->redis);
+
+                foreach ($raws as $raw) {
+
+                    $project_raw = new Model_Project_Raw();
+                    $project_raw->project_id = $project_manager->getId();
+                    $project_raw->resource_id = $raw->resource_id;
+                    $project_raw->amount = 0;
+
+                    $project_raw->save();
+
+                }
+                
+                $this->redirect('events');
+                
+            }
+            
+            if ($lock->id) {
+                $current_level = $lock->locktype->level;
+            } else {
+                //no lock, so all levels possible
+                $current_level = 0;
+            }
             
             //show view with upgrade options
-            $levels = Model_Locktype::getUpgradeLevels($lock->level);
+            $levels = Model_Locktype::getUpgradeLevels($current_level);
             
-//            $level = new stdClass();
-//            $level->level = 2;
-//            $level->name = 'żelazny zamek';
-//            
-//            $levels[] = $level;
-//            
-//            $level = new stdClass();
-//            $level->level = 3;
-//            $level->name = 'stalowy zamek';
-//            
-//            $levels[] = $level;
-//            
-//            $level = new stdClass();
-//            $level->level = 4;
-//            $level->name = 'pancerny zamek';
-//            
-//            $levels[] = $level;
+            $this->view->specs = array();
+            
+            foreach ($levels as $level) {
+                
+                $specs = ORM::factory('spec')
+                    ->where('itemtype_id', '=', $level->itemtype_id)
+                    ->find();
+                
+                if ($specs->loaded()) {
+                    $raws = Model_Spec_Raw::getRaws($level->itemtype_id);
+
+                    $this->view->specs[$level->itemtype_id] = array(
+                        'specs' => $specs,
+                        'raws' => $raws,
+                    );
+                }
+            }
             
             $this->view->lock = $lock;
             $this->view->levels = $levels;

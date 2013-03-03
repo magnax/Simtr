@@ -2,6 +2,14 @@
 
 class Model_ItemType extends ORM {
     
+    protected $_belongs_to = array(
+        'projecttype' => array(
+            'model' => 'Projecttype',
+            'foreign_key' => 'projecttype_id',
+            'far_key' => 'id'
+        )
+    );
+
     public static $states = array(
         'brand_new' => array(
             'M' => 'całkiem nowy',
