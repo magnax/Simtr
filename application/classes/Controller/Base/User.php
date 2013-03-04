@@ -74,9 +74,6 @@ class Controller_Base_User extends Controller_Base_Base {
         //init translations
         $this->dict = Model_Dict::getInstance($this->redis);
         
-        //init location names
-        $this->lnames = Model_LNames::getInstance($this->redis, $this->dict);
-        
         $this->user = Auth::instance()->get_user();
         if (!$this->user) {
             Request::current()->redirect('login');
