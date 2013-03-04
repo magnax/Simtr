@@ -101,7 +101,7 @@ class Controller_User_Lock extends Controller_Base_Character {
             }
             
             //show view with upgrade options
-            $levels = Model_Locktype::getUpgradeLevels($current_level);
+            $levels = Model_LockType::getUpgradeLevels($current_level);
             
             $this->view->specs = array();
             
