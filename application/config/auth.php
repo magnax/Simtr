@@ -2,7 +2,7 @@
  
 return array(
  
-    'driver'       => 'orm',
+    'driver'       => 'ORM',
     'hash_method'  => 'sha256',
     'hash_key'     => 'Never gonna give you up',
     'lifetime'     => 1209600,
