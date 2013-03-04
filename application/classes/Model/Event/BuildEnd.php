@@ -18,21 +18,12 @@ class Model_Event_BuildEnd extends Model_Event {
         $this->amount = $amount;
     }
 
-    public function dispatchArgs($event_data, $args, $character_id, $lang) {
+    public function dispatchArgs(array $args, Model_Character $character, $lang) {
         
-        $returned = array();
+        $returned = parent::dispatchArgs($args, $character, $lang);
         
-        $returned['name'] = $event_data['name'];
-        $returned['itemtypeid'] = $event_data['itemtypeid'];
-        
-        if (in_array('sndr', $args)) {
-            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
-            if (!$name) {
-                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
-            }
-            $returned['sndr'] = '<a href="chname?id='.
-                $event_data['sndr'].'">'.$name.'</a>';
-        }
+        $returned['name'] = $this->name;
+        $returned['itemtypeid'] = $this->itemtypeid;
 
         return $returned;
         

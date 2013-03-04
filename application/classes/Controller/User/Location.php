@@ -32,7 +32,7 @@ class Controller_User_Location extends Controller_Base_Character {
         }
         
         if ($this->location->parent_id) {
-            $location_name = ORM::factory('lname')->name($this->character->id, $this->location->parent_id)->name;
+            $location_name = ORM::factory('LName')->name($this->character->id, $this->location->parent_id)->name;
             $this->view->doors = array(
                 'id' => $this->location->parent_id,
                 'name' => Utils::getLocationName($location_name),
@@ -74,14 +74,14 @@ class Controller_User_Location extends Controller_Base_Character {
         $this->view->corpses = array();
         
         foreach ($corpses as $corpse) {
-            $name = ORM::factory('chname')->name($this->character->id, $corpse->character_id)->name;
+            $name = ORM::factory('ChName')->name($this->character->id, $corpse->character_id)->name;
             if (!$name) {
                 //not necesary for own corpse, because character can't seen his corpse, but... :)
                 if ($corpse->character_id == $this->character->id) {
                     //myself
                     $name = $this->character->name;
                 } else {
-                    $name = ORM::factory('character')->getUnknownName($corpse->character_id, $this->lang);
+                    $name = ORM::factory('Character')->getUnknownName($corpse->character_id, $this->lang);
                 }
             }
             $this->view->corpses[] = array(

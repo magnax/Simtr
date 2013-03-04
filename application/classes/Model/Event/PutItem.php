@@ -28,21 +28,12 @@ class Model_Event_PutItem extends Model_Event {
 
     }
 
-    public function dispatchArgs($event_data, $args, $character_id, $lang) {
+    public function dispatchArgs(array $args, Model_Character $character, $lang) {
         
-        $item = ORM::factory('item')->where('id', '=', $event_data['itemid'])
+        $returned = parent::dispatchArgs($args, $character, $lang);
+        
+        $item = ORM::factory('Item')->where('id', '=', $this->itemid)
             ->find();
-        
-        $returned = array();
-        
-        if (in_array('sndr', $args)) {
-            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
-            if (!$name) {
-                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
-            }
-            $returned['sndr'] = '<a href="chname?id='.
-                $event_data['sndr'].'">'.$name.'</a>';
-        }
         
         $returned['stt'] = Model_ItemType::getState($item->points / $item->itemtype->points, $item->itemtype->kind);
         $returned['itemid'] = $item->itemtype->name;

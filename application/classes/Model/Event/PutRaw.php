@@ -37,23 +37,14 @@ class Model_Event_PutRaw extends Model_Event {
 
     }
 
-    public function dispatchArgs($event_data, $args, $character_id, $lang) {
+    public function dispatchArgs(array $args, Model_Character $character, $lang) {
         
-        $res = ORM::factory('resource', $event_data['res_id'])->d;
+        $returned = parent::dispatchArgs($args, $character, $lang);
         
-        $returned = array();
-        
-        if (in_array('sndr', $args)) {
-            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
-            if (!$name) {
-                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
-            }
-            $returned['sndr'] = '<a href="chname?id='.
-                $event_data['sndr'].'">'.$name.'</a>';
-        }
+        $res = ORM::factory('Resource', $this->res_id)->d;
         
         if (in_array('amount', $args)) {
-            $returned['amount'] = $event_data['amount'];
+            $returned['amount'] = $this->amount;
         }
         
         $returned['res_id'] = $res;

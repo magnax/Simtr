@@ -14,7 +14,7 @@ class Controller_ChName extends Controller_Base_Character {
         
         if ($_POST) {
             
-            $chname = ORM::factory('chname')
+            $chname = ORM::factory('ChName')
                 ->name($this->character->id, $_POST['character_id']);
             
             if ($_POST['name']) {

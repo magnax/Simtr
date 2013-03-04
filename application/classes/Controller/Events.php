@@ -9,7 +9,6 @@ class Controller_Events extends Controller_Base_Character {
         
         $page = $this->request->param('page', 1);
 
-        //$events = Model_Character_Redis::getEvents($this->character->id, $this->redis, $this->lang, $page);
         $events = $this->character->getEvents($page);
         $this->view->first_new_event = $this->redis->lpop("new_events:{$this->character->id}");
         $this->redis->del("new_events:{$this->character->id}");
@@ -158,7 +157,7 @@ class Controller_Events extends Controller_Base_Character {
 
         if ($_POST) {
             
-            $dest_character = ORM::factory('character', $_POST['character_id']);
+            $dest_character = ORM::factory('Character', $_POST['character_id']);
             
             $this->character->putRaw($_POST['res_id'], $_POST['amount']);
             $dest_character->addRaw($_POST['res_id'], $_POST['amount']);
@@ -192,9 +191,9 @@ class Controller_Events extends Controller_Base_Character {
         $this->view->characters = array();
         foreach ($all_characters as $ch) {
             if ($ch != $this->character->id) {
-                $name = ORM::factory('chname')->name($this->character->id, $ch)->name;
+                $name = ORM::factory('ChName')->name($this->character->id, $ch)->name;
                 if (!$name) {
-                    $name = ORM::factory('character')->getUnknownName($ch, $this->lang);
+                    $name = ORM::factory('Character')->getUnknownName($ch, $this->lang);
                 }
                 $this->view->characters[$ch] = $name;
             }

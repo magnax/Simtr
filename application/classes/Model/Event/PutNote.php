@@ -28,20 +28,11 @@ class Model_Event_PutNote extends Model_Event {
 
     }
 
-    public function dispatchArgs($event_data, $args, $character_id, $lang) {
+    public function dispatchArgs(array $args, Model_Character $character, $lang) {
         
-        $returned = array();
+        $returned = parent::dispatchArgs($args, $character, $lang);
         
-        if (in_array('sndr', $args)) {
-            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
-            if (!$name) {
-                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
-            }
-            $returned['sndr'] = '<a href="chname?id='.
-                $event_data['sndr'].'">'.$name.'</a>';
-        }
-        
-        $returned['note_title'] = $event_data['note_title'];
+        $returned['note_title'] = $this->note_title;
         
         return $returned;
         

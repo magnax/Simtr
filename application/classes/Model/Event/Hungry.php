@@ -22,21 +22,12 @@ class Model_Event_Hungry extends Model_Event {
 
     }
 
-    public function dispatchArgs($event_data, $args, $character_id, $lang) {
+    public function dispatchArgs(array $args, Model_Character $character, $lang) {
         
-        $returned = array();
-        
-        if (in_array('sndr', $args)) {
-            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
-            if (!$name) {
-                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
-            }
-            $returned['sndr'] = '<a href="chname?id='.
-                $event_data['sndr'].'">'.$name.'</a>';
-        }
+        $returned = parent::dispatchArgs($args, $character, $lang);
         
         if (in_array('desc', $args)) {
-            $returned['desc'] = $event_data['desc'];
+            $returned['desc'] = $this->desc;
         }
         
         return $returned;

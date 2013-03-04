@@ -11,7 +11,7 @@ class Model_Spec extends ORM {
     
     public static function getItems($menu_id) {
         
-        return ORM::factory('spec')
+        return ORM::factory('Spec')
             ->where('buildmenu_id', '=', $menu_id)
             ->find_all();
         

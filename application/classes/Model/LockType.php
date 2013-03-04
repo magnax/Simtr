@@ -12,7 +12,7 @@ class Model_Locktype extends ORM {
     
     public static function getUpgradeLevels($current_level) {
         
-        return ORM::factory('locktype')
+        return ORM::factory('LockType')
             ->where('level', '>', $current_level)
             ->find_all()
             ->as_array();

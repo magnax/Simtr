@@ -46,9 +46,16 @@ class Model_Event {
 
     public static function getInstance($type, $date, $source) {
 
-            $src = 'Model_Event_'.$type;
-            return new $src($type, $date, $source);
+        $src = 'Model_Event_'.$type;
+        return new $src($type, $date, $source);
 
+    }
+
+    public function values(array $event_data) {
+        foreach ($event_data as $k => $v) {
+            $this->$k = $v;
+        }
+        return $this;
     }
 
     public function getSource() {
@@ -86,34 +93,30 @@ class Model_Event {
         
     }
     
-    public function dispatchArgs($event_data, $args, $character_id, $lang) {
-        
+    public function dispatchArgs(array $args, Model_Character $character, $lang) {
+ 
         $returned = array();
+
+        //make arguments in proper order and set initial values
+        foreach ($args as $key) {
+            $returned[$key] = null;
+        }
         
+        //this should rather go to location related events
         if (in_array('loc_type', $args)) {
-            $returned['loc_type'] = ORM::factory('locationclass', $event_data['loc_type'])->name;
+            $returned['loc_type'] = ORM::factory('LocationClass', $this->loc_type)->name;
         }
         
         if (in_array('sndr', $args)) {
-            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
-            if (!$name) {
-                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
-            }
-            $returned['sndr'] = '<a href="/chname?id='.
-                $event_data['sndr'].'">'.$name.'</a>';
+            $returned['sndr'] = $character->getChNameLink($this->sndr);
         }
         
         if (in_array('rcpt', $args)) {
-            $name = ORM::factory('chname')->name($character_id, $event_data['rcpt'])->name;
-            if (!$name) {
-                $name = ORM::factory('character')->getUnknownName($event_data['rcpt'], $lang);
-            }
-            $returned['rcpt'] = '<a href="/chname?id='.
-                $event_data['rcpt'].'">'.$name.'</a>';
+            $returned['rcpt'] = $character->getChNameLink($this->rcpt);
         }
         
         if (in_array('text', $args)) {
-            $returned['text'] = $event_data['text'];
+            $returned['text'] = $this->text;
         }
         
         return $returned;

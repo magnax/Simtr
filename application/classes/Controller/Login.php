@@ -50,7 +50,7 @@ class Controller_Login extends Controller_Base_Guest {
             $this->redirectError('Bad request!');
         }
         
-        $user = ORM::factory('user', $_GET['id']);
+        $user = ORM::factory('User', $_GET['id']);
         
         if (!$user->id) {
             $this->redirectError('This user does not exists!');

@@ -10,8 +10,8 @@ class Controller_User_Menu extends Controller_Base_User {
             
             $new_events = $this->redis->llen("new_events:{$character->id}");
             
-            $name = ORM::factory('chname')->name($character, $character)->name;
-            $location_name = ORM::factory('lname')->name($character, $character->location->id)->name;
+            $name = ORM::factory('ChName')->name($character, $character)->name;
+            $location_name = ORM::factory('LName')->name($character, $character->location->id)->name;
             $current_project = RedisDB::getInstance()->get("characters:{$character->id}:current_project");
             if ($current_project) {
                 $my_project = ($current_project) ? RedisDB::getJSON("projects:$current_project") : null;

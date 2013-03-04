@@ -2,19 +2,17 @@
 
 class Model_EventDispatcher_Redis extends Model_EventDispatcher {
 
-    public function formatEvent($id_event, $id_character) {
+    public function formatEvent($id_event, Model_Character $character) {
 
         //get and decode event
         $event = json_decode($this->source->get("events:$id_event"), true);
+        $event_object = Model_Event::getInstance($event['type'], NULL, $this->source)
+            ->values($event);        
         
-        //print_r($event); exit;
-        
-        //print_r($event);echo $id_event.'<br><br>';
-
         //check if current character is sender, recipient or just viewer of the event
-        if ($event['sndr'] == $id_character) {
+        if ($event['sndr'] == $character->id) {
             $person = 1;
-        } elseif (isset($event['rcpt']) && $event['rcpt'] == $id_character) {
+        } elseif (isset($event['rcpt']) && $event['rcpt'] == $character->id) {
             $person = 2;
         } else {
             $person = 3;
@@ -22,10 +20,10 @@ class Model_EventDispatcher_Redis extends Model_EventDispatcher {
         
         //get display format and params
         $format = $this->source->get("global:event_tpl:{$event['type']}:$person");
-        $args = $this->source->lrange("global:event_tpl:{$event['type']}:$person:params", 0, -1);
+        $event_args = $this->source->lrange("global:event_tpl:{$event['type']}:$person:params", 0, -1);
         //delegate further dispatching to proper event model
-        $event_object = Model_Event::getInstance($event['type'], NULL, $this->source);
-        $args = $event_object->dispatchArgs($event, $args, $id_character, $this->lang);
+        //$event_object = Model_Event::getInstance($event['type'], NULL, $this->source);
+        $args = $event_object->dispatchArgs($event_args, $character, $this->lang);
 
         if (!$format) {
             $event['text'] = 'coś nie tak...('.$id_event.', person: '.$person.')';
@@ -36,6 +34,7 @@ class Model_EventDispatcher_Redis extends Model_EventDispatcher {
             }
             if (!$event['text']) {
                 $event['text'] = 'ERROR: <b>'.$format.'</b> L.arg.:'.count($args).' Person:'.$person. ' Event: '.$id_event;
+                print_r($event_args);
             }
         }
         

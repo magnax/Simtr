@@ -27,9 +27,9 @@ class Model_Event_Eat extends Model_Event {
         $returned = array();
         
         if (in_array('sndr', $args)) {
-            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
+            $name = ORM::factory('ChName')->name($character_id, $event_data['sndr'])->name;
             if (!$name) {
-                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
+                $name = ORM::factory('Character')->getUnknownName($event_data['sndr'], $lang);
             }
             $returned['sndr'] = '<a href="chname?id='.
                 $event_data['sndr'].'">'.$name.'</a>';

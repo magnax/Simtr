@@ -82,7 +82,7 @@ class Controller_Base_User extends Controller_Base_Base {
             Request::current()->redirect('login');
         }
         
-        $this->is_admin = ($this->user->has('roles', ORM::factory('role', array('name' => 'admin'))));
+        $this->is_admin = ($this->user->has('roles', ORM::factory('Role', array('name' => 'admin'))));
         
         $this->template->user = $this->user;
         $this->template->is_admin = $this->is_admin;

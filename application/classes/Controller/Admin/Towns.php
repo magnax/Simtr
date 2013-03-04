@@ -5,7 +5,7 @@ class Controller_Admin_Towns extends Controller_Base_Admin {
     
     public function action_index() {
         
-        $this->view->towns = ORM::factory('town')->find_all();
+        $this->view->towns = ORM::factory('Town')->find_all();
         
     }
     
@@ -19,7 +19,7 @@ class Controller_Admin_Towns extends Controller_Base_Admin {
             ->bind('errors', $errors);
         
         if (isset($_GET['id'])) {
-            $town = ORM::factory('town', $_GET['id']);
+            $town = ORM::factory('Town', $_GET['id']);
             $this->view->location = $town->location->as_array();
             $this->view->town = $town->as_array();
         } else {
@@ -30,7 +30,7 @@ class Controller_Admin_Towns extends Controller_Base_Admin {
         if ($_POST) {
             
             if (isset($_POST['id'])) {
-                $town = ORM::factory('town', $_GET['id']);
+                $town = ORM::factory('Town', $_GET['id']);
                 $location = $town->location;
             } else {
                 $location = new Model_Location();

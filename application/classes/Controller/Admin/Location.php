@@ -21,7 +21,7 @@ class Controller_Admin_Location extends Controller_Base_Admin {
 
     public function action_index($page = 1) {
         
-        $this->view->locationsCount = ORM::factory('location')->count_all();
+        $this->view->locationsCount = ORM::factory('Location')->count_all();
 
     }
 

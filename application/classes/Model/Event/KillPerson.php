@@ -34,32 +34,14 @@ class Model_Event_KillPerson extends Model_Event {
 
     }
 
-    public function dispatchArgs($event_data, $args, $character_id, $lang) {
+    public function dispatchArgs(array $args, Model_Character $character, $lang) {
         
-        $returned = array();
+        $returned = parent::dispatchArgs($args, $character, $lang);
         
-        if (in_array('sndr', $args)) {
-            $name = ORM::factory('chname')->name($character_id, $event_data['sndr'])->name;
-            if (!$name) {
-                $name = ORM::factory('character')->getUnknownName($event_data['sndr'], $lang);
-            }
-            $returned['sndr'] = '<a href="chname?id='.
-                $event_data['sndr'].'">'.$name.'</a>';
-        }
+        $returned['skill'] = Model_Character::getSkillString($this->skill);
         
-        $returned['skill'] = Model_Character::getSkillString($event_data['skill']);
-        
-        if (in_array('rcpt', $args)) {
-            $name = ORM::factory('chname')->name($character_id, $event_data['rcpt'])->name;
-            if (!$name) {
-                $name = ORM::factory('character')->getUnknownName($event_data['rcpt'], $lang);
-            }
-            $returned['rcpt'] = '<a href="chname?id='.
-                $event_data['rcpt'].'">'.$name.'</a>';
-        }
-        
-        $returned['wpid'] = ORM::factory('itemtype', $event_data['wpid'])
-                ->name;
+        $returned['wpid'] = ORM::factory('ItemType', $this->wpid)
+            ->name;
         
         return $returned;
         

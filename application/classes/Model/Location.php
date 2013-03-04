@@ -82,7 +82,7 @@ class Model_Location extends ORM {
     }
     
     public static function getRandomSpawnLocation() {
-        $random_location = ORM::factory('location')
+        $random_location = ORM::factory('Location')
             ->where('locationtype_id', '=', 1)
             ->order_by(DB::expr('RAND()'))
             ->find();
@@ -118,7 +118,7 @@ class Model_Location extends ORM {
         $tmp = array();
         if ($raws) {
             foreach ($raws as $k => $v) {
-                $resource = ORM::factory('resource', $k)->d;
+                $resource = ORM::factory('Resource', $k)->d;
                 $tmp[$k] = array(
                     'id'=>$k,
                     'name'=>$resource,
@@ -171,7 +171,7 @@ class Model_Location extends ORM {
         $tmp = array();
         if ($items) {
             
-            $db_items = ORM::factory('item')->where('id', 'IN', DB::expr('('. join(',',$items).')'))
+            $db_items = ORM::factory('Item')->where('id', 'IN', DB::expr('('. join(',',$items).')'))
                 ->find_all()->as_array();
         
             foreach ($db_items as $item) {
@@ -202,7 +202,7 @@ class Model_Location extends ORM {
     
     public function getBuildings() {
         
-        $returned = ORM::factory('location')
+        $returned = ORM::factory('Location')
             ->where('locationtype_id', '=', '2')
             ->and_where('parent_id', '=', $this->id)
             ->find_all()
@@ -213,7 +213,7 @@ class Model_Location extends ORM {
     
         public function getCorpses() {
         
-        return ORM::factory('corpse')
+        return ORM::factory('Corpse')
             ->where('location_id', '=', $this->id)
             ->find_all();
         
@@ -226,7 +226,7 @@ class Model_Location extends ORM {
         $tmp = array();
         if ($notes) {
             
-            $db_notes = ORM::factory('note')->where('id', 'IN', DB::expr('('. join(',',$notes).')'))
+            $db_notes = ORM::factory('Note')->where('id', 'IN', DB::expr('('. join(',',$notes).')'))
                 ->find_all()->as_array();
         
             foreach ($db_notes as $note) {

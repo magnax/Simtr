@@ -8,7 +8,7 @@ class Controller_PassRemind extends Controller_Base_Guest {
     function action_index() {
         
         if ($_POST) {
-            $user = ORM::factory('user')->where('email', '=', trim($_POST['email']))->find();
+            $user = ORM::factory('User')->where('email', '=', trim($_POST['email']))->find();
             if ($user->id) {
                 $new_password = Text::random('distinct', 8);
                 $user->password = $new_password;

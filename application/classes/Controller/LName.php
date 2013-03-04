@@ -11,7 +11,7 @@ class Controller_LName extends Controller_Base_Character {
         
         if ($_POST) {
             
-            $lname = ORM::factory('lname')
+            $lname = ORM::factory('LName')
                 ->where('char_id', '=', $this->character->id)
                 ->and_where('location_id', '=', $_POST['location_id'])
                 ->find();
@@ -41,7 +41,7 @@ class Controller_LName extends Controller_Base_Character {
         if ($location->id) {
             
             $this->view->location_id = $_GET['id'];
-            $name = ORM::factory('lname')->name($this->character->id, $_GET['id'])->name;
+            $name = ORM::factory('LName')->name($this->character->id, $_GET['id'])->name;
             if (!$name) {
                 $name = 'unknown location';
             }

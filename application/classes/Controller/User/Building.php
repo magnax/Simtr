@@ -10,7 +10,7 @@ class Controller_User_Building extends Controller_Base_Character {
         $buildings = array();
         
         foreach ($buildings_ids as $building_id) {
-            $building = ORM::factory('building')
+            $building = ORM::factory('Building')
                 ->where('location_id', '=', $building_id)
                 ->find();
             $buildings[] = $building;

@@ -1,9 +1,11 @@
 <?php defined('SYSPATH') or die('No direct script access.');
-
 /**
  * klasa postaci gracza
  */
 class Model_Character extends ORM {
+
+    protected static $chname_link = '<a href="chname?id=%d">%s</a>';
+
 
     protected $_belongs_to = array(
         'spawn_location' => array(
@@ -79,22 +81,22 @@ class Model_Character extends ORM {
 
     public function getInfo($raw_time) {
         
-        $name = ORM::factory('chname')->name($this->id, $this->id)->name;
-        $location = ORM::factory('location', $this->location_id);
+        $name = ORM::factory('ChName')->name($this->id, $this->id)->name;
+        $location = ORM::factory('Location', $this->location_id);
         
         if ($location->parent_id) {
-            $parent_location = ORM::factory('location', $location->parent_id);
+            $parent_location = ORM::factory('Location', $location->parent_id);
             $sublocation = $location->name;
             $location_id = $parent_location->id;
-            $location_name = ORM::factory('lname')->name($this->id, $parent_location->id)->name;
+            $location_name = ORM::factory('LName')->name($this->id, $parent_location->id)->name;
         } else {
             //is grand location
             $sublocation = null;
             $location_id = $location->id;
-            $location_name = ORM::factory('lname')->name($this->id, $this->location_id)->name;
+            $location_name = ORM::factory('LName')->name($this->id, $this->location_id)->name;
         }
         
-        $spawn_location_name = ORM::factory('lname')->name($this->id, $this->spawn_location_id)->name;
+        $spawn_location_name = ORM::factory('LName')->name($this->id, $this->spawn_location_id)->name;
         $my_project_id = RedisDB::get("characters:{$this->id}:current_project");
         $my_project = ($my_project_id) ? RedisDB::getJSON("projects:$my_project_id") : null;
 
@@ -245,8 +247,12 @@ class Model_Character extends ORM {
 
     }
     
+    public function getChNameLink($dest_character_id) {
+        return sprintf(self::$chname_link, $dest_character_id, $this->getChname($dest_character_id));
+    }
+
     public function getChname($dest_character_id) {
-        $name = ORM::factory('chname')->name($this->id, $dest_character_id)->name;
+        $name = ORM::factory('ChName')->name($this->id, $dest_character_id)->name;
         if (!$name) {
             $name = ($this->id == $dest_character_id) 
                 ? $this->name 
@@ -311,7 +317,7 @@ class Model_Character extends ORM {
         $tmp = array();
         if ($raws) {
             foreach ($raws as $k => $v) {
-                $resource = ORM::factory('resource', $k)->d;
+                $resource = ORM::factory('Resource', $k)->d;
                 $tmp[$k] = array(
                     'id'=>$k,
                     'name'=>$resource,
@@ -377,7 +383,7 @@ class Model_Character extends ORM {
         
         $tmp = array();
         if ($items) {
-            $db_items = ORM::factory('item')->where('id', 'IN', DB::expr('('. join(',',$items).')'))
+            $db_items = ORM::factory('Item')->where('id', 'IN', DB::expr('('. join(',',$items).')'))
                 ->find_all()->as_array();
         
             foreach ($db_items as $item) {
@@ -411,7 +417,7 @@ class Model_Character extends ORM {
         $weapon_list = array();
         
         if (count($items)) {
-            $weapons = ORM::factory('item')
+            $weapons = ORM::factory('Item')
                 ->with('itemtype')
                 ->where('item.id', 'IN', DB::expr('('. join(',',$items).')'))
                 ->and_where('itemtype.attack', 'is not', NULL)
@@ -452,7 +458,7 @@ class Model_Character extends ORM {
         
         $tmp = array();
         if ($notes) {
-            $tmp = ORM::factory('note')->where('id', 'IN', DB::expr('('. join(',',$notes).')'))
+            $tmp = ORM::factory('Note')->where('id', 'IN', DB::expr('('. join(',',$notes).')'))
                 ->find_all()->as_array();
         }
         return $tmp;
@@ -492,7 +498,7 @@ class Model_Character extends ORM {
         $returned = array();
         foreach ($characters_ids as $ch) {
             if ($ch != $this->id || $with_self) {
-                $name = ORM::factory('chname')->name($this->id, $ch)->name;
+                $name = ORM::factory('ChName')->name($this->id, $ch)->name;
                 if (!$name) {
                     $name = $this->getUnknownName($ch, $this->lang);
                 }
@@ -521,7 +527,7 @@ class Model_Character extends ORM {
 
         foreach ($events as $id_event) {
 
-            $return_events[] = $event_dispatcher->formatEvent($id_event, $this->id);
+            $return_events[] = $event_dispatcher->formatEvent($id_event, $this);
             
         }
         
@@ -539,7 +545,7 @@ class Model_Character extends ORM {
     
     public static function getAllCharactersIds() {
         
-        return array_keys(ORM::factory('character')->find_all()->as_array('id', 'id'));
+        return array_keys(ORM::factory('Character')->find_all()->as_array('id', 'id'));
         
     }
     

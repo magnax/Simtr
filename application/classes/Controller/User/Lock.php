@@ -5,7 +5,7 @@ class Controller_User_Lock extends Controller_Base_Character {
     public function action_lock() {
         
         if ($this->request->param('lock_nr')) {
-            $lock = ORM::factory('lock')
+            $lock = ORM::factory('Lock')
                 ->where('nr', '=', $this->request->param('lock_nr'))
                 ->find();
         } else {
@@ -45,11 +45,11 @@ class Controller_User_Lock extends Controller_Base_Character {
         
             if (HTTP_Request::POST == $this->request->method()) {
 
-                $locktype = ORM::factory('Locktype')
+                $locktype = ORM::factory('LockType')
                     ->where('level', '=', $this->request->post('level'))
                     ->find();
                                 
-                $spec = ORM::factory('spec')
+                $spec = ORM::factory('Spec')
                     ->where('itemtype_id', '=', $locktype->itemtype_id)
                     ->find();
                 
@@ -107,7 +107,7 @@ class Controller_User_Lock extends Controller_Base_Character {
             
             foreach ($levels as $level) {
                 
-                $specs = ORM::factory('spec')
+                $specs = ORM::factory('Spec')
                     ->where('itemtype_id', '=', $level->itemtype_id)
                     ->find();
                 

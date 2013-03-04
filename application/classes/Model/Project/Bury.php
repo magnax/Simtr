@@ -26,9 +26,9 @@ class Model_Project_Bury extends Model_Project {
     public function name($project_data, $character_id, $lang = 'pl') {
         
         $buried_char = new Model_Character($project_data['character_id']);
-        $buried_name = ORM::factory('chname')->name($character_id, $buried_char)->name;
+        $buried_name = ORM::factory('ChName')->name($character_id, $buried_char)->name;
         if (!$buried_name) {
-            $buried_name = ORM::factory('character')->getUnknownName($buried_char, $lang);
+            $buried_name = ORM::factory('Character')->getUnknownName($buried_char, $lang);
         }
         return 'Zakopywanie ciała '.'<a href="/chname?id='.$buried_char.'">'.$buried_name.'</a>';
     }

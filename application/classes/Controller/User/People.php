@@ -45,7 +45,7 @@ class Controller_User_People extends Controller_Base_Character {
             $victim = new Model_Character($character_id);
             
             //get attack strength of weapon
-            $weapon_attack = ORM::factory('itemtype', $_POST['weapon'])
+            $weapon_attack = ORM::factory('ItemType', $_POST['weapon'])
                 ->attack;
             
             //damage calculate

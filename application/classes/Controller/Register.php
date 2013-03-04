@@ -22,7 +22,7 @@ class Controller_Register extends Controller_Base_Guest {
                 try {
 
                     // Create the user using form values
-                    $user = ORM::factory('user')->create_user($this->request->post(), array(
+                    $user = ORM::factory('User')->create_user($this->request->post(), array(
                         'password',
                         'email'            
                     ));
@@ -33,7 +33,7 @@ class Controller_Register extends Controller_Base_Guest {
                     $user->save();
                     
                     // Grant user login role
-                    $user->add('roles', ORM::factory('role', array('name' => 'login')));
+                    $user->add('roles', ORM::factory('Role', array('name' => 'login')));
 
                     // Reset values so form is not sticky
                     $_POST = array();

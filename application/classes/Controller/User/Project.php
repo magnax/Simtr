@@ -71,13 +71,13 @@ class Controller_User_Project extends Controller_Base_Character {
         
         $characters = $this->location->getHearableCharacters();
         if (in_array($project['owner_id'], $characters)) {
-            $owner = ORM::factory('user', $project['owner_id']);
-            $name = ORM::factory('chname')->name($this->character->id, $project['owner_id'])->name;
+            $owner = ORM::factory('User', $project['owner_id']);
+            $name = ORM::factory('ChName')->name($this->character->id, $project['owner_id'])->name;
             if (!$name) {
                 if ($project['owner_id'] == $this->character->id) {
                     $name = $this->character->name;
                 } else {
-                    $name = ORM::factory('character')->getUnknownName($project['owner_id'], $this->lang);
+                    $name = ORM::factory('Character')->getUnknownName($project['owner_id'], $this->lang);
                 }
             }
             $project['owner'] = '<a href="/chname?id='.$project['owner_id'].'">'.$name.'</a>';
@@ -91,12 +91,12 @@ class Controller_User_Project extends Controller_Base_Character {
         
         if (is_array($workers)) {
             foreach ($workers as $worker) {
-                $name = ORM::factory('chname')->name($this->character->id, $worker)->name;
+                $name = ORM::factory('ChName')->name($this->character->id, $worker)->name;
                 if (!$name) {
                     if ($worker == $this->character->id) {
                         $name = $this->character->name;
                     } else {
-                        $name = ORM::factory('character')->getUnknownName($worker, $this->lang);
+                        $name = ORM::factory('Character')->getUnknownName($worker, $this->lang);
                     }
                 }
                 $project['workers'][] = array(
@@ -201,7 +201,7 @@ class Controller_User_Project extends Controller_Base_Character {
             
             //pierwsze, naiwne liczenie czasu trwania projektu
             //tylko na podstawie ilości i dziennego zbioru
-            $res = ORM::factory('resource', $_POST['resource_id']);
+            $res = ORM::factory('Resource', $_POST['resource_id']);
             
             $time = ceil($_POST['amount'] / $res->gather_base * Model_GameTime::DAY_LENGTH);
 
@@ -237,10 +237,10 @@ class Controller_User_Project extends Controller_Base_Character {
 
     public function action_builditem() {
         
-        $itemtype = ORM::factory('itemtype', $this->request->param('id'));
-        $project_type = ORM::factory('projecttype', $itemtype->projecttype_id);
+        $itemtype = ORM::factory('ItemType', $this->request->param('id'));
+        $project_type = ORM::factory('ProjectType', $itemtype->projecttype_id);
         
-        $spec = ORM::factory('spec')
+        $spec = ORM::factory('Spec')
             ->where('itemtype_id', '=', $this->request->param('id'))
             ->find();
         

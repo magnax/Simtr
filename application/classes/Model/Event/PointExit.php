@@ -27,19 +27,14 @@ class Model_Event_PointExit extends Model_Event {
 
     }
 
-    public function dispatchArgs($event_data, $args, $character) {
+    public function dispatchArgs(array $args, Model_Character $character, $lang) {
+        
+        $returned = parent::dispatchArgs($args, $character, $lang);
     
         $dict = Model_Dict::getInstance($this->source);
         
         $res = Model_Road::getInstance($this->source)->findOneByID($event_data['exit_id']);
-            
-        $returned = array();
         
-        if (in_array('sndr', $args)) {
-            $name = $character->getChname($event_data['sndr']);
-            $returned['sndr'] = '<a href="/user/char/nameform/'.
-                $event_data['sndr'].'">'.$name.'</a>';
-        }
         $returned['exit_id'] = $dict->getString($res->getLevelString());
         
         $name = $character->getLname($res->getDestinationLocationID());
