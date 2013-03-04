@@ -57,8 +57,6 @@ class Model_Event_UseRaw extends Model_Event {
         
         $res = ORM::factory('Resource', $this->res_id)->d;
         
-        $returned = array();
-        
         if (in_array('amount', $args)) {
             $returned['amount'] = $this->amount;
         }
