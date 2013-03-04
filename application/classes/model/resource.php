@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class Model_Resource extends ORM {
 
@@ -9,17 +9,6 @@ class Model_Resource extends ORM {
             'far_key' => 'projecttype_id',
         ),
     );
-
-//    public function  __construct($source) {
-//        $this->source = $source;
-//    }
-//
-//    public static function getInstance($source) {
-//        //if ($source instanceof Redisent) {
-//        if ($source instanceof Redis) {
-//            return new Model_Resource_Redis($source);
-//        }
-//    }
     
     public function getGatherBase() {
         return $this->gather_base;
