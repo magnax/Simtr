@@ -40,8 +40,8 @@ class Controller_Base_Base extends Controller_Template {
         /**
          * get default view and set it to content variable
          */
-        $page = ($this->request->directory() ? $this->request->directory() . '/' : '')
-            . $this->request->controller() . '/' . $this->request->action();
+        $page = ($this->request->directory() ? strtolower($this->request->directory()) . '/' : '')
+            . strtolower($this->request->controller()) . '/' . $this->request->action();
 
         if (Kohana::find_file('views', $page)) {
             $this->template->content = View::factory($page);
