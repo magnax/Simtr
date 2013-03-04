@@ -6,12 +6,12 @@ class Model_Spec_Raw extends ORM {
     
     protected $_belongs_to = array(
         'itemtype' => array(
-            'model' => 'itemtype',
+            'model' => 'ItemType',
             'foreign_key' => 'id',
             'far_key' => 'itemtype_id'
         ),
         'resource' => array(
-            'model' => 'resource',
+            'model' => 'Resource',
             'foreign_key' => 'resource_id',
             'far_key' => 'id'
         )
