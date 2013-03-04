@@ -4,7 +4,7 @@ class Model_Resource extends ORM {
 
     protected $_has_one = array(
         'projecttype' => array(
-            'model' => 'projecttype',
+            'model' => 'ProjectType',
             'foreign_key' => 'id',
             'far_key' => 'projecttype_id',
         ),

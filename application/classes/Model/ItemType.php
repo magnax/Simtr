@@ -4,7 +4,7 @@ class Model_ItemType extends ORM {
     
     protected $_belongs_to = array(
         'projecttype' => array(
-            'model' => 'Projecttype',
+            'model' => 'ProjectType',
             'foreign_key' => 'projecttype_id',
             'far_key' => 'id'
         )

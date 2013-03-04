@@ -4,7 +4,7 @@ class Model_Spec extends ORM {
     
     protected $_belongs_to = array(
         'item' => array(
-            'model' => 'itemtype',
+            'model' => 'ItemType',
             'foreign_key' => 'itemtype_id'
         )
     );

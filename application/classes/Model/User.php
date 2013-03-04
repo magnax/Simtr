@@ -11,7 +11,7 @@ class Model_User extends Model_Auth_User {
     protected function _initialize() {
         
         $this->_has_many['characters'] = array(
-            'model' => 'character',
+            'model' => 'Character',
             'foreign_key' => 'user_id',
             'far_key' => 'id'
         );

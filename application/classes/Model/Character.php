@@ -9,12 +9,12 @@ class Model_Character extends ORM {
 
     protected $_belongs_to = array(
         'spawn_location' => array(
-            'model' => 'location',
+            'model' => 'Location',
             'foreign_key' => 'spawn_location_id',
             'far_key' => 'id'
         ),
         'location' => array(
-            'model' => 'location',
+            'model' => 'Location',
             'foreign_key' => 'location_id',
             'far_key' => 'id'
         )
@@ -22,7 +22,7 @@ class Model_Character extends ORM {
 
     protected $_has_many = array(
         'keys' => array(
-            'model' => 'key',
+            'model' => 'Key',
             'foreign_key' => 'character_id',
             'far_key' => 'id',
         )

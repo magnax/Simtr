@@ -4,7 +4,7 @@ class Model_Building extends ORM {
     
     protected $_belongs_to = array(
         'location' => array(
-            'model' => 'location',
+            'model' => 'Location',
             'foreign_key' => 'location_id',
             'far_key' => 'id'
         ),

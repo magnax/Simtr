@@ -4,7 +4,7 @@ class Model_Lock extends ORM {
     
     protected $_belongs_to = array(
         'locktype' => array(
-            'model' => 'Locktype',
+            'model' => 'LockType',
             'foreign_key' => 'locktype_id',
             'far_key' => 'id'
         )
