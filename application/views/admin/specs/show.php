@@ -1,11 +1,11 @@
 Przedmiot: <?php echo $itemtype->name; ?>
-<?php echo form::open(); ?>
-<?php echo form::hidden('id', $specs->id); ?>
-<?php echo form::hidden('itemtype_id', $itemtype->id); ?>
-Menu: <?php echo form::select('buildmenu_id', $menus, $specs->buildmenu_id); ?><br />
-Czas: <?php echo form::input('time', $specs->time); ?><br />
-<?php echo form::submit('add', 'Zapisz'); ?>
-<?php echo form::close(); ?>
+<?php echo Form::open(); ?>
+<?php echo Form::hidden('id', $specs->id); ?>
+<?php echo Form::hidden('itemtype_id', $itemtype->id); ?>
+Menu: <?php echo Form::select('buildmenu_id', $menus, $specs->buildmenu_id); ?><br />
+Czas: <?php echo Form::input('time', $specs->time); ?><br />
+<?php echo Form::submit('add', 'Zapisz'); ?>
+<?php echo Form::close(); ?>
 <?php foreach ($raws as $raw): ?>
     <div>
         <?php echo $raw->resource->name; ?>: <?php echo $raw->amount; ?> gram 

@@ -1,5 +1,5 @@
 <?php echo Form::open(); ?>
-<?php echo form::hidden('parent', isset($location['parent']) ? $location['parent'] : ''); ?>
+<?php echo Form::hidden('parent', isset($location['parent']) ? $location['parent'] : ''); ?>
     Klasa: <?php echo Form::select('class', $locations_classes, isset($location['class']) ? $location['class'] : '--'); ?><br />
     Typ: <?php echo Form::select('type', $types, isset($location['type']) ? $location['type'] : '--'); ?><br />
     Nazwa (wewn.): <?php echo Form::input('name', isset($location['name']) ? $location['name'] : ''); ?><br />

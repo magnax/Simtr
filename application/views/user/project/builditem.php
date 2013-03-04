@@ -16,7 +16,7 @@ Wymagania:
     <?php endif; ?>
 </div>
 Zajmie Ci to: <?php echo $spec->time; ?> sekund, sam sobie policz, ile to dni czy czego tam chcesz.<br />
-<?php echo form::open(); ?>
-<?php echo form::hidden('itemtype_id', $spec->itemtype_id); ?>
-<?php echo form::submit('submit', ' Na co czekasz, produkuj!! '); ?>
-<?php echo form::close(); ?>
+<?php echo Form::open(); ?>
+<?php echo Form::hidden('itemtype_id', $spec->itemtype_id); ?>
+<?php echo Form::submit('submit', ' Na co czekasz, produkuj!! '); ?>
+<?php echo Form::close(); ?>

@@ -1,4 +1,4 @@
-<?= form::open(); ?>
-    <?= form::input('project', $project, array('size' => 150));?>
-    <?= form::submit('submit', 'Zapisz projekt'); ?>
-<?= form::close(); ?>
+<?= Form::open(); ?>
+    <?= Form::input('project', $project, array('size' => 150));?>
+    <?= Form::submit('submit', 'Zapisz projekt'); ?>
+<?= Form::close(); ?>

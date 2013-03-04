@@ -34,9 +34,9 @@
     <body>
         <div id="game_info">Info about game (current date/time (<div id="time">??</div>), info active users)</div>
         <div id="user_info">Info about user</div>
-        <?php echo form::open('#', array('id'=>'talk_all')); ?>
+        <?php echo Form::open('#', array('id'=>'talk_all')); ?>
         <input id="event_input_small" type="text" name="text"> <input id="talk" type="submit" value="Talk to all">
-        <?php echo form::close(); ?>
+        <?php echo Form::close(); ?>
         <div id="events">Events</div>
         <div id="inventory">User inventory (maybe with tabs)</div>
         <div id="location">Location info (map, resources, animals)</div>

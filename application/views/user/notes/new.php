@@ -5,13 +5,13 @@
         Utwórz notatkę
     <?php endif; ?>
 </div>
-<?= form::open(); ?>
+<?= Form::open(); ?>
 <?php if ($note->id): ?>
-    <?= form::hidden('id', $note->id); ?>
+    <?= Form::hidden('id', $note->id); ?>
 <?php endif; ?>
-Tytuł: <?= form::input('title', $note->title, array('size'=>40)); ?><br />
-<?= form::textarea('text', $note->text); ?><br />
-<?= form::label('editable', 'Edytowalna: '); ?>
-<?= form::checkbox('editable', '1', (($note->id) ? !!$note->editable : true)); ?><br />
-<?= form::submit('submit', 'Zapisz'); ?>
-<?= form::close(); ?>
+Tytuł: <?= Form::input('title', $note->title, array('size'=>40)); ?><br />
+<?= Form::textarea('text', $note->text); ?><br />
+<?= Form::label('editable', 'Edytowalna: '); ?>
+<?= Form::checkbox('editable', '1', (($note->id) ? !!$note->editable : true)); ?><br />
+<?= Form::submit('submit', 'Zapisz'); ?>
+<?= Form::close(); ?>

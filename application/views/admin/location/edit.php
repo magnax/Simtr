@@ -44,8 +44,8 @@ Lokacja ID: <?php echo $location['id']; ?><br />
     <?php endif; ?>
      <?php echo HTML::anchor('admin/location/add', 'Dodaj budynek'); ?>
      <p>Dodaj nieprzypisany budynek do tej lokacji:
-     <?php echo form::open(); ?>
-        <?php echo form::select('building_id', $orphan_buildings); ?>
-        <?php echo form::submit('append', 'Przypisz'); ?>
-     <?php echo form::close(); ?>
+     <?php echo Form::open(); ?>
+        <?php echo Form::select('building_id', $orphan_buildings); ?>
+        <?php echo Form::submit('append', 'Przypisz'); ?>
+     <?php echo Form::close(); ?>
 </div>

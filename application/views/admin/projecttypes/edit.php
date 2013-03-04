@@ -1,10 +1,10 @@
 Edytuj typ projektu:
-<?php echo form::open(); ?>
-<?php echo form::hidden('id', $projecttype->id); ?>
-<?php echo form::hidden('redir', isset($redir) ? $redir : ''); ?>
-Nazwa: <?php echo form::input('name', $projecttype->name); ?><br />
-Klucz: <?php echo form::input('key', $projecttype->key); ?><br />
-Opis: <?php echo form::input('description', $projecttype->description); ?><br />
-<?php echo form::submit('add', 'Zapisz'); ?>
-<?php echo form::close(); ?>
+<?php echo Form::open(); ?>
+<?php echo Form::hidden('id', $projecttype->id); ?>
+<?php echo Form::hidden('redir', isset($redir) ? $redir : ''); ?>
+Nazwa: <?php echo Form::input('name', $projecttype->name); ?><br />
+Klucz: <?php echo Form::input('key', $projecttype->key); ?><br />
+Opis: <?php echo Form::input('description', $projecttype->description); ?><br />
+<?php echo Form::submit('add', 'Zapisz'); ?>
+<?php echo Form::close(); ?>
 <a href="<?php echo $request->referrer(); ?>">Powrót</a>

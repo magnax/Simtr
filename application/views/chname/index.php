@@ -8,7 +8,7 @@ Mów do tej postaci: <br />
 <?php endif; ?>
 Zmiana nazwy postaci<br />
 Obecna nazwa: <?php echo $name; ?>
-<?= form::open(); ?>
+<?= Form::open(); ?>
     <input type="hidden" name="character_id" value="<?php echo $character_id; ?>">
     Nowa nazwa: <input type="text" name="name" value="<?php echo $name; ?>"><br />
     <input type="submit" value="Zmień">

@@ -1,8 +1,8 @@
 <div class="title_bar">Zdarzenia</div>
 <div id="talk_form">
-    <?php echo form::open('/events/talkall', array('id'=>'talk_all')); ?>
+    <?php echo Form::open('/events/talkall', array('id'=>'talk_all')); ?>
         <input id="event_input_small" type="text" name="text"> <input id="talk" type="submit" value="Mów do wszystkich">
-    <?php echo form::close(); ?>
+    <?php echo Form::close(); ?>
     <div id="talk_error" class="error"></div>
 </div>
 <div class="clear"></div>
