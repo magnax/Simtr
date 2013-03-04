@@ -12,10 +12,10 @@
             <img src="/assets/images/view.png" height=32 width=32>
         </a>
     <? if ($note->editable || ($note->created_by == $character['id'])): ?>
-        <?= html::anchor('user/notes/new/'.$note->id, '[edytuj]'); ?>
+        <?= HTML::anchor('user/notes/new/'.$note->id, '[edytuj]'); ?>
     <? endif; ?>
     <? if ($note->created_by == $character['id']): ?>
-        <?= html::anchor('user/notes/delete/'.$note->id, '[usuń]'); ?>
+        <?= HTML::anchor('user/notes/delete/'.$note->id, '[usuń]'); ?>
     <? endif; ?>
     <?= $note->title; ?>
     <? if ($note->created_by == $character['id']): ?>

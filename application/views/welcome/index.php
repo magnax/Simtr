@@ -3,8 +3,8 @@
 </div>
 
 <div id="main_menu">
-    <?php echo html::anchor('register', 'Zarejestruj się'); ?><br />
-    <?php echo html::anchor('login', 'Logowanie'); ?><br />
+    <?php echo HTML::anchor('register', 'Zarejestruj się'); ?><br />
+    <?php echo HTML::anchor('login', 'Logowanie'); ?><br />
 </div>
 
 <div class="title_bar">

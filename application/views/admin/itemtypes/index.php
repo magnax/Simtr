@@ -18,8 +18,8 @@
     <?php foreach ($itemtypes as $itemtype): ?>
     <tr>
         <td><?php echo $itemtype->id; ?></td>
-        <td><?php echo html::anchor('admin/itemtypes/edit/'.$itemtype->id, $itemtype->name); ?></td>
-        <td><?php echo ($itemtype->projecttype->id) ? html::anchor('admin/projecttypes/edit/'.$itemtype->projecttype->id.'?redir=1', $itemtype->projecttype->name) : '-'; ?></td>
+        <td><?php echo HTML::anchor('admin/itemtypes/edit/'.$itemtype->id, $itemtype->name); ?></td>
+        <td><?php echo ($itemtype->projecttype->id) ? HTML::anchor('admin/projecttypes/edit/'.$itemtype->projecttype->id.'?redir=1', $itemtype->projecttype->name) : '-'; ?></td>
         <td>&nbsp;<?php echo $itemtype->attack; ?></td>
         <td>&nbsp;<?php echo $itemtype->points; ?></td>
         <td>&nbsp;<?php echo $itemtype->kind; ?></td>
@@ -27,4 +27,4 @@
     </tr>
     <?php endforeach; ?>
 </table>
-<?php echo html::anchor('admin/itemtypes/edit', 'Dodaj nowy typ przedmiotu'); ?>
+<?php echo HTML::anchor('admin/itemtypes/edit', 'Dodaj nowy typ przedmiotu'); ?>

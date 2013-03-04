@@ -8,7 +8,7 @@
                Nazwa:
             </td>
             <td width="420">
-               <?php echo html::anchor('chname?id='.$character['id'], $character['name']); ?>
+               <?php echo HTML::anchor('chname?id='.$character['id'], $character['name']); ?>
             </td>
         </tr>
         <tr>
@@ -24,7 +24,7 @@
                 Przebudzenie:
             </td>
             <td>
-                Dnia <?php echo Model_GameTime::formatDateTime($character['spawn_day'], 'd'); ?> w <?php echo html::anchor('lname?id='.$character['spawn_location_id'], $character['spawn_location']); ?>
+                Dnia <?php echo Model_GameTime::formatDateTime($character['spawn_day'], 'd'); ?> w <?php echo HTML::anchor('lname?id='.$character['spawn_location_id'], $character['spawn_location']); ?>
             </td>
         </tr>
         <tr>
@@ -40,10 +40,10 @@
                 Miejsce:
             </td>
             <td>
-               <?php echo html::anchor('lname?id='.$character['location_id'], $character['location']); ?>
+               <?php echo HTML::anchor('lname?id='.$character['location_id'], $character['location']); ?>
                 <?php if ($character['sublocation']): ?>
                     <?php if ($character['sublocation_id']): ?>
-                        : <?php echo html::anchor('lname?id='.$character['sublocation_id'], $character['sublocation']); ?>
+                        : <?php echo HTML::anchor('lname?id='.$character['sublocation_id'], $character['sublocation']); ?>
                     <?php else: ?>
                         : <?= $character['sublocation']; ?>
                     <?php endif; ?>
@@ -57,7 +57,7 @@
             <td>
                 <?php if (isset($character['project_id']) && $character['project_id']) : ?>
                     (<?php echo $character['project_name']; ?> <span id="project_percent"><?php echo $character['myproject']['percent']; ?></span>%)
-                    <?php echo html::anchor('user/project/leave/'.$character['project_id'], '[Porzuć]'); ?>
+                    <?php echo HTML::anchor('user/project/leave/'.$character['project_id'], '[Porzuć]'); ?>
                 <?php endif; ?>
             </td>
         </tr>
@@ -72,25 +72,25 @@
 <div id="actions">
     <ul>
         <li>
-            <?php echo html::anchor('events', 'Zdarzenia'); ?>
+            <?php echo HTML::anchor('events', 'Zdarzenia'); ?>
         </li>
         <li>
-            <?php echo html::anchor('user/inventory', 'Inwentarz'); ?>
+            <?php echo HTML::anchor('user/inventory', 'Inwentarz'); ?>
         </li>
         <li>
-            <?php echo html::anchor('user/location', 'Miejsce'); ?>
+            <?php echo HTML::anchor('user/location', 'Miejsce'); ?>
         </li>
         <li>
-            <?php echo html::anchor('user/building', 'Budynki i pojazdy'); ?>
+            <?php echo HTML::anchor('user/building', 'Budynki i pojazdy'); ?>
         </li>
         <li>
-            <?php echo html::anchor('user/people', 'Ludzie'); ?>
+            <?php echo HTML::anchor('user/people', 'Ludzie'); ?>
         </li>
         <li>
-            <?php echo html::anchor('user/location/objects', 'Obiekty'); ?>
+            <?php echo HTML::anchor('user/location/objects', 'Obiekty'); ?>
         </li>
         <li>
-            <?php echo html::anchor('user/project', 'Projekty'); ?>
+            <?php echo HTML::anchor('user/project', 'Projekty'); ?>
         </li>
     </ul>
 </div>

@@ -11,7 +11,7 @@
         <a href="<?= URL::base(); ?>user/people/hit/<?=$ch->id; ?>" title="Atakuj tę postać">
             <img src="/assets/images/hit.png" height=32 width=32>
         </a>
-        <?= html::image('assets/images/'.strtolower($ch->sex).'.png'); ?>
+        <?= HTML::image('assets/images/'.strtolower($ch->sex).'.png'); ?>
         <?= $ch->chname; ?>
     </div>
     <?php endforeach; ?>

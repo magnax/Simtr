@@ -85,10 +85,10 @@
 <?php endif; ?>
 
 <?php if ($character['project_id'] == $project['id']): ?>
-    <?php echo html::anchor('user/project/leave/'.$project['id'], '[Porzuć]'); ?>
+    <?php echo HTML::anchor('user/project/leave/'.$project['id'], '[Porzuć]'); ?>
 <?php elseif (!$character['project_id']): ?>
     <?php if ($can_join): ?>
-        <?php echo html::anchor('user/project/join/'.$project['id'], '[Dołącz]'); ?>
+        <?php echo HTML::anchor('user/project/join/'.$project['id'], '[Dołącz]'); ?>
     <?php else: ?>
         <div class="error">
             Nie można rozpocząć projektu, póki nie są spełnione wszystkie wymagania.

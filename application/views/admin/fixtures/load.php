@@ -1,1 +1,1 @@
-<?php echo html::anchor('admin/fixtures/menu', 'Menu'); ?>
+<?php echo HTML::anchor('admin/fixtures/menu', 'Menu'); ?>

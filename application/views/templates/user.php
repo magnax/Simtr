@@ -79,7 +79,7 @@
     </head>
     <body>
         <div id="main">
-            <div><?php echo html::anchor('/','Fabular (pre-alpha)'); ?> (U:<span id="count_active_users">0</span>, C:<span id="count_active_chars">0</span>)</div>
+            <div><?php echo HTML::anchor('/','Fabular (pre-alpha)'); ?> (U:<span id="count_active_users">0</span>, C:<span id="count_active_chars">0</span>)</div>
             <?php if (isset($error) && $error): ?>
                 <div class="error">Błąd: <?php echo $error; ?></div>
             <?php endif; ?>

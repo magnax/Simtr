@@ -5,14 +5,14 @@ Lokacja ID: <?php echo $location['id']; ?><br />
     <?php if ($location['resources']): ?>
         <?php foreach ($location['resources'] as $res): ?>
             <div>
-                <?php echo 'Nazwa: '.html::anchor('admin/resource/edit/'.$res['id'], $res['name']).' (ID: '.$res['id'].'), typ: '.$res['type'].
+                <?php echo 'Nazwa: '.HTML::anchor('admin/resource/edit/'.$res['id'], $res['name']).' (ID: '.$res['id'].'), typ: '.$res['type'].
                     ', bazowy zbiór: '.$res['gather_base']; ?>
             </div>
         <?php endforeach; ?>
     <?php else: ?>
         Brak surowców
     <?php endif; ?>
-     <?php echo html::anchor('admin/resource/add/'.$location['id'], 'Dodaj surowiec'); ?>
+     <?php echo HTML::anchor('admin/resource/add/'.$location['id'], 'Dodaj surowiec'); ?>
 </div>
 <div>
     <h1>Drogi</h1>
@@ -27,7 +27,7 @@ Lokacja ID: <?php echo $location['id']; ?><br />
     <?php else: ?>
         Brak dróg
     <?php endif; ?>
-     <?php echo html::anchor('admin/road/add/'.$location['id'], 'Dodaj drogę'); ?>
+     <?php echo HTML::anchor('admin/road/add/'.$location['id'], 'Dodaj drogę'); ?>
 </div>
 <div>
      <h1>Budynki</h1>
@@ -36,13 +36,13 @@ Lokacja ID: <?php echo $location['id']; ?><br />
             <div>
                 ID: <?php echo $building['id']; ?> <?php echo $building['name']; ?> 
                 (<?php echo $building['type']; ?>) 
-                <?php echo html::anchor('admin/location/removebuilding/'.$location['id'].'/'.$building['id'], '[Odłącz]'); ?>
+                <?php echo HTML::anchor('admin/location/removebuilding/'.$location['id'].'/'.$building['id'], '[Odłącz]'); ?>
             </div>
         <?php endforeach; ?>
     <?php else: ?>
         Brak budynków
     <?php endif; ?>
-     <?php echo html::anchor('admin/location/add', 'Dodaj budynek'); ?>
+     <?php echo HTML::anchor('admin/location/add', 'Dodaj budynek'); ?>
      <p>Dodaj nieprzypisany budynek do tej lokacji:
      <?php echo form::open(); ?>
         <?php echo form::select('building_id', $orphan_buildings); ?>

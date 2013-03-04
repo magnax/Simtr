@@ -9,7 +9,7 @@
             <?php if ($character['rip']): ?>
                 R.I.P. 
             <?php endif; ?>
-            <?php echo html::anchor('character?id='.$character['id'], $character['name']); ?>
+            <?php echo HTML::anchor('character?id='.$character['id'], $character['name']); ?>
         </div>
         <div class="character_location">
             <?php echo $character['location']; ?>
@@ -30,5 +30,5 @@
     Nie masz aktualnie żadnych postaci w grze
 <?php endif; ?>
 <div>
-    <?php echo html::anchor('character/new', 'Twórz nową postać'); ?>
+    <?php echo HTML::anchor('character/new', 'Twórz nową postać'); ?>
 </div>

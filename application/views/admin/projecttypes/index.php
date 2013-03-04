@@ -15,10 +15,10 @@
     <?php foreach ($projecttypes as $projecttype): ?>
     <tr>
         <td><?php echo $projecttype->id; ?></td>
-        <td><?php echo html::anchor('admin/projecttypes/edit/'.$projecttype->id, $projecttype->name); ?></td>
+        <td><?php echo HTML::anchor('admin/projecttypes/edit/'.$projecttype->id, $projecttype->name); ?></td>
         <td>&nbsp;<?php echo $projecttype->key; ?></td>
         <td>&nbsp;<?php echo $projecttype->description; ?></td>
     </tr>
     <?php endforeach; ?>
 </table>
-<?php echo html::anchor('admin/projecttypes/edit', 'Dodaj nowy typ projektu'); ?>
+<?php echo HTML::anchor('admin/projecttypes/edit', 'Dodaj nowy typ projektu'); ?>

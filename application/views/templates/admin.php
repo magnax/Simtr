@@ -18,20 +18,20 @@
     }
 </style>
 <div id="menu">
-    <?php echo html::anchor('', 'Main page'); ?>
-    <?php echo html::anchor('admin/menu', 'Menu'); ?>
-    <?php echo html::anchor('admin/users', 'Users'); ?> 
-    <?php echo html::anchor('admin/location', 'Locations'); ?> 
-    <?php echo html::anchor('admin/resource', 'Resources'); ?>
-    <?php echo html::anchor('admin/fixtures/menu', 'Fixtures menu'); ?>
-    <?php echo html::anchor('admin/characters/menu', 'Characters menu'); ?> 
-    <?php echo html::anchor('admin/itemtypes', 'Item types'); ?> 
-    <?php echo html::anchor('admin/projecttypes', 'Project types'); ?> 
-    <?php echo html::anchor('admin/menu/keys', 'DB Keys'); ?> 
-    Node server: [<?php echo html::anchor('admin/server/check', 'Check server'); ?> 
-    <?php echo html::anchor('admin/server/on', 'Turn on server'); ?>]
-    <?php echo html::anchor('admin/events/index', 'Events'); ?> 
-    <?php echo html::anchor('admin/projects/index', 'Projects'); ?> 
-    <?php echo html::anchor('admin/system', 'System'); ?> 
+    <?php echo HTML::anchor('', 'Main page'); ?>
+    <?php echo HTML::anchor('admin/menu', 'Menu'); ?>
+    <?php echo HTML::anchor('admin/users', 'Users'); ?> 
+    <?php echo HTML::anchor('admin/location', 'Locations'); ?> 
+    <?php echo HTML::anchor('admin/resource', 'Resources'); ?>
+    <?php echo HTML::anchor('admin/fixtures/menu', 'Fixtures menu'); ?>
+    <?php echo HTML::anchor('admin/characters/menu', 'Characters menu'); ?> 
+    <?php echo HTML::anchor('admin/itemtypes', 'Item types'); ?> 
+    <?php echo HTML::anchor('admin/projecttypes', 'Project types'); ?> 
+    <?php echo HTML::anchor('admin/menu/keys', 'DB Keys'); ?> 
+    Node server: [<?php echo HTML::anchor('admin/server/check', 'Check server'); ?> 
+    <?php echo HTML::anchor('admin/server/on', 'Turn on server'); ?>]
+    <?php echo HTML::anchor('admin/events/index', 'Events'); ?> 
+    <?php echo HTML::anchor('admin/projects/index', 'Projects'); ?> 
+    <?php echo HTML::anchor('admin/system', 'System'); ?> 
 </div>
 <?php echo $content; ?>

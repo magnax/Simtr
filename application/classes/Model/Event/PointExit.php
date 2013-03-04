@@ -46,7 +46,7 @@ class Model_Event_PointExit extends Model_Event {
         if (!$name) {
             $name = Model_Dict::getInstance($this->source)->getString('unknown_location');
         }
-        $returned['loc_id'] = html::anchor('user/location/nameform/'.$res->getDestinationLocationID(), $name);
+        $returned['loc_id'] = HTML::anchor('user/location/nameform/'.$res->getDestinationLocationID(), $name);
         
         return $returned;
         

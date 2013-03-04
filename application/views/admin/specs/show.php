@@ -14,5 +14,5 @@ Czas: <?php echo form::input('time', $specs->time); ?><br />
         </a>
     </div>
 <?php endforeach; ?>
-<?php echo html::anchor('admin/specs/add/'.$itemtype->id, 'Dodaj nowy materiał'); ?><br />
+<?php echo HTML::anchor('admin/specs/add/'.$itemtype->id, 'Dodaj nowy materiał'); ?><br />
 <a href="<?php echo $request->referrer(); ?>">Powrót</a>

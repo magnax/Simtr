@@ -5,4 +5,4 @@ Narzędzia:<br />
 Nie ma żadnych narzędzi jeszcze
 <?php endif; ?>
 <br />
-<?php echo html::anchor('admin/tools/add', 'Dodaj nowe narzędzie'); ?>
+<?php echo HTML::anchor('admin/tools/add', 'Dodaj nowe narzędzie'); ?>

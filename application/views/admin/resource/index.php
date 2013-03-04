@@ -16,12 +16,12 @@
     <?php foreach ($resources as $res): ?>
     <tr>
         <td><?php echo $res->id; ?></td>
-        <td><?php echo html::anchor('admin/resource/edit/'.$res->id, $res->name); ?></td>
+        <td><?php echo HTML::anchor('admin/resource/edit/'.$res->id, $res->name); ?></td>
         <td><?php echo $res->is_raw ? 'TAK' : '-'; ?></td>
         <td>&nbsp;<?php echo $res->gather_base; ?></td>
         <td><?php echo $res->d; ?></td>
     </tr>
     <?php endforeach; ?>
 </table>
-<?php echo html::anchor('admin/resource/edit', 'Dodaj nowy surowiec'); ?>
+<?php echo HTML::anchor('admin/resource/edit', 'Dodaj nowy surowiec'); ?>
 

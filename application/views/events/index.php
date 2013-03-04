@@ -14,10 +14,10 @@
         <li<?= ($first_new_event && ($event['id'] >= $first_new_event))? ' class="new_event"':'' ?>>
         <?php if ($event['date'] == ''): ?>
             <?php if ($event['prev']): ?>
-                <?php echo html::anchor('/events/p/'.$event['prev'], 'Poprzednia strona'); ?> &nbsp; &nbsp;
+                <?php echo HTML::anchor('/events/p/'.$event['prev'], 'Poprzednia strona'); ?> &nbsp; &nbsp;
             <?php endif; ?>
             <?php if ($event['next']): ?>
-                <?php echo html::anchor('/events/p/'.$event['next'], 'Następna strona'); ?>
+                <?php echo HTML::anchor('/events/p/'.$event['next'], 'Następna strona'); ?>
             <?php endif; ?>
         <?php else: ?>
             <?php echo $event['date']; ?>: <?php echo $event['text']; ?><br/>

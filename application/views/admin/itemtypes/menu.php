@@ -1,1 +1,1 @@
-<?php echo html::anchor('admin/itemtypes/all', 'All item types'); ?><br />
+<?php echo HTML::anchor('admin/itemtypes/all', 'All item types'); ?><br />
