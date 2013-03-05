@@ -97,7 +97,7 @@ class Controller_User_Location extends Controller_Base_Character {
         
         $item_id = $this->request->param('id');
         /**
-         * @todo check if user has this item 
+         * @todo check if location has this item 
          */
         $this->location->putItem($item_id);
         $this->character->addItem($item_id);
