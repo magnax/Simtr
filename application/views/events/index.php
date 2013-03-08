@@ -12,19 +12,19 @@
     
     <?php foreach ($events as $event): ?>
         <li<?= ($first_new_event && ($event['id'] >= $first_new_event))? ' class="new_event"':'' ?>>
-        <?php if ($event['date'] == ''): ?>
-            <?php if ($event['prev']): ?>
-                <?php echo HTML::anchor('/events/p/'.$event['prev'], 'Poprzednia strona'); ?> &nbsp; &nbsp;
-            <?php endif; ?>
-            <?php if ($event['next']): ?>
-                <?php echo HTML::anchor('/events/p/'.$event['next'], 'Następna strona'); ?>
-            <?php endif; ?>
-        <?php else: ?>
             <?php echo $event['date']; ?>: <?php echo $event['text']; ?><br/>
-        <?php endif; ?>
         </li>
     <?php endforeach; ?>
     
+    <?php if ($pagination): ?>
+        <?php if ($pagination['prev']): ?>
+            <?php echo HTML::anchor('/events/p/'.$pagination['prev'], 'Poprzednia strona'); ?> &nbsp; &nbsp;
+        <?php endif; ?>
+        <?php if ($pagination['next']): ?>
+            <?php echo HTML::anchor('/events/p/'.$pagination['next'], 'Następna strona'); ?>
+        <?php endif; ?>
+    <?php endif; ?>
+                
 <?php endif; ?>
 </ul>
 </div>

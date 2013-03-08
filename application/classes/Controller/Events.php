@@ -13,13 +13,8 @@ class Controller_Events extends Controller_Base_Character {
         $this->view->first_new_event = $this->redis->lpop("new_events:{$this->character->id}");
         $this->redis->del("new_events:{$this->character->id}");
         $this->view->events = $events;
+        $this->view->pagination = $this->character->getPagination();
 
-    }
-
-    public function action_events2($page = 1) {
-        $this->template->set_filename('templates/new_character');
-        $events = Model_Character_Redis::getEvents($this->character->id, $this->redis, $this->lang, $page);
-        $this->template->user_token = 'abc';
     }
 
     public function action_talkall() {

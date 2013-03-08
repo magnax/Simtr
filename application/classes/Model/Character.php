@@ -45,21 +45,7 @@ class Model_Character extends ORM {
 
     const START_AGE = 20;
     
-    public $chname = 'asdfg';
-//    protected $age;
-//    protected $eq_weight;
-//    protected $place_type;
-//    protected $place_id;
-//    protected $project_id;
-//    protected $travel_id;
-
-     /**
-      * kolekcje
-      */
-//     protected $items = array(); //asocjacyjna ID:stan, np: 928:98
-//     protected $resources = array(); //asocjacyjna np: RES_SAND : 20000
-//     protected $events = array(); //osobna struktura
-
+    private $_pagination = null;
     /**
      * źródło danych (Redis, RDBMS, other)
      */
@@ -526,23 +512,32 @@ class Model_Character extends ORM {
         $event_dispatcher = Model_EventDispatcher::getInstance($this->source, $this->lang);
 
         foreach ($events as $id_event) {
-
-            $return_events[] = $event_dispatcher->formatEvent($id_event, $this);
-            
+            $return_events[] = $event_dispatcher->formatEvent($id_event, $this);            
         }
         
-        //"pagination" ;) just info 
-        $return_events[] = array(
-            'id' => -1,
-            'date' => '',
-            'prev' => ($page > 1) ? $page - 1 : '',
-            'current' => $page,
-            'next' => ($from + $pagesize < $size) ? $page + 1 : '',
-        );
+        $this->_setPagination($from, $page, $size, $pagesize);
         
         return $return_events;
+        
     }
     
+    private function _setPagination($from, $page, $size, $pagesize) {
+        $prev = ($page > 1) ? $page - 1 : null;
+        $next = ($from + $pagesize < $size) ? $page + 1 : null;
+        if ($prev || $next) {
+            $this->_pagination = array(
+                'prev' => $prev,
+                'next' => $next
+            );
+        } else {
+            $this->_pagination = NULL;
+        }
+    }
+
+    public function getPagination() {
+        return $this->_pagination;
+    }
+
     public static function getAllCharactersIds() {
         
         return array_keys(ORM::factory('Character')->find_all()->as_array('id', 'id'));

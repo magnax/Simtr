@@ -27,9 +27,9 @@ class Model_Event {
     /**
      * wspólne właściwości
      */
-    protected $id;
-    protected $date;
-    protected $type;
+    public $id;
+    public $date;
+    public $type;
     
     //sender may remains null if event is send by the system
     protected $sender = null;
@@ -56,6 +56,18 @@ class Model_Event {
             $this->$k = $v;
         }
         return $this;
+    }
+
+    public static function findById($id, $source) {
+        
+        $event_data = json_decode($source->get("events:$id"), true);
+        if ($event_data) {
+            $src = 'Model_Event_'.$event_data['type'];
+            $event = new $src($event_data['type'], null, $source);
+            return $event->values($event_data);
+        }
+        return null;
+        
     }
 
     public function getSource() {

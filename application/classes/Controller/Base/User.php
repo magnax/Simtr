@@ -76,7 +76,7 @@ class Controller_Base_User extends Controller_Base_Base {
         
         $this->user = Auth::instance()->get_user();
         if (!$this->user) {
-            Request::current()->redirect('login');
+            $this->redirect('login');
         }
         
         $this->is_admin = ($this->user->has('roles', ORM::factory('Role', array('name' => 'admin'))));
@@ -84,35 +84,6 @@ class Controller_Base_User extends Controller_Base_Base {
         $this->template->user = $this->user;
         $this->template->is_admin = $this->is_admin;
         
-    }
-
-    /**
-     * ustawia bieżącą postać - wszystkie akcje będą dotyczyły właśnie
-     * tej postaci
-     *
-     * @param <type> $id IDCharacter
-     */
-    public function action_set($id) {
-        
-        if (!$this->user->isActive()) {
-            $this->redirectError('Cannot play on inactive account', 'user/menu');
-        }
-
-        if ($this->user->setCurrentCharacter($id)) {
-            $this->redirect('user/event');
-        } else {
-            $this->redirectError('Cannot view events of other player', 'user/menu');
-        }
-
-    }
-    
-    public function action_logout() {
-
-        if ($this->user->logout()) {
-            $this->session->delete('authkey');
-            $this->redirect('/');
-        }
-
     }
     
 }
