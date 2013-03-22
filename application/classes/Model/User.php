@@ -16,6 +16,11 @@ class Model_User extends Model_Auth_User {
             'far_key' => 'id'
         );
         
+//        $this->_has_many['roles'] = array(
+//            'model' => 'Role',
+//            'through' => 'roles_users'
+//        );
+        
         parent::_initialize();
         
     }

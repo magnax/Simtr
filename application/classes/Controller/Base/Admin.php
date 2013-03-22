@@ -14,7 +14,7 @@ class Controller_Base_Admin extends Controller_Base_User {
         $this->template->bind_global('request', $this->request);
         
     }
-
+    
 }
 
 ?>

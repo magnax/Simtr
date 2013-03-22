@@ -17,3 +17,4 @@
 /simtrd/node/nohup.out
 /.htaccess
 /simtrd/node/config.js
+/application/config/redis.php

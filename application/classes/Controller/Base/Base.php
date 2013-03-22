@@ -54,19 +54,15 @@ class Controller_Base_Base extends Controller_Template {
         /**
          * flash messages: error and info message
          */
-        $this->template->error = $this->session->get_once('error');
-        
-        //flash message
-        $this->template->message = $this->session->get_once('message');
+        $this->template->set_global('error', $this->session->get_once('error'));
+        $this->template->set_global('message', $this->session->get_once('message'));
         
         /**
          * Redis database init
          */
-        $this->redis = RedisDB::getInstance()
-            ->connect(Kohana::$config->load('database.dsn'))
-            ->getConnectionObject();
+        $this->redis = RedisDB::instance();
         
-        $this->template->active_count = count($this->redis->keys('active:*'));
+        $this->template->set_global('active_count', count($this->redis->keys('active:*')));
         
         $this->server_uri = Kohana::$config->load('general.server_ip');
         $this->template->set_global('server_uri', $this->server_uri);

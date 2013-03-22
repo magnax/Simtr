@@ -101,14 +101,16 @@ Kohana::$config->attach(new Config_File);
  * Enable modules. Modules are referenced by a relative or absolute path.
  */
 Kohana::modules(array(
-    'email'         => APPPATH.'modules/email',
-    'unittest'      => MODPATH.'unittest',   // Unit testing
-    'redisent'      => APPPATH.'modules/redisent',   // redisent library
-	'orm'           => MODPATH.'orm',        // Object Relationship Mapping
-	'auth'          => MODPATH.'auth', // Auth module
-	'database'      => MODPATH.'database',  // Database
-    'cache'         => MODPATH.'cache',     //cache module
-	));
+    'email'         => APPPATH.'modules/email',     //email module
+    'unittest'      => MODPATH.'unittest',          // Unit testing
+    'redisent'      => APPPATH.'modules/redisent',  // redisent library
+	'orm'           => MODPATH.'orm',               // Object Relationship Mapping
+	'auth'          => MODPATH.'auth',              // Auth module
+	'database'      => MODPATH.'database',          // Database
+    'cache'         => MODPATH.'cache',             //cache module
+    'ohm'           => APPPATH.'modules/ohm',       // object-hash mapping redis library
+    'elephant'      => APPPATH.'modules/elephant',  // ElephantIOClient socket.io implementation
+));
 
 // Load the routes
 require APPPATH . 'routes' . EXT;

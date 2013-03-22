@@ -21,41 +21,26 @@ class Controller_Events extends Controller_Base_Character {
         
         if (HTTP_Request::POST == $this->request->method() && $this->request->post('text')) {
             
+            $event = new Model_Event();
+            
             $text = strip_tags($this->request->post('text'));
             if (Auth::instance()->logged_in('admin') && $text[0] == '!') {
-                $event_sender = Model_EventSender::getInstance(
-                    Model_Event::getInstance(
-                        Model_Event::GOD_TALK, $this->game->raw_time, $this->redis
-                    )
-                );
+                $event->type = Model_Event::GOD_TALK;
                 $text = substr($text, 1, strlen($text)-1);
-                $godmode = true;
-            } else {
-                $event_sender = Model_EventSender::getInstance(
-                    Model_Event::getInstance(
-                        Model_Event::TALK_ALL, $this->game->raw_time, $this->redis
-                    )
-                );
-            }
-
-            $event_sender->setText($text);
-            
-            //recipients to lista obiektów klasy Character
-            if (isset($godmode) && $godmode) {
                 $recipients = Model_Character::getAllCharactersIds();
             } else {
+                $event->type = Model_Event::TALK_ALL;
                 $recipients = $this->location->getHearableCharacters($this->character);
             }
-            $event_sender->addRecipients($recipients);
-            $event_sender->setSender($this->character->id);
 
-            $event_sender->send();
+            $event->date = $this->game->raw_time;
             
-            Model_EventNotifier::notify(
-                $event_sender->getEvent()->getRecipients(), 
-                $event_sender->getEvent()->getId(), 
-                $this->redis, $this->lang
-            );
+            $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+            $event->add('params', array('name' => 'text', 'value' => $text));
+            
+            $event->save();
+            
+            $event->notify($recipients);
 
         }
 
@@ -71,31 +56,33 @@ class Controller_Events extends Controller_Base_Character {
 
     public function action_put_raw() {
         
-        if ($_POST) {
+        //get all raws from the character
+        $inventory = $this->character->getRaws();
+        
+        if (HTTP_Request::POST == $this->request->method()) {
             
-            $id = $_POST['res_id'];
-            $amount = $_POST['amount'];
+            $id = $this->request->post('res_id');
+            $amount = $this->request->post('amount');
+            
+            if (!isset($inventory[$id]) || ($amount > $inventory[$id]['amount'])) {
+                $this->redirectError('Nieprawidłowy materiał lub nie posiadasz tyle', 'user/inventory');
+            }
 
             $this->character->putRaw($id, $amount);
             $this->location->addRaw($id, $amount);
 
             //wysłanie eventu
-            $event_sender = Model_EventSender::getInstance(
-                Model_Event::getInstance(
-                    Model_Event::PUT_RAW, $this->game->getRawTime(), $this->redis
-                )
-            );
-            $event_sender->setResource($_POST['res_id'], $_POST['amount']);
-            //recipients to lista obiektów klasy Character
-            $event_sender->addRecipients($this->location->getVisibleCharacters());
-            $event_sender->setSender($this->character->id);
-            $event_sender->send();
-
-            Model_EventNotifier::notify(
-                $event_sender->getEvent()->getRecipients(), 
-                $event_sender->getEvent()->getId(), 
-                $this->redis, $this->lang
-            );
+            $event = new Model_Event();
+            $event->type = Model_Event::PUT_RAW;
+            $event->date = $this->game->getRawTime();
+            
+            $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+            $event->add('params', array('name' => 'res_id', 'value' => $id));
+            $event->add('params', array('name' => 'amount', 'value' => $amount));
+            
+            $event->save();
+            
+            $event->notify($this->location->getVisibleCharacters());
             
             $this->redirect('events');
             
@@ -103,98 +90,103 @@ class Controller_Events extends Controller_Base_Character {
         
         $id = $this->request->param('id');
         
-        $inventory = $this->character->getRaws();
+        if (!$this->character->getRawAmount($id)) {
+            $this->redirectError('Nie posiadasz tego materiału', 'user/inventory');
+        }
+        
         $this->view->res = $inventory[$id];
         $this->view->character = $this->template->character;
     }
 
     public function action_get_raw() {
         
-        if ($_POST) {
+        if (HTTP_Request::POST == $this->request->method()) {
         
-            $id = $_POST['res_id'];
-            $amount = $_POST['amount'];
+            $id = $this->request->post('res_id');
+            $amount = $this->request->post('amount');
 
-            $this->location->putRaw($id, $amount);
-            $this->character->addRaw($id, $amount);
+            try {
+                $this->character->get_raw_from_location($this->location, $id, $amount);
 
-            //wysłanie eventu
-            $event_sender = Model_EventSender::getInstance(
-                Model_Event::getInstance(
-                    Model_Event::GET_RAW, $this->game->raw_time, $this->redis
-                )
-            );
-            $event_sender->setResource($_POST['res_id'], $_POST['amount']);
-            //recipients to lista obiektów klasy Character
-            $event_sender->addRecipients($this->location->getVisibleCharacters());
-            $event_sender->setSender($this->character->id);
-            $event_sender->send();
+                //wysłanie eventu
+                $event = new Model_Event();
+                $event->type = Model_Event::GET_RAW;
+                $event->date = $this->game->getRawTime();
 
-            Model_EventNotifier::notify(
-                $event_sender->getEvent()->getRecipients(), 
-                $event_sender->getEvent()->getId(), 
-                $this->redis, $this->lang
-            );
-            
-            $this->redirect('events');
+                $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+                $event->add('params', array('name' => 'res_id', 'value' => $id));
+                $event->add('params', array('name' => 'amount', 'value' => $amount));
+
+                $event->save();
+
+                $event->notify($this->location->getVisibleCharacters());
+
+                $this->redirect('events');
+                
+            } catch (Exception $e) {
+                $this->redirectError($e->getMessage(), 'user/location/objects');
+            }
             
         }
         
         $id = $this->request->param('id');
+        $location_raws = $this->location->getRaws();
         
-        $raws = $this->location->getRaws();
-        $this->view->res = $raws[$id];
+        if (!isset($location_raws[$id])) {
+            $this->redirectError('Nieprawidłowy materiał', 'user/location/objects');
+        }
+        
+        $this->view->res = $location_raws[$id];
         $this->view->character = $this->template->character;
+        $this->view->max_amount = 
+                ($location_raws[$id]['amount'] + $this->template->character['eq_weight'] <= Model_Character::MAX_WEIGHT) 
+                ? $location_raws[$id]['amount'] 
+                : (Model_Character::MAX_WEIGHT - $this->template->character['eq_weight']);
         
     }
 
     public function action_give_raw() {
-
-        if ($_POST) {
+        
+        if (HTTP_Request::POST == $this->request->method()) {
             
-            $dest_character = ORM::factory('Character', $_POST['character_id']);
-            
-            $this->character->putRaw($_POST['res_id'], $_POST['amount']);
-            $dest_character->addRaw($_POST['res_id'], $_POST['amount']);
+            $character_id = $this->request->post('character_id');
+            $id = $this->request->post('res_id');
+            $amount = $this->request->post('amount');
 
-            //wysłanie eventu
-            $event_sender = Model_EventSender::getInstance(
-                Model_Event::getInstance(
-                    Model_Event::GIVE_RAW, $this->game->raw_time, $this->redis
-                )
-            );
-            $event_sender->setResource($_POST['res_id'], $_POST['amount']);
-            //recipients to lista obiektów klasy Character
-            $event_sender->addRecipients($this->location->getVisibleCharacters());
-            $event_sender->setSender($this->character->id);
-            $event_sender->setRecipient($dest_character->id);
-            $event_sender->send();
+            try {
+                $this->character->give_raw_to_character($character_id, $id, $amount);
 
-            Model_EventNotifier::notify(
-                $event_sender->getEvent()->getRecipients(), 
-                $event_sender->getEvent()->getId(), 
-                $this->redis, $this->lang
-            );
+                //wysłanie eventu
+                $event = new Model_Event();
+                $event->type = Model_Event::GIVE_RAW;
+                $event->date = $this->game->getRawTime();
+
+                $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+                $event->add('params', array('name' => 'rcpt', 'value' => $character_id));
+                $event->add('params', array('name' => 'res_id', 'value' => $id));
+                $event->add('params', array('name' => 'amount', 'value' => $amount));
+
+                $event->save();
+
+                $event->notify($this->location->getHearableCharacters());
+
+                $this->redirect('events');
+                
+            } catch (Exception $e) {
+                $this->redirectError($e->getMessage(), 'user/inventory');
+            }
             
-            $this->redirect('events');
         }
         
         $id = $this->request->param('id');
-        
+
         $raws = $this->character->getRaws();
-        $all_characters = $this->location->getHearableCharacters();
-        $this->view->characters = array();
-        foreach ($all_characters as $ch) {
-            if ($ch != $this->character->id) {
-                $name = ORM::factory('ChName')->name($this->character->id, $ch)->name;
-                if (!$name) {
-                    $name = ORM::factory('Character')->getUnknownName($ch, $this->lang);
-                }
-                $this->view->characters[$ch] = $name;
-            }
-        }
+        
+        $this->view->characters = $this->location->get_hearable_characters_names($this->character);
         $this->view->res = $raws[$id];
         $this->view->character = $this->template->character;
+        $this->view->max_amount = $raws[$id]['amount'];
+        
     }
 
     public function action_use_raw() {
@@ -231,33 +223,30 @@ class Controller_Events extends Controller_Base_Character {
             } elseif ($this->request->post('submit_raw')) {
                 
                 $amount = $this->request->post('amount');
-                
-                //dodanie materiału do projektu
-                $project->addRaw($_POST['resource_id'], $_POST['amount']);
-                
-                //odjęcie postaci podanej ilości materiału
-                $this->character->putRaw($_POST['resource_id'], $_POST['amount']);
-                
-                //wysłanie eventu
-                $event_sender = Model_EventSender::getInstance(
-                    Model_Event::getInstance(
-                        Model_Event::USE_RAW, $this->game->raw_time, $this->redis
-                    )
-                );
-                $event_sender->setResource($_POST['resource_id'], $_POST['amount']);
-                $event_sender->setProject($project);
-                //recipients to lista obiektów klasy Character
-                $event_sender->addRecipients($this->location->getVisibleCharacters());
-                $event_sender->setSender($this->character->id);
-                $event_sender->send();
+                $resource_id = $this->request->post('resource_id');
 
-                Model_EventNotifier::notify(
-                    $event_sender->getEvent()->getRecipients(), 
-                    $event_sender->getEvent()->getId(), 
-                    $this->redis, $this->lang
-                );
+                try {
+                    $this->character->add_raw_to_project($project, $resource_id, $amount);
 
-                $this->redirect('events');
+                    //wysłanie eventu
+                    $event = new Model_Event();
+                    $event->type = Model_Event::USE_RAW;
+                    $event->date = $this->game->getRawTime();
+
+                    $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+                    $event->add('params', array('name' => 'project_id', 'value' => $project->id));
+                    $event->add('params', array('name' => 'project_name', 'value' => $project->getName()));
+                    $event->add('params', array('name' => 'res_id', 'value' => $resource_id));
+                    $event->add('params', array('name' => 'amount', 'value' => $amount));
+
+                    $event->save();
+
+                    $event->notify($this->location->getVisibleCharacters());
+
+                    $this->redirect('events');
+                } catch (Exception $e) {
+                    $this->redirectError($e->getMessage(), 'user/inventory');
+                }
                 
             }
             

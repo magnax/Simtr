@@ -32,8 +32,6 @@ class Controller_Base_Character extends Controller_Base_User {
             $this->redirect('user/menu');
         }
         
-        $this->character->setSource($this->redis);
-        
         //redirect if character is dead
         if (!$this->character->life && !($this->request->uri() == 'events')) {            
             $this->redirectError('Jesteś martwy a martwi zazwyczaj nic już nie robią!', 'events');

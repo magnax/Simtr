@@ -50,6 +50,18 @@ class Model_Location extends ORM {
         return $characters;
     }
 
+    public function get_hearable_characters_names(Model_Character $character, $remove_self = true) {
+        $characters = $this->characters->find_all()->as_array('id', 'id');
+        foreach($characters as $k => $v) {
+            $characters[$k] = $character->getChname($k);
+        }
+        if ($remove_self) {
+            unset($characters[$character->id]);
+        }
+        return $characters;
+    }
+
+
     public function getHearableCharacters() {
         
         $returned = array();
@@ -111,28 +123,32 @@ class Model_Location extends ORM {
         return $participants_count;
     }
     
-    public function getRaws() {
+    public function getRaws($simple = false) {
 
-        $raws = RedisDB::getInstance()->getJSON("locations:{$this->id}:raws");
+        $raws = RedisDB::getJSON("locations:{$this->id}:raws");
         
-        $tmp = array();
-        if ($raws) {
-            foreach ($raws as $k => $v) {
-                $resource = ORM::factory('Resource', $k)->d;
-                $tmp[$k] = array(
-                    'id'=>$k,
-                    'name'=>$resource,
-                    'amount'=>$v
-                );
+        if ($simple) {
+            return $raws;  
+        } else {
+            $tmp = array();
+            if ($raws) {
+                foreach ($raws as $k => $v) {
+                    $resource = ORM::factory('Resource', $k)->d;
+                    $tmp[$k] = array(
+                        'id'=>$k,
+                        'name'=>$resource,
+                        'amount'=>$v
+                    );
+                }
             }
+            return $tmp;
         }
-        return $tmp;
 
     }
 
     public function addRaw($id, $amount) {
         
-        $raws = RedisDB::getInstance()->getJSON("locations:{$this->id}:raws");
+        $raws = RedisDB::getJSON("locations:{$this->id}:raws");
         
         if ($raws) {
             if (in_array($id, array_keys($raws))) {
@@ -144,13 +160,13 @@ class Model_Location extends ORM {
             $raws[$id] = $amount;
         }
 
-        RedisDB::getInstance()->setJSON("locations:{$this->id}:raws", $raws);
+        RedisDB::setJSON("locations:{$this->id}:raws", $raws);
         
     }
     
     public function putRaw($id, $amount) {
 
-        $raws = RedisDB::getInstance()->getJSON("locations:{$this->id}:raws");
+        $raws = RedisDB::getJSON("locations:{$this->id}:raws");
         
         if ($raws) {
             $raws[$id] -= $amount;
@@ -158,7 +174,7 @@ class Model_Location extends ORM {
                 unset($raws[$id]);
             }
             
-            RedisDB::getInstance()->setJSON("locations:{$this->id}:raws", $raws);
+            RedisDB::setJSON("locations:{$this->id}:raws", $raws);
             
         }
 
@@ -166,7 +182,7 @@ class Model_Location extends ORM {
     
     public function getItems() {
         
-        $items = RedisDB::getInstance()->smembers("loc_items:{$this->id}");
+        $items = RedisDB::smembers("loc_items:{$this->id}");
         
         $tmp = array();
         if ($items) {
@@ -190,13 +206,13 @@ class Model_Location extends ORM {
     
     public function addItem($item_id) {
         
-        RedisDB::getInstance()->sadd("loc_items:{$this->id}", $item_id);
+        RedisDB::sadd("loc_items:{$this->id}", $item_id);
         
     }
 
     public function putItem($item_id) {
         
-        RedisDB::getInstance()->srem("loc_items:{$this->id}", $item_id);
+        RedisDB::srem("loc_items:{$this->id}", $item_id);
         
     }
     
@@ -221,7 +237,7 @@ class Model_Location extends ORM {
     
         public function getNotes() {
         
-        $notes = RedisDB::getInstance()->smembers("locations:{$this->id}:notes");
+        $notes = RedisDB::smembers("locations:{$this->id}:notes");
         
         $tmp = array();
         if ($notes) {
@@ -244,7 +260,7 @@ class Model_Location extends ORM {
     
     public function getProjectsIds() {
         
-        return RedisDB::getInstance()->smembers("locations:{$this->id}:projects");
+        return RedisDB::smembers("locations:{$this->id}:projects");
         
     }
     

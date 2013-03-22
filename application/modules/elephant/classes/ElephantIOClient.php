@@ -6,7 +6,7 @@
  *
  * @author Ludovic Barreca <ludovic@balloonup.com>
  */
-class Client {
+class ElephantIOClient {
     const TYPE_DISCONNECT   = 0;
     const TYPE_CONNECT      = 1;
     const TYPE_HEARTBEAT    = 2;

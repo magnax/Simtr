@@ -68,8 +68,8 @@ class Controller_Base_User extends Controller_Base_Base {
             $this->redirectError($e->getMessage());
         }
 
-        $this->template->current_time = $this->game->getTime();
-        $this->template->current_date = $this->game->getDate();
+        $this->template->set_global('current_time', $this->game->getTime());
+        $this->template->set_global('current_date', $this->game->getDate());
         
         //init translations
         $this->dict = Model_Dict::getInstance($this->redis);
@@ -83,6 +83,14 @@ class Controller_Base_User extends Controller_Base_Base {
         
         $this->template->user = $this->user;
         $this->template->is_admin = $this->is_admin;
+        
+        $this->template->set('header', View::factory('common/header'));
+        $this->template->set('game_info_header', View::factory('common/game_info_header')
+            ->set('stats', View::factory('common/stats'))
+            ->set('user_menu', View::factory('user/menu')
+                ->bind('is_admin', $this->is_admin)
+            )
+        );
         
     }
     

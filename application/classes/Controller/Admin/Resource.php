@@ -26,7 +26,7 @@ class Controller_Admin_Resource extends Controller_Base_Admin {
             $resource->values($_POST);
             $resource->save();
 
-            $this->redirect(isset($_POST['redir']) ? $_POST['redir'] : 'admin/resource/');
+            $this->redirect($this->request->post('redir'));
             
         }
         

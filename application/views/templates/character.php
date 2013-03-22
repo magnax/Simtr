@@ -87,45 +87,14 @@
                     $('#event_input_small').removeAttr("disabled");
                     $('#talk_error').html('something went wrong').delay(6000).hide(1000);
                 });
-            });
-            $('#insert').live('click', function() {
-                event.preventDefault();
-                var exists = $('#events ul li[data-id="9888"]').length;
-                console.log(exists);
-            });
-            
-            var timer = function() {
-                    var now = (project.time_elapsed + ((Math.floor(Date.now()/1000) - project.time_zero) * project.speed)) / project.time * 100;
-//                    
-                    $('#project_percent').html(Math.round(now*100)/100);
-                    //console.log(now);
-                    //window.setTimeout(timer, 1000);
-                };
-//            //project update, if project
-//            //if (project) {
-                //window.setTimeout(timer, 1000); 
-//            //}
-            
+            });           
         });
         
         </script>
     </head>
     <body>
         <div id="main">
-            <div><?php echo HTML::anchor('/','Fabular (pre-alpha)'); ?> (U:<span id="count_active_users">0</span>, C:<span id="count_active_chars">0</span>)</div>
-            <?php if (isset($error) && $error): ?>
-                <div class="error">Błąd: <?php echo $error; ?></div>
-            <?php endif; ?>
-            <?php if (isset($message) && $message): ?>
-                <div class="message"><?php echo $message; ?></div>
-            <?php endif; ?>
-            <div id="statistics">
-                <?php include Kohana::find_file('views', 'common/stats') ?>
-            </div>
-            <div id="usermenu">
-                <?php include Kohana::find_file('views', 'user/menu') ?>
-            </div>
-
+            <?= $game_info_header; ?>
             <?php echo View::factory('user/charinfo', array('character'=>$character)); ?>
             
             <?php echo $content; ?>

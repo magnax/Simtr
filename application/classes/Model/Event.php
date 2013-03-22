@@ -1,6 +1,14 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_Event {
+class Model_Event extends OHM {
+
+    protected $_columns = array('type', 'date');
+    
+    protected $_has_many = array(
+        'params' => array(
+            'model' => 'Param'
+        )
+    );
 
     const EAT = 'Eat';
     const ENTER_LOCATION = 'EnterLocation';
@@ -23,71 +31,26 @@ class Model_Event {
     const TALK_ALL = 'TalkAll';
     const TALK_TO = 'TalkTo';
     const USE_RAW = 'UseRaw';
-    
-    /**
-     * wspólne właściwości
-     */
-    public $id;
-    public $date;
-    public $type;
-    
-    //sender may remains null if event is send by the system
-    protected $sender = null;
-    
-    protected $recipients = array();
-
-    protected $source;
-
-    public function  __construct($type, $date, $source) {
-        $this->type = $type;
-        $this->date = $date;
-        $this->source = $source;
-    }
-
-    public static function getInstance($type, $date, $source) {
-
-        $src = 'Model_Event_'.$type;
-        return new $src($type, $date, $source);
-
-    }
-
-    public function values(array $event_data) {
-        foreach ($event_data as $k => $v) {
-            $this->$k = $v;
-        }
-        return $this;
-    }
-
-    public static function findById($id, $source) {
-        
-        $event_data = json_decode($source->get("events:$id"), true);
-        if ($event_data) {
-            $src = 'Model_Event_'.$event_data['type'];
-            $event = new $src($event_data['type'], null, $source);
-            return $event->values($event_data);
-        }
-        return null;
-        
-    }
-
-    public function getSource() {
-        return $this->source;
-    }
-    
-    public function setId($id) {
-        $this->id = $id;
-    }
-    
-    public function getId() {
-        return $this->id;
-    }
 
     public function setSender($ch) {
         $this->sender = $ch;
     }
     
-    public function addRecipients(array $recipients) {
-        $this->recipients = $recipients;
+    public function notify(array $recipients) {
+        
+        //require_once APPPATH . 'modules/elephant/classes/client.php';
+        
+        //add event ID to each recipient events list
+        foreach ($recipients as $character_id) {
+            
+            $notified_char = new Model_Character($character_id);
+            
+            $this->_redis->lpush("characters:$character_id:events", $this->id);
+            
+            Model_EventNotifier::notify($notified_char, $this);
+            
+        }
+           
     }
 
     public function getRecipients() {
@@ -105,36 +68,61 @@ class Model_Event {
         
     }
     
-    public function dispatchArgs(array $args, Model_Character $character, $lang) {
- 
-        $returned = array();
-
-        //make arguments in proper order and set initial values
-        foreach ($args as $key) {
-            $returned[$key] = null;
-        }
-        
-        //this should rather go to location related events
-        if (in_array('loc_type', $args)) {
-            $returned['loc_type'] = ORM::factory('LocationClass', $this->loc_type)->name;
-        }
-        
-        if (in_array('sndr', $args)) {
-            $returned['sndr'] = $character->getChNameLink($this->sndr);
-        }
-        
-        if (in_array('rcpt', $args)) {
-            $returned['rcpt'] = $character->getChNameLink($this->rcpt);
-        }
-        
-        if (in_array('text', $args)) {
-            $returned['text'] = $this->text;
-        }
-        
-        return $returned;
-        
+    protected function get_format($person) {
+        return RedisDB::instance()->get("global:event_tpl:{$this->type}:$person");
     }
 
+    protected function get_required_params($person) {
+        return RedisDB::instance()->lrange("global:event_tpl:{$this->type}:$person:params", 0, -1);
+    }
+
+    public function dispatch($character) {
+            
+        foreach ($this->params as $param) {
+            $flattened_params[$param->name] = $param->value;
+        }
+        
+        $person = 3;
+        if (isset($flattened_params['sndr']) && ($flattened_params['sndr']== $character->id)) {
+            $person = 1;
+        } elseif (isset($flattened_params['rcpt']) && ($flattened_params['rcpt'] == $character->id)) {
+            $person = 2;
+        }
+
+        $format = $this->get_format($person);
+        if (!$format) {
+            $text = 'coś nie tak...('.$this->id.', person: '.$person.')';
+        } else {
+            $required_params = $this->get_required_params($person);
+            $dispatched_params = Model_Param::dispatch($flattened_params, $required_params, $character);
+            $text = @vsprintf($format, $dispatched_params);
+            if ($person == 2) {
+                $text = '<b>'.$text.'</b>';
+            }
+            if (!$text) {
+                $text = 'ERROR: <b>'.$format.'</b> L.arg.:'.count($required_params).' Person:'.$person. ' Event: '.$id_event;
+            }
+        }
+        return $text;
+    }
+     
+    public function format_output(Model_Character $character, $id) {
+        
+        if (!$this->loaded()) {
+            return array(
+                'id'  => $id,
+                'date'=> 0,
+                'text'=> $id.': malformed event',
+            );
+        } else {
+            return array(
+                'id'  => $this->id,
+                'date'=> Model_GameTime::formatDateTime($this->date),
+                'text'=> '('.$this->id.') ' . $this->dispatch($character)
+            );
+        }
+        
+    }
 }
 
 ?>

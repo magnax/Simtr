@@ -12,7 +12,7 @@ class Controller_User_Menu extends Controller_Base_User {
             
             $name = ORM::factory('ChName')->name($character, $character)->name;
             $location_name = ORM::factory('LName')->name($character, $character->location->id)->name;
-            $current_project = RedisDB::getInstance()->get("characters:{$character->id}:current_project");
+            $current_project = RedisDB::instance()->get("characters:{$character->id}:current_project");
             if ($current_project) {
                 $my_project = ($current_project) ? RedisDB::getJSON("projects:$current_project") : null;
 

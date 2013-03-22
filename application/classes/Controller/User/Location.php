@@ -59,11 +59,12 @@ class Controller_User_Location extends Controller_Base_Character {
             $this->view->can_upgrade_lock = 
                 ($lock->locktype->level < $max_lock_level) && 
                 !$this->location->hasProjectType(Model_Project::TYPE_LOCKBUILD);
-                        
+             
+            $this->view->max_lock_level = $max_lock_level;
+            
         }
         
         $this->view->lockable = $location_lockable;
-        $this->view->max_lock_level = $max_lock_level;
         
         $this->view->locationtype = $this->location->locationclass->name;
         $this->view->raws = $this->location->getRaws();
@@ -155,6 +156,8 @@ class Controller_User_Location extends Controller_Base_Character {
                 )
             );
 
+//            $event = new Model_Event(Model_Event::ENTER_LOCATION, $this->game->raw_time);
+//            $params = new Model_Param();
             //first get recipients from current loc
             $current_recipients = $this->location->getVisibleCharacters();
 
@@ -171,6 +174,13 @@ class Controller_User_Location extends Controller_Base_Character {
             $event_sender->setLocationId($dest_location_id);
             $event_sender->setExitLocationId($exit_location_id);
 
+//            $param->add('sndr', $this->character->id);
+//            $param->add('locid', $dest_location->id);
+//            $param->add('exit_id', $exit_location->id);
+//            
+//            $param->save_all();
+//            $event->save();
+            
             $event_sender->send();
 
             $event_id = $event_sender->getEvent()->getId();

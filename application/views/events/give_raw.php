@@ -4,7 +4,7 @@ Maksymalna ilość <?php echo $res['name']; ?>, jaką możesz podać: <?php echo
 <?= Form::open(); ?>
     <input type="hidden" name="res_id" value="<?php echo $res['id']; ?>">
 
-    Ilość, jaką chcesz podać: <input name="amount">
+    Ilość, jaką chcesz podać: <?php echo Form::input('amount', $max_amount); ?>
     Komu: <?php echo Form::select('character_id', $characters); ?>
     <input type="submit" value="Kontynuuj">
 <?= Form::close(); ?>

@@ -4,8 +4,7 @@
  */
 class Model_Character extends ORM {
 
-    protected static $chname_link = '<a href="chname?id=%d">%s</a>';
-
+    protected static $chname_link = '<a href="{{base}}chname?id=%d">%s</a>';
 
     protected $_belongs_to = array(
         'spawn_location' => array(
@@ -44,14 +43,9 @@ class Model_Character extends ORM {
     }
 
     const START_AGE = 20;
-    
-    private $_pagination = null;
-    /**
-     * źródło danych (Redis, RDBMS, other)
-     */
-    protected $source;
+    const MAX_WEIGHT = 15000;
 
-    protected $chnames;
+    private $_pagination = null;
 
     //memorized characters names
     public $character_names = null;
@@ -60,10 +54,6 @@ class Model_Character extends ORM {
     public $raw_time;
     
     public $lang = 'pl';
-
-    public function setSource($source) {
-        $this->source = $source;
-    }
 
     public function getInfo($raw_time) {
         
@@ -83,8 +73,8 @@ class Model_Character extends ORM {
         }
         
         $spawn_location_name = ORM::factory('LName')->name($this->id, $this->spawn_location_id)->name;
-        $my_project_id = RedisDB::get("characters:{$this->id}:current_project");
-        $my_project = ($my_project_id) ? RedisDB::getJSON("projects:$my_project_id") : null;
+        $my_project_id = RedisDB::instance()->get("characters:{$this->id}:current_project");
+        $my_project = ($my_project_id) ? RedisDB::instance()->getJSON("projects:$my_project_id") : null;
 
         if ($my_project) {
             if (!$my_project['time_elapsed']) {
@@ -234,7 +224,7 @@ class Model_Character extends ORM {
     }
     
     public function getChNameLink($dest_character_id) {
-        return sprintf(self::$chname_link, $dest_character_id, $this->getChname($dest_character_id));
+        return sprintf(str_replace('{{base}}', URL::base(), self::$chname_link), $dest_character_id, $this->getChname($dest_character_id));
     }
 
     public function getChname($dest_character_id) {
@@ -263,12 +253,12 @@ class Model_Character extends ORM {
         $this->save();
     }
 
-    public function connectedChar($redis) {
-        return $redis->get("connected_char:{$this->id}");
+    public function connectedChar() {
+        return RedisDB::get("connected_char:{$this->id}");
     }
 
-    public function connectedUser($redis) {
-        return $redis->get("connected_user:{$this->user_id}");
+    public function connectedUser() {
+        return RedisDB::get("connected_user:{$this->user_id}");
     }
     
     /**
@@ -279,7 +269,7 @@ class Model_Character extends ORM {
     public function calculateWeight() {
         
         //raws... and only raws for a while ;-)
-        $raws = RedisDB::getInstance()->getJSON("raws:{$this->id}");
+        $raws = RedisDB::getJSON("raws:{$this->id}");
         
         $weight = 0;
         
@@ -295,29 +285,35 @@ class Model_Character extends ORM {
 
     /**
      * gets inventory raws for character
+     * 
+     * @todo make user resources hash instead of json'ed array
      */
-    public function getRaws() {
+    public function getRaws($simple = false) {
 
-        $raws = RedisDB::getInstance()->getJSON("raws:{$this->id}");
+        $raws = RedisDB::getJSON("raws:{$this->id}");
         
-        $tmp = array();
-        if ($raws) {
-            foreach ($raws as $k => $v) {
-                $resource = ORM::factory('Resource', $k)->d;
-                $tmp[$k] = array(
-                    'id'=>$k,
-                    'name'=>$resource,
-                    'amount'=>$v
-                );
+        if ($simple) {
+            return $raws;  
+        } else {
+            $tmp = array();
+            if ($raws) {
+                foreach ($raws as $k => $v) {
+                    $resource = ORM::factory('Resource', $k)->d;
+                    $tmp[$k] = array(
+                        'id'=>$k,
+                        'name'=>$resource,
+                        'amount'=>$v
+                    );
+                }
             }
+            return $tmp;
         }
-        return $tmp;
 
     }
     
     public function getRawAmount($raw_id) {
     
-        $raws = RedisDB::getInstance()->getJSON("raws:{$this->id}");
+        $raws = RedisDB::getJSON("raws:{$this->id}");
         
         foreach ($raws as $k => $v) {
             if ($k == $raw_id) {
@@ -331,7 +327,7 @@ class Model_Character extends ORM {
 
     public function addRaw($id, $amount) {
         
-        $raws = RedisDB::getInstance()->getJSON("raws:{$this->id}");
+        $raws = RedisDB::getJSON("raws:{$this->id}");
         
         if ($raws) {
             if (in_array($id, array_keys($raws))) {
@@ -343,29 +339,99 @@ class Model_Character extends ORM {
             $raws[$id] = $amount;
         }
 
-        RedisDB::getInstance()->setJSON("raws:{$this->id}", $raws);
+        RedisDB::setJSON("raws:{$this->id}", $raws);
         
     }
     
     public function putRaw($id, $amount) {
 
-        $raws = RedisDB::getInstance()->getJSON("raws:{$this->id}");
+        $raws = RedisDB::getJSON("raws:{$this->id}");
         
-        if ($raws) {
+        if ($raws && isset($raws[$id])) {
             $raws[$id] -= $amount;
             if ($raws[$id] <= 0) {
                 unset($raws[$id]);
             }
             
-            RedisDB::getInstance()->setJSON("raws:{$this->id}", $raws);
+            RedisDB::setJSON("raws:{$this->id}", $raws);
             
+        } else {
+            throw new Exception('Nieprawidłowy materiał: '.$id);
         }
 
     }
     
+    public function get_raw_from_location(Model_Location $location, $resource_id, $amount) {
+        
+        if (!is_integer($amount) || ($amount <= 0)) {
+            throw new Exception('Nieprawidłowa ilość');
+        }
+        
+        $location_raws = $location->getRaws(true);
+        
+        if (!isset($location_raws[$resource_id])) {
+            throw new Exception('Nieprawidłowy materiał');
+        }
+        
+        if ($amount > $location_raws[$resource_id]) {
+            throw new Exception('Nieprawidłowa ilość');
+        }
+        
+        if (($amount + $this->calculateWeight()) > Model_Character::MAX_WEIGHT) {
+            throw new Exception('Nie możesz tyle unieść');
+        }
+            
+        //all ok
+        $location->putRaw($resource_id, $amount);
+        $this->addRaw($resource_id, $amount);
+        
+    }
+
+    public function give_raw_to_character($character_id, $resource_id, $amount) {
+        
+        
+        if (!is_numeric($amount) || ($amount <= 0)) {
+            throw new Exception('Nieprawidłowa liczba: >>' . $amount . '<<');
+        }
+        
+        $amount = (int) $amount;
+        $raws = $this->getRaws(true);
+        
+        if (!isset($raws[$resource_id])) {
+            throw new Exception('Nieprawidłowy materiał');
+        }
+        
+        if ($amount > $raws[$resource_id]) {
+            throw new Exception('Nieprawidłowa ilość');
+        }
+        
+        $dest_character = ORM::factory('Character', $character_id);
+         
+        if (!$dest_character->loaded() || !$this->location->isHearable($dest_character)) {
+            throw new Exception('Tej osoby już tutaj nie ma');
+        }
+        
+        if (($amount + $dest_character->calculateWeight()) > Model_Character::MAX_WEIGHT) {
+            throw new Exception('Odbiorca nie może tyle unieść');
+        }
+            
+        //all ok
+        $this->putRaw($resource_id, $amount);
+        $dest_character->addRaw($resource_id, $amount);
+        
+    }
+
+    public function add_raw_to_project(Model_Project $project, $resource_id, $amount) {
+        
+        //odjęcie postaci podanej ilości materiału
+        $this->putRaw($resource_id, $amount);
+        $project->addRaw($resource_id, $amount);
+        
+    }
+    
     public function getItems() {
         
-        $items = RedisDB::getInstance()->smembers("items:{$this->id}");
+        $items = RedisDB::smembers("items:{$this->id}");
         
         $tmp = array();
         if ($items) {
@@ -384,22 +450,26 @@ class Model_Character extends ORM {
         
     }
     
+    public function hasRaw($id) {
+        return in_array($id, $this->getRaws(TRUE));
+    }
+
     public function addItem($item_id) {
         
-        RedisDB::getInstance()->sadd("items:{$this->id}", $item_id);
+        RedisDB::sadd("items:{$this->id}", $item_id);
         
     }
     
     public function putItem($item_id) {
         
-        RedisDB::getInstance()->srem("items:{$this->id}", $item_id);
+        RedisDB::srem("items:{$this->id}", $item_id);
         
     }
     
     //returns list of available weapons from character inventory
     public function getWeaponsList() {
         
-        $items = RedisDB::getInstance()->smembers("items:{$this->id}");
+        $items = RedisDB::smembers("items:{$this->id}");
         $weapon_list = array();
         
         if (count($items)) {
@@ -440,7 +510,7 @@ class Model_Character extends ORM {
     
     public function getNotes() {
         
-        $notes = RedisDB::getInstance()->smembers("notes:{$this->id}");
+        $notes = RedisDB::smembers("notes:{$this->id}");
         
         $tmp = array();
         if ($notes) {
@@ -462,20 +532,20 @@ class Model_Character extends ORM {
             $manager->removeParticipant($this, $raw_time);
             $manager->save();
 
-            RedisDB::getInstance()->del("characters:{$this->id}:current_project");
+            RedisDB::del("characters:{$this->id}:current_project");
         }
         
     }
     
     public function hasItem($item_id) {
-        $items = RedisDB::getInstance()->smembers("items:{$this->id}");
+        $items = RedisDB::smembers("items:{$this->id}");
         return in_array($item_id, $items);
     }
     
     public function giveItemTo($item_id, $character_id) {
         
-        RedisDB::getInstance()->srem("items:{$this->id}", $item_id);
-        RedisDB::getInstance()->sadd("items:$character_id", $item_id);
+        RedisDB::srem("items:{$this->id}", $item_id);
+        RedisDB::sadd("items:$character_id", $item_id);
         
     }
 
@@ -499,20 +569,21 @@ class Model_Character extends ORM {
         
         //ile na stronę 
         $pagesize = 20;
-        
-        $size = $this->source->llen("characters:{$this->id}:events");
+        $size = RedisDB::llen("characters:{$this->id}:events");
         if ($size) {
             $from = ($page - 1) * $pagesize;
-            $events = $this->source->lrange("characters:{$this->id}:events", $from, $from + $pagesize - 1);
+            $events = RedisDB::lrange("characters:{$this->id}:events", $from, $from + $pagesize - 1);
         } else {
             return array();
         }
         $return_events = array();
 
-        $event_dispatcher = Model_EventDispatcher::getInstance($this->source, $this->lang);
-
         foreach ($events as $id_event) {
-            $return_events[] = $event_dispatcher->formatEvent($id_event, $this);            
+            
+            $event = new Model_Event($id_event);
+            
+            $return_events[] = $event->format_output($this, $id_event);
+
         }
         
         $this->_setPagination($from, $page, $size, $pagesize);

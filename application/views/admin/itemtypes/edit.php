@@ -1,6 +1,7 @@
 Edytuj typ przedmiotu:
 <?php echo Form::open(); ?>
 <?php echo Form::hidden('id', $itemtype->id); ?>
+<?php echo Form::hidden('redir', isset($redir) ? $redir : $request->referrer()); ?>
 Nazwa: <?php echo Form::input('name', $itemtype->name); ?><br />
 Siła ataku: <?php echo Form::input('attack', $itemtype->attack); ?><br/>
 Siła obrony: <?php echo Form::input('shield', $itemtype->shield); ?><br/>
@@ -12,4 +13,4 @@ Psucie używ./dzień: <?php echo Form::input('rot_use', $itemtype->rot_use); ?><
 Naprawa/godz.: <?php echo Form::input('repair', $itemtype->repair); ?><br/>
 <?php echo Form::submit('add', 'Zapisz'); ?>
 <?php echo Form::close(); ?>
-<a href="<?php echo $request->referrer(); ?>">Powrót</a>
+<a href="<?php echo isset($redir) ? $redir : $request->referrer(); ?>">Powrót</a>

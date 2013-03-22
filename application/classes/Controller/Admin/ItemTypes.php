@@ -26,10 +26,10 @@ class Controller_Admin_ItemTypes extends Controller_Base_Admin {
             $itemtype->values($_POST);
             $itemtype->save();
 
-            $this->redirect(isset($_POST['redir']) ? $_POST['redir'] : 'admin/itemtypes/');
+            $this->redirect($this->request->post('redir'));
             
         }
-        
+             
         $this->view->itemtype = $itemtype;
     }
     

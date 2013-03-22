@@ -1,6 +1,6 @@
 <html>
     <head>
-        <?php include Kohana::find_file('views', 'common/header') ?>
+        <?= $header; ?>
         <script src="<?= $server_uri;?>/socket.io/socket.io.js"></script>
         <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
         <script src="/assets/js/general.js"></script>
@@ -79,25 +79,8 @@
     </head>
     <body>
         <div id="main">
-            <div><?php echo HTML::anchor('/','Fabular (pre-alpha)'); ?> (U:<span id="count_active_users">0</span>, C:<span id="count_active_chars">0</span>)</div>
-            <?php if (isset($error) && $error): ?>
-                <div class="error">Błąd: <?php echo $error; ?></div>
-            <?php endif; ?>
-            <?php if (isset($message) && $message): ?>
-                <div class="message"><?php echo $message; ?></div>
-            <?php endif; ?>
-            <div id="statistics">
-                <?php include Kohana::find_file('views', 'common/stats') ?>
-            </div>
-            <div id="usermenu">
-                <?php include Kohana::find_file('views', 'user/menu') ?>
-            </div>
-
-            <?php if (isset($character)): ?>
-                <?php echo View::factory('user/charinfo', array('character'=>$character)); ?>
-            <?php else: ?>
-                <?php echo View::factory('user/userinfo', array('user'=>$user)); ?>
-            <?php endif; ?>
+            <?= $game_info_header; ?>
+            <?php echo View::factory('user/userinfo', array('user'=>$user)); ?>
             <?php echo $content; ?>
 
         </div>

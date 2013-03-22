@@ -1,12 +1,15 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_User_Inventory extends Controller_Base_Character {
 
     public function before() {
-        
         parent::before();
-        
-        $this->inventory_menu = View::factory('user/inventory/index');
+        $this->template->set_global('inventory_menu', View::factory('user/inventory/index'));
+    }
+    
+    public function after() {
+        parent::after();
+        Session::instance()->set('inventory', $this->request->action());
     }
 
     public function action_index($type = 'raws') {
@@ -31,34 +34,28 @@ class Controller_User_Inventory extends Controller_Base_Character {
             'raws'=>$raws,
             'items'=>$items,
             'notes'=>$notes,
-            'inventory_menu'=>  $this->inventory_menu,
         ));
-        Session::instance()->set('inventory', 'all');
     }
 
     public function action_raws() {
         $raws = $this->character->getRaws();
         $this->template->content = View::factory('user/inventory/raws', array(
             'raws'=>$raws,
-            'inventory_menu'=>  $this->inventory_menu,
         ));
-        Session::instance()->set('inventory', 'raws');
     }
 
     public function action_items() {
         $items = $this->character->getItems();
-        $this->template->content = View::factory('user/inventory/items', array('items'=>$items,
-            'inventory_menu'=>  $this->inventory_menu,
+        $this->template->content = View::factory('user/inventory/items', array(
+            'items'=>$items,
         ));
-        Session::instance()->set('inventory', 'items');
     }
 
     public function action_notes() {
         $notes = $this->character->getNotes();
-        $this->template->content = View::factory('user/inventory/notes', array('notes'=>$notes,
-            'inventory_menu'=>  $this->inventory_menu,
+        $this->template->content = View::factory('user/inventory/notes', array(
+            'notes'=>$notes,
         ));
-        Session::instance()->set('inventory', 'notes');
     }
 
     public function action_keys() {

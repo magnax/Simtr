@@ -59,7 +59,7 @@ class Controller_Admin_Specs extends Controller_Base_Admin {
             
             $resources = ORM::factory('Resource')->find_all()->as_array('id', 'name');
             $resources = array('0' => '-- wybierz --') + $resources;
-
+            
             $this->template->content = View::factory('admin/specs/edit')
                 ->bind('spec', $spec)
                 ->bind('itemtype', $itemtype)

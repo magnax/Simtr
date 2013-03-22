@@ -27,13 +27,10 @@ class Controller_Admin_ProjectTypes extends Controller_Base_Admin {
             $projecttype->values($_POST);
             $projecttype->save();
 
-            $this->redirect((isset($_POST['redir']) && $_POST['redir']) ? $_POST['redir'] : 'admin/projecttypes/');
+            $this->redirect($this->request->post('redir'));
             
         }
         
-        if (isset($_GET['redir']) && $_GET['redir']) {
-            $this->view->redir = $this->request->referrer();
-        }
         $this->view->projecttype = $projecttype;
     }
     
