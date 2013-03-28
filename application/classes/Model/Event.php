@@ -10,6 +10,7 @@ class Model_Event extends OHM {
         )
     );
 
+    const ARRIVE_INFO = 'ArriveInfo';
     const EAT = 'Eat';
     const ENTER_LOCATION = 'EnterLocation';
     const GET_ITEM = 'GetItem';

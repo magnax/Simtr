@@ -16,6 +16,7 @@ class RedisDB {
             $config = Kohana::$config->load('redis.default');
             try {
                 RedisDB::$_connection = new Redisent($config['dsn']);
+                RedisDB::$_connection->select($config['database']);
                 RedisDB::$_instance = new RedisDB();
             } catch (RedisException $e) {
                 throw new RedisException($e->getMessage());
@@ -43,6 +44,10 @@ class RedisDB {
 
     public static function exists($key) {
         return self::$_connection->exists($key);
+    }
+    
+    public static function expire($key, $time) {
+        return self::$_connection->expire($key, $time);
     }
     
     public static function get($key) {

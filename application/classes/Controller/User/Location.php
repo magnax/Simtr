@@ -3,9 +3,6 @@
 class Controller_User_Location extends Controller_Base_Character {
 
     public function action_index() {
-
-        //get proper location object from factory
-        //$location = Model_LocationFactory::getInstance($this->location);
         
         //get resources list
         $resources = $this->location->resources->find_all()->as_array();
@@ -26,7 +23,7 @@ class Controller_User_Location extends Controller_Base_Character {
             $this->view->exits = array();
             $this->view->location['used_slots'] = 999;
             $this->view->location['res_slots'] = $this->location->town->slots;
-            $this->view->location['resources'] = $location_resources;
+            $this->view->location['resources'] = $resources;
         } else {
             $this->view->exits = array();
         }
@@ -97,25 +94,33 @@ class Controller_User_Location extends Controller_Base_Character {
     public function action_getitem() {
         
         $item_id = $this->request->param('id');
-        /**
-         * @todo check if location has this item 
-         */
-        $this->location->putItem($item_id);
-        $this->character->addItem($item_id);
-        //generate event
-        $event = Model_EventSender::getInstance(
-            Model_Event::getInstance(
-                Model_Event::GET_ITEM, $this->game->raw_time, $this->redis
-            )
-        );
+        $item = new Model_Item($item_id);
+        
+        try {
 
-        $event->setSender($this->character->getId());
-        $event->setItem($item_id);
+            $this->character->get_item($item, $this->location);
 
-        $event->addRecipients($this->location->getVisibleCharacters());
-        $event->send();
+            //wysłanie eventu
+            $event = new Model_Event();
+            $event->type = Model_Event::GET_ITEM;
+            $event->date = $this->game->getRawTime();
+
+            $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+            $event->add('params', array('name' => 'item_id', 'value' => $item->id));
+            $event->add('params', array('name' => 'item_points', 'value' => $item->itemtype->kind . $item->points_percent()));
+
+            $event->save();
+
+            $event->notify($this->location->getVisibleCharacters());
+            
+        } catch (Exception $e){
+            
+            $this->redirectError($e->getMessage(), 'user/location/objects');
+            
+        }
         
         $this->redirect('events');
+        
     }
     
     /**
@@ -123,72 +128,39 @@ class Controller_User_Location extends Controller_Base_Character {
      */
     public function action_enter() {
         
-        $error = null;
-        
-        $dest_location_id = $this->request->param('id');
-        $exit_location_id = $this->character->location_id;
-        /**
-         * @todo check if user may enter this location
-         * (locked, too much weight etc.)
-         */
-        
-        $dest_location = new Model_Location($dest_location_id);
-        $exit_location = new Model_Location($exit_location_id);
-        $lock = $exit_location->lock;
-        
-        if ($lock->locked && !$this->character->hasKey($lock->nr)) {
-            $error = 'Nie możesz wyjść, zamknięte';
-        }
-        
-        if ($dest_location->lock->locked && !$this->character->hasKey($dest_location->lock->nr)) {
-            $error = 'Nie możesz wejść, zamknięte';
-        }
-        
-        if (!$error) {
-        
-            //if user is working on the project, leave it before enter
-            $this->character->leaveCurrentProject($this->redis, $this->game->raw_time);
-
-            //generate event
-            $event_sender = Model_EventSender::getInstance(
-                Model_Event::getInstance(
-                    Model_Event::ENTER_LOCATION, $this->game->raw_time, $this->redis
-                )
-            );
-
-//            $event = new Model_Event(Model_Event::ENTER_LOCATION, $this->game->raw_time);
-//            $params = new Model_Param();
+        try {
+            
+            $dest_location = new Model_Location($this->request->param('id'));
+            $exit_location = $this->location;
+            
             //first get recipients from current loc
             $current_recipients = $this->location->getVisibleCharacters();
-
+            
+            $this->character->enter_location($dest_location);
+            
+            //then - recipients from destination location
             $dest_recipients = $dest_location->getVisibleCharacters();
 
+            //merge all recipients in one list
             $recipients = array_merge($current_recipients, $dest_recipients);
-
-            $event_sender->addRecipients($recipients);
-
-            $this->character->location_id = $dest_location_id;
-            $this->character->save();
-
-            $event_sender->setSender($this->character->getId());
-            $event_sender->setLocationId($dest_location_id);
-            $event_sender->setExitLocationId($exit_location_id);
-
-//            $param->add('sndr', $this->character->id);
-//            $param->add('locid', $dest_location->id);
-//            $param->add('exit_id', $exit_location->id);
-//            
-//            $param->save_all();
-//            $event->save();
             
-            $event_sender->send();
+            //wysłanie eventu
+            $event = new Model_Event();
+            $event->type = Model_Event::ENTER_LOCATION;
+            $event->date = $this->game->getRawTime();
 
-            $event_id = $event_sender->getEvent()->getId();
-            Model_EventNotifier::notify($recipients, $event_id, $this->redis, $this->lang);
-        
-        } else {
-            //there was some error, set error message
-            Session::instance()->set('error', $error);
+            $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+            $event->add('params', array('name' => 'locid', 'value' => $dest_location->id));
+            $event->add('params', array('name' => 'exit_id', 'value' => $exit_location->id));
+
+            $event->save();
+
+            $event->notify($recipients);
+            
+        } catch (Exception $e) {
+            
+            $this->redirectError($e->getMessage(), 'events');
+            
         }
         
         $this->redirect('events');

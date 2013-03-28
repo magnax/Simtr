@@ -70,30 +70,30 @@ class Controller_User_Inventory extends Controller_Base_Character {
         
         $item_id = $this->request->param('id');
         
-        /**
-         * @todo check if user has this item 
-         * @todo check if user has enough place in inventory
-         */
-        $this->character->putItem($item_id);
-        $this->location->addItem($item_id);
-        //generate event
-        $event_sender = Model_EventSender::getInstance(
-            Model_Event::getInstance(
-                Model_Event::PUT_ITEM, $this->game->raw_time, $this->redis
-            )
-        );
-
-        $event_sender->setSender($this->character->getId());
-        $event_sender->setItem($item_id);
-
-        $event_sender->addRecipients($this->location->getVisibleCharacters());
-        $event_sender->send();
+        $item = new Model_Item($item_id);
         
-        Model_EventNotifier::notify(
-            $event_sender->getEvent()->getRecipients(), 
-            $event_sender->getEvent()->getId(), 
-            $this->redis, $this->lang
-        );
+        try {
+
+            $this->character->drop_item($item, $this->location);
+
+            //wysłanie eventu
+            $event = new Model_Event();
+            $event->type = Model_Event::PUT_ITEM;
+            $event->date = $this->game->getRawTime();
+
+            $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+            $event->add('params', array('name' => 'item_id', 'value' => $item->id));
+            $event->add('params', array('name' => 'item_points', 'value' => $item->itemtype->kind . $item->points_percent()));
+
+            $event->save();
+
+            $event->notify($this->location->getVisibleCharacters());
+            
+        } catch (Exception $e){
+            
+            $this->redirectError($e->getMessage(), 'user/inventory/items');
+            
+        }
         
         $this->redirect('events');
         
@@ -102,46 +102,44 @@ class Controller_User_Inventory extends Controller_Base_Character {
     public function action_give() {
     
         $item_id = $this->request->param('id');
+        $item = new Model_Item($item_id);
         
         if (!$this->character->hasItem($item_id)) {
             $this->redirectError('Nie posiadasz tego przedmiotu!', 'events');
         }
         
         if (HTTP_Request::POST == $this->request->method()) {
-            $recipient = $this->request->post('character_id');
-            if (!$this->location->isHearable($recipient)) {
-                $this->redirectError('Tej osoby już tu nie ma', 'events');
-            }
-            if ($this->request->post('item_id') != $item_id || !$this->character->hasItem($item_id)) {
-                $this->redirectError('Nie posiadasz tego przedmiotu!', 'events');
-            }
-            $this->character->giveItemTo($item_id, $recipient);
             
-            //generate event
-            $event_sender = Model_EventSender::getInstance(
-                Model_Event::getInstance(
-                    Model_Event::GIVE_ITEM, $this->game->raw_time, $this->redis
-                )
-            );
+            $recipient = new Model_Character($this->request->post('character_id'));
 
-            $event_sender->setSender($this->character->getId());
-            $event_sender->setRecipient($recipient);
-            $event_sender->setItem($item_id);
+            try {
 
-            $event_sender->addRecipients($this->location->getVisibleCharacters());
-            $event_sender->send();
-        
-            Model_EventNotifier::notify(
-                $event_sender->getEvent()->getRecipients(), 
-                $event_sender->getEvent()->getId(), 
-                $this->redis, $this->lang
-            );
+                $this->character->give_item($item, $recipient);
+
+                //wysłanie eventu
+                $event = new Model_Event();
+                $event->type = Model_Event::GIVE_ITEM;
+                $event->date = $this->game->getRawTime();
+
+                $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+                $event->add('params', array('name' => 'rcpt', 'value' => $recipient->id));
+                $event->add('params', array('name' => 'item_id', 'value' => $item->id));
+                $event->add('params', array('name' => 'item_points', 'value' => $item->itemtype->kind . $item->points_percent()));
+
+                $event->save();
+
+                $event->notify($this->location->getVisibleCharacters());
+
+            } catch (Exception $e){
+
+                $this->redirectError($e->getMessage(), 'user/inventory/items');
+
+            }
             
             $this->redirect('events');
             
         }
-        
-        $item = new Model_Item($item_id);
+
         $characters = $this->location->getHearableCharacters();
         $this->view->characters = $this->character->charactersSelect($characters, false);
 

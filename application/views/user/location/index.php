@@ -25,7 +25,7 @@
         </div>
         <?php echo $location['used_slots']; ?> out of <?php echo $location['res_slots']; ?> resource slots are used<br />
         <?php foreach ($location['resources'] as $res): ?>
-            <?php echo HTML::anchor('user/project/get_raw/'.$res['id'], '[zbieraj]'); ?>
-            <?php echo $res['name']; ?> (<?php echo $res['id']; ?>)<br />
+            <?php echo HTML::anchor('user/project/get_raw/'.$res->id, '[zbieraj]'); ?>
+            <?php echo $res->name; ?> (<?php echo $res->id; ?>)<br />
         <?php endforeach; ?>
 <?php endif; ?>

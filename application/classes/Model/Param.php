@@ -67,8 +67,43 @@ class Model_Param extends OHM {
         return ORM::factory('Resource', $id)->d;
     }
      
-    private static function loc_type($id) {
+    private static function item_id($id) {
+        return ORM::factory('Item', $id)->itemtype->name;
+    }
+    
+    private static function location_type($id) {
         return ORM::factory('LocationClass', $id)->name;
+    }
+    
+    private static function item_points($points) {
+        
+        $states = array(
+            'm' => array(
+                'zużyty', 'często używany', 'używany', 'nowy', 'całkiem nowy'
+            ),
+            'k' => array(
+                'zużyta', 'często używana', 'używana', 'nowa', 'całkiem nowa'
+            )
+        );
+        
+        $type = strtolower($points[0]);
+        $points = intval(substr($points,1));
+        
+        if (!in_array($type, array('m', 'k', 'n')) || $points < 0  || $points > 100) {
+            return '[nieprawidłowy]';
+        }
+        
+        if ($points > 80) {
+            return $states[$type][4];
+        } elseif ($points > 60) {
+            return $states[$type][3];
+        } elseif ($points > 40) {
+            return $states[$type][2];
+        } elseif ($points > 20) {
+            return $states[$type][1];
+        } else {
+            return $states[$type][0];
+        }
     }
 }
 

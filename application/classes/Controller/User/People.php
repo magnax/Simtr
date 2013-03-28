@@ -4,7 +4,7 @@ class Controller_User_People extends Controller_Base_Character {
 
     public function action_index() {
 
-        $this->view->characters = $this->location->getCharacters($this->character);
+        $this->view->characters = $this->location->get_characters($this->character);
         
     }
 
@@ -55,6 +55,9 @@ class Controller_User_People extends Controller_Base_Character {
             //set victim damage (or generate death event if vitality <= 0
             $victim->setDamage($damage);
             
+            //creating event
+            $event = new Model_Event();
+            
             if ($victim->isDying()) {
                 
                 $body = new Model_Corpse();
@@ -72,48 +75,35 @@ class Controller_User_People extends Controller_Base_Character {
                 $victim->life = 0;
                 $victim->save();
                 
-                //generate event & message
-                $event_sender = Model_EventSender::getInstance(
-                    Model_Event::getInstance(
-                        Model_Event::KILL_PERSON, $this->game->raw_time, $this->redis
-                    )
-                );
+                $event->type = Model_Event::KILL_PERSON;
 
             } else {
             
-                //generate event & message
-                $event_sender = Model_EventSender::getInstance(
-                    Model_Event::getInstance(
-                        Model_Event::HIT_PERSON, $this->game->raw_time, $this->redis
-                    )
-                );
-
-                $event_sender->setDamage($damage);
-                $event_sender->setShieldTypeID(-1);
-                $event_sender->setShield(0);
+                $event->type = Model_Event::HIT_PERSON;
+                
+                $event->add('params', array('name' => 'dmg', 'value' => $damage));
+                //shield ID (item from inventory)
+                $event->add('params', array('name' => 'shid', 'value' => -1));
+                //poinst saved from shield
+                $event->add('params', array('name' => 'shd', 'value' => 0));
                 
                 //set time of last attack
                 $key = "hit:{$this->character->id}:{$character_id}";
                 $this->redis->set($key, $this->game->raw_time);
                 $this->redis->expire($key, Model_User::HIT_GAP);
             }
+
+            $event->date = $this->game->getRawTime();
+
+            $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+            $event->add('params', array('name' => 'rcpt', 'value' => $character_id));
+            $event->add('params', array('name' => 'skill', 'value' => $this->character->fighting));
+            $event->add('params', array('name' => 'wpid', 'value' => $_POST['weapon']));
+
+            $event->save();
+
+            $event->notify($this->location->getHearableCharacters());
             
-            $event_sender->setRecipient($character_id);           
-            $event_sender->setSender($this->character->id);
-                
-            //set fighting skill
-            $event_sender->setSkill($this->character->fighting);
-            $event_sender->setWeaponTypeID($_POST['weapon']);
-                
-            $event_sender->addRecipients($this->location->getHearableCharacters());    
-            $event_sender->send();
-            
-            Model_EventNotifier::notify(
-                $event_sender->getEvent()->getRecipients(), 
-                $event_sender->getEvent()->getId(), 
-                $this->redis, $this->lang
-            );
-        
             $this->redirect('events');
         }
             

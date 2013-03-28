@@ -1,5 +1,13 @@
 <?php
 
+//ArriveInfo
+$key = "global:event_tpl:ArriveInfo";
+$person = 1;
+$this->redis->set("$key:$person", 'Znajdujesz się w miejscu, które wygląda jak %s, widzisz tu %s innych osób');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->lpush("$key:$person:params", 'characters_count');$loaded++;
+$this->redis->lpush("$key:$person:params", 'location_type');$loaded++;
+
 //BuryEnd
 $key = "global:event_tpl:BuryEnd";
 $person = 1;
@@ -255,53 +263,53 @@ $key = "global:event_tpl:PutItem";
 $person = 1;
 $this->redis->set("$key:$person", 'Odkładasz %s %s');$loaded++;
 $this->redis->del("$key:$person:params");
-$this->redis->rpush("$key:$person:params", 'stt');$loaded++;
-$this->redis->rpush("$key:$person:params", 'itemid');$loaded++;
+$this->redis->rpush("$key:$person:params", 'item_points');$loaded++;
+$this->redis->rpush("$key:$person:params", 'item_id');$loaded++;
 
 $person = 3;
 $this->redis->set("$key:$person", 'Widzisz jak %s odkłada %s %s');$loaded++;
 $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
-$this->redis->rpush("$key:$person:params", 'stt');$loaded++;
-$this->redis->rpush("$key:$person:params", 'itemid');$loaded++;
+$this->redis->rpush("$key:$person:params", 'item_points');$loaded++;
+$this->redis->rpush("$key:$person:params", 'item_id');$loaded++;
 
 //GetItem
 $key = "global:event_tpl:GetItem";
 $person = 1;
 $this->redis->set("$key:$person", 'Podnosisz %s %s');$loaded++;
 $this->redis->del("$key:$person:params");
-$this->redis->rpush("$key:$person:params", 'stt');$loaded++;
-$this->redis->rpush("$key:$person:params", 'itemid');$loaded++;
+$this->redis->rpush("$key:$person:params", 'item_points');$loaded++;
+$this->redis->rpush("$key:$person:params", 'item_id');$loaded++;
 
 $person = 3;
 $this->redis->set("$key:$person", 'Widzisz jak %s bierze %s %s');$loaded++;
 $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
-$this->redis->rpush("$key:$person:params", 'stt');$loaded++;
-$this->redis->rpush("$key:$person:params", 'itemid');$loaded++;
+$this->redis->rpush("$key:$person:params", 'item_points');$loaded++;
+$this->redis->rpush("$key:$person:params", 'item_id');$loaded++;
 
 //GiveItem
 $key = "global:event_tpl:GiveItem";
 $person = 1;
 $this->redis->set("$key:$person", 'Podajesz %s %s do %s');$loaded++;
 $this->redis->del("$key:$person:params");
-$this->redis->rpush("$key:$person:params", 'stt');$loaded++;
-$this->redis->rpush("$key:$person:params", 'itemid');$loaded++;
+$this->redis->rpush("$key:$person:params", 'item_points');$loaded++;
+$this->redis->rpush("$key:$person:params", 'item_id');$loaded++;
 $this->redis->rpush("$key:$person:params", 'rcpt');$loaded++;
 
 $person = 2;
 $this->redis->set("$key:$person", '%s podaje Ci %s %s');$loaded++;
 $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
-$this->redis->rpush("$key:$person:params", 'stt');$loaded++;
-$this->redis->rpush("$key:$person:params", 'itemid');$loaded++;
+$this->redis->rpush("$key:$person:params", 'item_points');$loaded++;
+$this->redis->rpush("$key:$person:params", 'item_id');$loaded++;
 
 $person = 3;
 $this->redis->set("$key:$person", 'Widzisz jak %s podaje %s %s do %s');$loaded++;
 $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
-$this->redis->rpush("$key:$person:params", 'stt');$loaded++;
-$this->redis->rpush("$key:$person:params", 'itemid');$loaded++;
+$this->redis->rpush("$key:$person:params", 'item_points');$loaded++;
+$this->redis->rpush("$key:$person:params", 'item_id');$loaded++;
 $this->redis->rpush("$key:$person:params", 'rcpt');$loaded++;
 
 //EnterLocation

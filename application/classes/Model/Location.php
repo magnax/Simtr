@@ -3,11 +3,7 @@
 class Model_Location extends ORM {  
     
     protected $_belongs_to = array(
-        'town' => array(
-            'model' => 'Town',
-            'foreign_key' => 'location_id',
-            'far_key' => 'id',
-        ),
+        
         'locationtype' => array(
             'model' => 'LocationType',
             'foreign_key' => 'locationtype_id',
@@ -39,10 +35,15 @@ class Model_Location extends ORM {
             'model' => 'Lock',
             'foreign_key' => 'location_id',
             'far_key' => 'id'
-        )
+        ),
+        'town' => array(
+            'model' => 'Town',
+            'foreign_key' => 'location_id',
+            'far_key' => 'id',
+        ),
     );
 
-    public function getCharacters(Model_Character $character = null) {
+    public function get_characters(Model_Character $character) {
         $characters = $this->characters->find_all()->as_array();
         foreach($characters as &$ch) {
             $ch->chname = $character->getChname($ch->id);
@@ -213,6 +214,20 @@ class Model_Location extends ORM {
     public function putItem($item_id) {
         
         RedisDB::srem("loc_items:{$this->id}", $item_id);
+        
+    }
+    
+    /**
+     * 
+     * checks if given item belongs to location
+     * 
+     * @param type $item_id
+     * @return type
+     */
+    public function hasItem($item_id) {
+        
+        $items = RedisDB::smembers("loc_items:{$this->id}");
+        return in_array($item_id, $items);
         
     }
     

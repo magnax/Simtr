@@ -49,6 +49,10 @@ class Model_GameTime {
             $daemon_path = $this->path ? $this->path : self::PATH;
         }
         
+        if (!file_exists($daemon_path)) {
+            throw new BadDaemonException('Bad daemon? Should be installed in '.$daemon_path);
+        }
+        
         $output = @shell_exec($daemon_path.' say');
         
         if (strpos($output, 'Error:') !== false) {
@@ -60,7 +64,7 @@ class Model_GameTime {
         if (is_integer($output) && $output) {
             return $output;
         } else {
-            throw new BadDaemonException('Bad daemon? Should be installed in '.$daemon_path);
+            throw new Exception('Wrong daemon output!');
         }
         
     }

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit colors="true" bootstrap="../../modules/unittest/bootstrap.php">
+    <php>
+        <server name="KOHANA_ENV" value="TESTING" />
+    </php>
     <testsuites>
         <testsuite name="Model">
             <directory>./</directory>

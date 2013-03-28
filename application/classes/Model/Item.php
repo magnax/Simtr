@@ -8,7 +8,11 @@ class Model_Item extends ORM {
         ),
     );
 
-
+    public function points_percent() {
+        
+        return round(100 * $this->points / $this->itemtype->points, 0);
+        
+    }
 //    abstract public function fetchAll($filter);
     
 }

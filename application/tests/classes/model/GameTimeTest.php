@@ -1,7 +1,5 @@
 <?php defined('SYSPATH') or die('No direct script access');
 
-include_once APPPATH.'classes/model/GameTime.php';
-
 class Model_GameTimeTest extends Kohana_UnitTest_TestCase {
     
     public function testAdd() {

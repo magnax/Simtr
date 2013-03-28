@@ -47,13 +47,14 @@ class Model_Character extends ORM {
 
     private $_pagination = null;
 
-    //memorized characters names
-    public $character_names = null;
-    public $location_names = null;
+    //memorized character name
+    public $chname = null;
     
-    public $raw_time;
-    
-    public $lang = 'pl';
+//    public $location_names = null;
+//    
+//    public $raw_time;
+//    
+//    public $lang = 'pl';
 
     public function getInfo($raw_time) {
         
@@ -111,7 +112,7 @@ class Model_Character extends ORM {
     }
 
     
-    public function getUnknownName($char_id, $lang) {
+    public function getUnknownName($char_id) {
         return 'nieznany ktoś';
     }
 
@@ -227,14 +228,23 @@ class Model_Character extends ORM {
         return sprintf(str_replace('{{base}}', URL::base(), self::$chname_link), $dest_character_id, $this->getChname($dest_character_id));
     }
 
+    /**
+     * 
+     * get other character remembered name
+     * 
+     * @param integer $dest_character_id
+     * @return string name of character or unknown character string
+     */
     public function getChname($dest_character_id) {
+        
         $name = ORM::factory('ChName')->name($this->id, $dest_character_id)->name;
         if (!$name) {
             $name = ($this->id == $dest_character_id) 
                 ? $this->name 
-                : $this->getUnknownName($dest_character_id, $this->lang);
+                : $this->getUnknownName($dest_character_id);
         }
         return $name;
+        
     }
 
     public function getLname($for_location_id) {
@@ -423,12 +433,82 @@ class Model_Character extends ORM {
 
     public function add_raw_to_project(Model_Project $project, $resource_id, $amount) {
         
+        if (!is_numeric($amount) || ($amount <= 0)) {
+            throw new Exception('Nieprawidłowa liczba: >>' . $amount . '<<');
+        }
+        
+        $amount = (int) $amount;
+        $raws = $this->getRaws(true);
+        
+        if (!isset($raws[$resource_id])) {
+            throw new Exception('Nieprawidłowy materiał');
+        }
+        
+        if ($amount > $raws[$resource_id]) {
+            throw new Exception('Nieprawidłowa ilość');
+        }
+        
         //odjęcie postaci podanej ilości materiału
         $this->putRaw($resource_id, $amount);
         $project->addRaw($resource_id, $amount);
         
     }
     
+    public function drop_item(Model_Item $item, Model_Location $location) {
+        
+        if (!$item->loaded()) {
+            throw new Exception('Nieprawidłowy przedmiot');
+        }
+        
+        if (!$this->hasItem($item->id)) {
+            throw new Exception('Nie posiadasz tego przedmiotu');
+        }
+        
+        $this->putItem($item->id);
+        $location->addItem($item->id);
+        
+    }
+    
+    /**
+     * 
+     * get item from the ground (location objects) to character inventory
+     * 
+     * @param Model_Item $item
+     * @param Model_Location $location
+     * @throws Exception
+     */
+    public function get_item(Model_Item $item, Model_Location $location) {
+        
+        if (!$item->loaded()) {
+            throw new Exception('Nieprawidłowy przedmiot');
+        }
+        
+        if (!$location->hasItem($item->id)) {
+            throw new Exception('Ten przedmiot nie znajduje się w lokacji');
+        }
+        
+        $location->putItem($item->id);
+        $this->addItem($item->id);
+        
+    }
+    
+    public function give_item(Model_Item $item, Model_Character $recipient) {
+        
+        if (!$recipient->loaded() || !$this->location->isHearable($recipient->id)) {
+            throw new Exception('Tej osoby już tu nie ma');
+        }
+        
+        if (!$this->hasItem($item->id)) {
+            throw new Exception('Nie posiadasz tego przedmiotu!');
+        }
+        
+        $this->putItem($item->id);
+        $recipient->addItem($item->id);
+
+    }
+
+    
+
     public function getItems() {
         
         $items = RedisDB::smembers("items:{$this->id}");
@@ -494,6 +574,13 @@ class Model_Character extends ORM {
             
     }
     
+    /**
+     * 
+     * @todo this method doesn't really belong to character, it's a helper method
+     * 
+     * @param type $skill
+     * @return string
+     */
     public static function getSkillString($skill) {
         if ($skill >= 1.2) {
             return 'po mistrzowsku';
@@ -521,12 +608,12 @@ class Model_Character extends ORM {
         
     }
     
-    public function leaveCurrentProject($redis, $raw_time) {
+    public function leaveCurrentProject($raw_time) {
         
         $project_id = RedisDB::get("characters:{$this->id}:current_project");
         
         if ($project_id) {
-            $manager = Model_ProjectManager::getInstance(null, $redis)
+            $manager = Model_ProjectManager::getInstance(null, RedisDB::instance())
                 ->findOneById($project_id);
 
             $manager->removeParticipant($this, $raw_time);
@@ -537,6 +624,31 @@ class Model_Character extends ORM {
         
     }
     
+    public function enter_location(Model_Location $dest_location) {
+        
+        if (!$dest_location->loaded()) {
+            throw new Exception('Nieprawidłowe miejsce');
+        }
+        
+        $lock = $this->location->lock;
+        
+        if ($lock->locked && !$this->character->hasKey($lock->nr)) {
+            throw new Exception('Nie możesz wyjść, zamknięte');
+        }
+        
+        if ($dest_location->lock->locked && !$this->character->hasKey($dest_location->lock->nr)) {
+            throw new Exception('Nie możesz wejść, zamknięte');
+        }
+        
+        $gametime = new Model_GameTime(Kohana::$config->load('general.paths.time_daemon_path'));
+        //if user is working on the project, leave it before enter
+        $this->leaveCurrentProject($gametime->getRawTime());
+        
+        $this->location_id = $dest_location->id;
+        $this->save();
+        
+    }
+
     public function hasItem($item_id) {
         $items = RedisDB::smembers("items:{$this->id}");
         return in_array($item_id, $items);
@@ -554,11 +666,7 @@ class Model_Character extends ORM {
         $returned = array();
         foreach ($characters_ids as $ch) {
             if ($ch != $this->id || $with_self) {
-                $name = ORM::factory('ChName')->name($this->id, $ch)->name;
-                if (!$name) {
-                    $name = $this->getUnknownName($ch, $this->lang);
-                }
-                $returned[$ch] = $name;
+                $returned[$ch] = $this->getChname($ch);
             }
         }
         return $returned;

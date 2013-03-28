@@ -18,3 +18,4 @@
 /.htaccess
 /simtrd/node/config.js
 /application/config/redis.php
+/application/config/testing/database.php

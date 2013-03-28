@@ -2,7 +2,7 @@
 
 class Model_Town extends ORM {  
     
-    protected $_belongs_to = array(
+    protected $_has_one = array(
         'location' => array(
             'model' => 'Location',
             'foreign_key' => 'location_id',
