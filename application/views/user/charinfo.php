@@ -24,7 +24,7 @@
                 Przebudzenie:
             </td>
             <td>
-                Dnia <?php echo Model_GameTime::formatDateTime($character['spawn_day'], 'd'); ?> w <?php echo HTML::anchor('lname?id='.$character['spawn_location_id'], $character['spawn_location']); ?>
+                Dnia <?php echo Model_GameTime::formatDateTime($character['spawn_day'], 'd'); ?> w <?php echo HTML::anchor('lname/'.$character['spawn_location_id'], $character['spawn_location']); ?>
             </td>
         </tr>
         <tr>
@@ -40,10 +40,10 @@
                 Miejsce:
             </td>
             <td>
-               <?php echo HTML::anchor('lname?id='.$character['location_id'], $character['location']); ?>
+               <?php echo HTML::anchor('lname/'.$character['location_id'], $character['location']); ?>
                 <?php if ($character['sublocation']): ?>
                     <?php if ($character['sublocation_id']): ?>
-                        : <?php echo HTML::anchor('lname?id='.$character['sublocation_id'], $character['sublocation']); ?>
+                        : <?php echo HTML::anchor('lname/'.$character['sublocation_id'], $character['sublocation']); ?>
                     <?php else: ?>
                         : <?= $character['sublocation']; ?>
                     <?php endif; ?>

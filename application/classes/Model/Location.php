@@ -300,6 +300,27 @@ class Model_Location extends ORM {
         
     }
     
+    /**
+     * 
+     * get other location remembered name
+     * 
+     * @param integer $character_id
+     * @return string name of location or unknown location string
+     */
+    public function get_lname($character_id) {
+        
+        $name = ORM::factory('LName')->name($character_id, $this->id)->name;
+        if (!$name) {
+            return $this->getUnknownName();
+        }
+        return $name;
+        
+    }
+    
+    public function getUnknownName() {
+        return 'nienazwane miejsce';
+    }
+    
 }
 
 ?>

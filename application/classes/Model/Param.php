@@ -59,7 +59,7 @@ class Model_Param extends OHM {
         } else {
             $location_name = ORM::factory('LName')->name($character->id, $id)->name;
             $lname = Utils::getLocationName($location_name);
-            return '<a href="lname?id='.$id.'">'.$lname.'</a>';
+            return '<a href="lname/'.$id.'">'.$lname.'</a>';
         }
     }
     

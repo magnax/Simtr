@@ -1,5 +1,5 @@
 <div class="title_bar">
-    <?php echo HTML::anchor('lname?id='.$character['location_id'], '['.$character['location'].']'); ?> - 
+    <?php echo HTML::anchor('lname/'.$character['location_id'], '['.$character['location'].']'); ?> - 
     [<?= $locationtype; ?>]: obiekty
 </div>
 

@@ -42,32 +42,7 @@ class Model_Event_EnterLocation extends Model_Event {
 
     public function dispatchArgs(array $args, Model_Character $character, $lang) {
         
-        $location = ORM::factory('Location')->where('id', '=', $this->locid)
-            ->find();
-        
-        $returned = parent::dispatchArgs($args, $character, $lang);
-        
-        if ($location->parent_id) {
-            $returned['locid'] = $location->name;
-        } else {
-            $location_name = ORM::factory('LName')->name($character->id, $this->locid)->name;
-            $lname = Utils::getLocationName($location_name);
-            $returned['locid'] = '<a href="lname?id='.$this->locid.'">'.$lname.'</a>';
-        }
-        
-        if (in_array('exit_id', $args) && isset($this->exit_id)) {
-            $exit_location = ORM::factory('Location')->where('id', '=', $this->exit_id)
-            ->find();
-            if ($exit_location->parent_id) {
-                $returned['exit_id'] = $exit_location->name;
-            } else {
-                $exit_location_name = ORM::factory('LName')->name($character->id, $this->exit_id)->name;
-                $lname = Utils::getLocationName($exit_location_name);
-                $returned['exit_id'] = '<a href="lname?id='.$this->exit_id.'">'.$lname.'</a>';
-            }
-        }
-        
-        return $returned;
+        return;
         
     }    
     

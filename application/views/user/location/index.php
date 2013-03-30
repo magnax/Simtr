@@ -1,10 +1,10 @@
 <div class="title_bar">
-    <?php echo HTML::anchor('lname?id='.$character['location_id'], $character['location']); ?>: WYJŚCIA
+    <?php echo HTML::anchor('lname/'.$character['location_id'], $character['location']); ?>: WYJŚCIA
 </div>
 
 <?php if ($doors): ?>
     <div>
-        <?php echo HTML::anchor('user/location/enter/'.$doors['id'], '[wyjdź]');?> Wyjście do <?php echo HTML::anchor('lname?id='.$doors['id'], $doors['name']); ?>
+        <?php echo HTML::anchor('user/location/enter/'.$doors['id'], '[wyjdź]');?> Wyjście do <?php echo HTML::anchor('lname/'.$doors['id'], $doors['name']); ?>
     </div>
 <?php endif; ?>
 
@@ -21,7 +21,7 @@
 <?php endif; ?>
     <?php if ($locationtype == 1): ?>
         <div class="title_bar">
-            <?php echo HTML::anchor('lname?id='.$character['location_id'], $character['location']); ?>: OPIS
+            <?php echo HTML::anchor('lname/'.$character['location_id'], $character['location']); ?>: OPIS
         </div>
         <?php echo $location['used_slots']; ?> out of <?php echo $location['res_slots']; ?> resource slots are used<br />
         <?php foreach ($location['resources'] as $res): ?>
