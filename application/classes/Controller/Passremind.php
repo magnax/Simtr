@@ -3,7 +3,7 @@
 /**
  * password remind controller
  */
-class Controller_PassRemind extends Controller_Base_Guest {
+class Controller_Passremind extends Controller_Base_Guest {
     
     function action_index() {
         

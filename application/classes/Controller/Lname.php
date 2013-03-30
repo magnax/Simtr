@@ -5,7 +5,7 @@
  * allows get and remember location name
  */
 
-class Controller_LName extends Controller_Base_Character {
+class Controller_Lname extends Controller_Base_Character {
     
     public function action_index() {
         
