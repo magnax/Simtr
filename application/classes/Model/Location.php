@@ -318,7 +318,7 @@ class Model_Location extends ORM {
     }
     
     public function getUnknownName() {
-        return 'nienazwane miejsce';
+        return ($this->parent_id) ? $this->name : 'nienazwane miejsce';
     }
     
 }

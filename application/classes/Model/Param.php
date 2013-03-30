@@ -51,16 +51,12 @@ class Model_Param extends OHM {
     }
     
     private static function _location_link($id, $character) {
+        
         $location = ORM::factory('Location')->where('id', '=', $id)
             ->find();
+        $lname = $location->get_lname($character->id);
+        return '<a href="lname/'.$id.'">'.$lname.'</a>';
         
-        if ($location->parent_id) {
-            return $location->name;
-        } else {
-            $location_name = ORM::factory('LName')->name($character->id, $id)->name;
-            $lname = Utils::getLocationName($location_name);
-            return '<a href="lname/'.$id.'">'.$lname.'</a>';
-        }
     }
     
     private static function res_id($id, $character) {
