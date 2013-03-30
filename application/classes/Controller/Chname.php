@@ -5,7 +5,7 @@
  * allows to get and change remembered characters names
  */
 
-class Controller_ChName extends Controller_Base_Character {
+class Controller_Chname extends Controller_Base_Character {
     
     /**
      * change name of given character
