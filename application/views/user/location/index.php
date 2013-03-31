@@ -1,5 +1,5 @@
 <div class="title_bar">
-    <?php echo HTML::anchor('lname/'.$character['location_id'], $character['location']); ?>: WYJŚCIA
+    <?php echo HTML::anchor('lname/'.$location->id, $location->get_lname($character['id'])); ?>: WYJŚCIA
 </div>
 
 <?php if ($doors): ?>
@@ -17,14 +17,14 @@
     </div>
 <?php endforeach; ?>
 <?php else: ?>
-    No roads from this location! You're trapped!
+    Nie widać żadnych dróg
 <?php endif; ?>
     <?php if ($locationtype == 1): ?>
         <div class="title_bar">
             <?php echo HTML::anchor('lname/'.$character['location_id'], $character['location']); ?>: OPIS
         </div>
-        <?php echo $location['used_slots']; ?> out of <?php echo $location['res_slots']; ?> resource slots are used<br />
-        <?php foreach ($location['resources'] as $res): ?>
+        Zajętych miejsc wydobycia: <?php echo $used_slots; ?> z <?php echo $res_slots; ?> dostępnych<br />
+        <?php foreach ($resources as $res): ?>
             <?php echo HTML::anchor('user/project/get_raw/'.$res->id, '[zbieraj]'); ?>
             <?php echo $res->name; ?> (<?php echo $res->id; ?>)<br />
         <?php endforeach; ?>

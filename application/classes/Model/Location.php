@@ -14,6 +14,11 @@ class Model_Location extends ORM {
             'foreign_key' => 'id',
             'far_key' => 'class_id',
         ),
+        'parent' => array(
+            'model' => 'Location',
+            'foreign_key' => 'parent_id',
+            'far_key' => 'id',
+        ),
     );
     
     protected $_has_many = array(

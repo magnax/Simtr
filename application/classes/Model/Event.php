@@ -39,7 +39,12 @@ class Model_Event extends OHM {
     
     public function notify(array $recipients) {
         
-        //require_once APPPATH . 'modules/elephant/classes/client.php';
+        $elephant = new ElephantIOClient(Kohana::$config->load('general.server_ip'));
+        try {
+            $elephant->init();
+        } catch (Exception $e) {
+            $elephant_error = $e->getMessage();
+        }
         
         //add event ID to each recipient events list
         foreach ($recipients as $character_id) {
@@ -48,7 +53,7 @@ class Model_Event extends OHM {
             
             $this->_redis->lpush("characters:$character_id:events", $this->id);
             
-            Model_EventNotifier::notify($notified_char, $this);
+            Model_EventNotifier::notify($elephant, $notified_char, $this);
             
         }
            

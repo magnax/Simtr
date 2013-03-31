@@ -7,14 +7,7 @@
 
 class Model_EventNotifier {
     
-    public static function notify(Model_Character $notified_char, Model_Event $event) {
-        
-        $elephant = new ElephantIOClient(Kohana::$config->load('general.server_ip'));
-        try {
-            $elephant->init();
-        } catch (Exception $e) {
-            $elephant_error = $e->getMessage();
-        }
+    public static function notify(ElephantIOClient $elephant, Model_Character $notified_char, Model_Event $event) {
 
         if ($notified_char->connectedChar()) {
 
@@ -46,7 +39,7 @@ class Model_EventNotifier {
             }
         }
         
-        if (!isset($elephant_error) && isset($data)) {
+        if (isset($data)) {
             $elephant->send(ElephantIOClient::TYPE_EVENT, null, null, $data);
         }
            

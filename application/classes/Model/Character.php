@@ -58,9 +58,9 @@ class Model_Character extends ORM {
         
         if ($location->parent_id) {
             $parent_location = ORM::factory('Location', $location->parent_id);
-            $sublocation = $location->name;
+            $sublocation = $location->get_lname($this->id); //$location->name;
             $location_id = $parent_location->id;
-            $location_name = ORM::factory('LName')->name($this->id, $parent_location->id)->name;
+            $location_name = $parent_location->get_lname($this->id); //ORM::factory('LName')->name($this->id, $parent_location->id)->name;
         } else {
             //is grand location
             $sublocation = null;

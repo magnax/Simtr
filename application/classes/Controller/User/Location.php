@@ -3,36 +3,37 @@
 class Controller_User_Location extends Controller_Base_Character {
 
     public function action_index() {
-        
-        //get resources list
-        $resources = $this->location->resources->find_all()->as_array();
-        
-        $location_resources = array();
-        foreach ($resources as $r) {
-            $location_resources[] = array(
-                'id' => $r->id,
-                'name'=> $r->name
-            );
-        }
 
-        $this->view->location = $this->location->as_array();
+        $this->view->location = $this->location; //->as_array();
         
         $this->view->locationtype = $this->location->locationtype_id;
         
         if ($this->location->locationtype_id == 1) {
             $this->view->exits = array();
-            $this->view->location['used_slots'] = 999;
-            $this->view->location['res_slots'] = $this->location->town->slots;
-            $this->view->location['resources'] = $resources;
+            $this->view->used_slots = 999;
+            $this->view->res_slots = $this->location->town->slots;
+            
+            //get resources list
+            $resources = $this->location->resources->find_all()->as_array();
+
+            $location_resources = array();
+            foreach ($resources as $r) {
+                $location_resources[] = array(
+                    'id' => $r->id,
+                    'name'=> $r->name
+                );
+            }
+        
+            $this->view->resources = $resources;
         } else {
             $this->view->exits = array();
         }
         
         if ($this->location->parent_id) {
-            $location_name = ORM::factory('LName')->name($this->character->id, $this->location->parent_id)->name;
+            $location_name = $this->location->get_lname($this->character->id); //ORM::factory('LName')->name($this->character->id, $this->location->parent_id)->name;
             $this->view->doors = array(
                 'id' => $this->location->parent_id,
-                'name' => Utils::getLocationName($location_name),
+                'name' => $this->location->parent->get_lname($this->character->id), //Utils::getLocationName($location_name),
             );
         } else {
             $this->view->doors = null;
@@ -136,10 +137,10 @@ class Controller_User_Location extends Controller_Base_Character {
             //first get recipients from current loc
             $current_recipients = $this->location->getVisibleCharacters();
             
-            $this->character->enter_location($dest_location);
-            
             //then - recipients from destination location
             $dest_recipients = $dest_location->getVisibleCharacters();
+            
+            $this->character->enter_location($dest_location);
 
             //merge all recipients in one list
             $recipients = array_merge($current_recipients, $dest_recipients);
