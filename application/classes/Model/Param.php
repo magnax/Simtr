@@ -84,8 +84,7 @@ class Model_Param extends OHM {
     }
     
     private static function item_points($points) {
-        
-        return $points;
+
         $states = array(
             'm' => array(
                 'zużyty', 'często używany', 'używany', 'nowy', 'całkiem nowy'
