@@ -65,22 +65,24 @@ class Controller_User_Notes extends Controller_Base_Character {
     public function action_put() {
         
         $note = new Model_Note($this->request->param('id'));
-        if ($note->id) {
+        if ($note->loaded()) {
+            
+            $this->character->put_note_to_location($this->location, $note);
+            
+            //wysłanie eventu
+            $event = new Model_Event();
+            $event->type = Model_Event::PUT_NOTE;
+            $event->date = $this->game->getRawTime();
+
+            $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+            $event->add('params', array('name' => 'note_title', 'value' => $note->title));
+
+            $event->save();
+
+            $event->notify($this->location->getVisibleCharacters());
+            
             $this->redis->srem("notes:{$this->character->id}", $note->id);
             $this->redis->sadd("locations:{$this->location->id}:notes", $note->id);
-            
-            //generate event
-            $event = Model_EventSender::getInstance(
-                Model_Event::getInstance(
-                    Model_Event::PUT_NOTE, $this->game->raw_time, $this->redis
-                )
-            );
-
-            $event->setSender($this->character->getId());
-            $event->setNote($note->title);
-
-            $event->addRecipients($this->location->getVisibleCharacters());
-            $event->send();
 
             $this->redirect('/events');
         } else {
@@ -93,22 +95,21 @@ class Controller_User_Notes extends Controller_Base_Character {
         
         $note = new Model_Note($this->request->param('id'));
         
-        if ($note->id) {
-            $this->redis->srem("locations:{$this->location->id}:notes", $note->id);
-            $this->redis->sadd("notes:{$this->character->id}", $note->id);
+        if ($note->loaded()) {
             
-            //generate event
-            $event = Model_EventSender::getInstance(
-                Model_Event::getInstance(
-                    Model_Event::GET_NOTE, $this->game->raw_time, $this->redis
-                )
-            );
+            $this->character->get_note_from_location($this->location, $note);
+            
+            //wysłanie eventu
+            $event = new Model_Event();
+            $event->type = Model_Event::GET_NOTE;
+            $event->date = $this->game->getRawTime();
 
-            $event->setSender($this->character->getId());
-            $event->setNote($note->title);
+            $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+            $event->add('params', array('name' => 'note_title', 'value' => $note->title));
 
-            $event->addRecipients($this->location->getVisibleCharacters());
-            $event->send();
+            $event->save();
+
+            $event->notify($this->location->getVisibleCharacters());
             
             $this->redirect('/events');
         } else {

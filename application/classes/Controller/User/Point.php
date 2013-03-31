@@ -11,21 +11,21 @@ class Controller_User_Point extends Controller_Base_Character {
      * pointing exit (road)
      * @param int $exit_id 
      */
-    public function action_e($exit_id) {
+    public function action_e() {
         
-        //generate event & message
-        $event_sender = Model_EventSender::getInstance(
-            Model_Event::getInstance(
-                Model_Event::POINT_EXIT, $this->game->raw_time, $this->redis
-            )
-        );
-
-        $event_sender->setExit($exit_id);           
-
-        $event_sender->setSender($this->character->id);
+        $pointed_location = new Model_Location($this->request->param('id'));
         
-        $event_sender->addRecipients($this->location->getHearableCharacters());
-        $event_sender->send();
+        //wysłanie eventu
+        $event = new Model_Event();
+        $event->type = Model_Event::POINT_EXIT;
+        $event->date = $this->game->getRawTime();
+
+        $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+        $event->add('params', array('name' => 'exit_id', 'value' => $pointed_location->id));
+
+        $event->save();
+
+        $event->notify($this->location->getHearableCharacters());
         
         //redirect to events page
         $this->redirect('events');
@@ -40,27 +40,21 @@ class Controller_User_Point extends Controller_Base_Character {
          * @todo check if this person can possibly be pointed
          */
         
-        //generate event & message
-        $event_sender = Model_EventSender::getInstance(
-            Model_Event::getInstance(
-                Model_Event::POINT_PERSON, $this->game->raw_time, $this->redis
-            )
-        );
+        //wysłanie eventu
+        $event = new Model_Event();
+        $event->type = Model_Event::POINT_PERSON;
+        $event->date = $this->game->getRawTime();
 
-        $event_sender->setRecipient($person);           
-        $event_sender->setSender($this->character->id);
+        $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+        $event->add('params', array('name' => 'rcpt', 'value' => $person));
 
-        $event_sender->addRecipients($this->location->getHearableCharacters());
-        $event_sender->send();
-         
-        //notify all recipients
-        Model_EventNotifier::notify(
-            $event_sender->getEvent()->getRecipients(), 
-            $event_sender->getEvent()->getId(), 
-            $this->redis, $this->lang
-        );
+        $event->save();
+
+        $event->notify($this->location->getHearableCharacters());
+        
         //redirect to events page
         $this->redirect('events');
+        
     }
     
 }

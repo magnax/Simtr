@@ -391,6 +391,21 @@ class Model_Character extends ORM {
         
     }
 
+    
+    public function get_note_from_location(Model_Location $location, Model_Note $note) {
+        
+        RedisDB::srem("locations:{$location->id}:notes", $note->id);
+        RedisDB::sadd("notes:{$this->id}", $note->id);
+        
+    }
+    
+    public function put_note_to_location(Model_Location $location, Model_Note $note) {
+        
+        RedisDB::srem("notes:{$this->id}", $note->id);
+        RedisDB::sadd("locations:{$location->id}:notes", $note->id);
+        
+    }
+
     public function give_raw_to_character($character_id, $resource_id, $amount) {
         
         
