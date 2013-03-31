@@ -67,6 +67,18 @@ class Model_Param extends OHM {
         return ORM::factory('Item', $id)->itemtype->name;
     }
     
+    private static function itemid($id) {
+        return ORM::factory('Item', $id)->itemtype->name;
+    }
+    
+    private static function wpid($id) {
+        return ORM::factory('ItemType', $id)->name;
+    }
+    
+    private static function shid($id) {
+        return ORM::factory('ItemType', $id)->name;
+    }
+    
     private static function location_type($id) {
         return ORM::factory('LocationClass', $id)->name;
     }
@@ -101,6 +113,21 @@ class Model_Param extends OHM {
             return $states[$type][0];
         }
     }
+    
+    private static function skill($skill) {
+        
+        $skills = array(
+            '0.8' => 'niezręcznie',
+            '0.9' => 'po amatorsku',
+            '1.0' => 'przeciętnie',
+            '1.1' => 'umiejętnie',
+            '1.2' => 'po mistrzowsku',
+        );
+        
+        return $skills[$skill];
+        
+    }
+    
 }
 
 ?>
