@@ -30,7 +30,8 @@ class Model_Project_Bury extends Model_Project {
         if (!$buried_name) {
             $buried_name = ORM::factory('Character')->getUnknownName($buried_char, $lang);
         }
-        return 'Zakopywanie ciała '.'<a href="/chname?id='.$buried_char.'">'.$buried_name.'</a>';
+        
+        return 'Zakopywanie ciała '.'<a href="/chname/'.$buried_char.'">'.$buried_name.'</a>';
     }
 
 }

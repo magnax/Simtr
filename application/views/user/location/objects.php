@@ -51,6 +51,6 @@
 <?php if (count($corpses)): ?>
     <div class="objects-menu">Ciała</div>
     <?php foreach ($corpses as $corpse): ?>
-        <?php echo HTML::anchor('user/location/bury/'.$corpse['id'], '[zakop]'); ?> Ciało <?php echo HTML::anchor('chname?id='.$corpse['character_id'], $corpse['name']); ?><br />
+        <?php echo HTML::anchor('user/location/bury/'.$corpse['id'], '[zakop]'); ?> Ciało <?php echo HTML::anchor('chname/'.$corpse['character_id'], $corpse['name']); ?><br />
     <?php endforeach; ?>
 <?php endif; ?>

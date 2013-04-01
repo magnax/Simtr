@@ -13,7 +13,7 @@
 </div>
 <div class="table_right">
     <?php foreach($project['workers'] as $worker): ?>
-        <a href="/chname?id=<?php echo $worker['id']; ?>"><?php echo $worker['name']; ?></a><br />
+        <a href="/chname/<?php echo $worker['id']; ?>"><?php echo $worker['name']; ?></a><br />
     <?php endforeach; ?>
 </div>
 <div class="clear"></div> 

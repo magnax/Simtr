@@ -4,7 +4,7 @@
  */
 class Model_Character extends ORM {
 
-    protected static $chname_link = '<a href="{{base}}chname?id=%d">%s</a>';
+    public static $chname_link = '<a href="{{base}}chname/%d">%s</a>';
 
     protected $_belongs_to = array(
         'spawn_location' => array(

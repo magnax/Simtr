@@ -8,7 +8,7 @@
                Nazwa:
             </td>
             <td width="420">
-               <?php echo HTML::anchor('chname?id='.$character['id'], $character['name']); ?>
+               <?php echo HTML::anchor('chname/'.$character['id'], $character['name']); ?>
             </td>
         </tr>
         <tr>

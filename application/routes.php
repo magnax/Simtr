@@ -8,9 +8,9 @@
 /**
  * lock/unlock buildings, vehicles, rooms
  */
-Route::set('lname', 'lname/<id>', array('id' => '[0-9]*'))
+Route::set('lname_or_chname', '<controller>/<id>', array('controller' => 'chname|lname', 'id' => '[0-9]*'))
     ->defaults(array(
-        'controller' => 'Lname',
+        'controller' => ':controller',
         'action' => 'index'
     ));
 Route::set('lock', 'lock(/<lock_nr>)', array('lock_nr' => '[0-9a-f]{4,12}'))

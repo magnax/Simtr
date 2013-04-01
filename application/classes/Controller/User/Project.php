@@ -34,9 +34,6 @@ class Controller_User_Project extends Controller_Base_Character {
             
             $project = $this->manager->findOneById($project_id, true);
             
-            $name = $this->character->getChname($project->owner_id);
-            $name = '<a href="/chname?id='.$project->owner_id.'">'.$name.'</a>';
-            
             $project_name = $project->getName();
             
             $workers = $this->manager->getWorkersIds($project_id);
@@ -46,7 +43,7 @@ class Controller_User_Project extends Controller_Base_Character {
             $this->view->projects[] = array(
                 'id' => $project->id,
                 'owner_id' => $project->owner_id,
-                'owner' => $name,
+                'owner_name' => $this->character->getChname($project->owner_id),
                 'name' => $project_name,
                 'created_at' => $project->created_at,
                 'progress' => $progress,
@@ -72,15 +69,8 @@ class Controller_User_Project extends Controller_Base_Character {
         $characters = $this->location->getHearableCharacters();
         if (in_array($project['owner_id'], $characters)) {
             $owner = ORM::factory('User', $project['owner_id']);
-            $name = ORM::factory('ChName')->name($this->character->id, $project['owner_id'])->name;
-            if (!$name) {
-                if ($project['owner_id'] == $this->character->id) {
-                    $name = $this->character->name;
-                } else {
-                    $name = ORM::factory('Character')->getUnknownName($project['owner_id'], $this->lang);
-                }
-            }
-            $project['owner'] = '<a href="/chname?id='.$project['owner_id'].'">'.$name.'</a>';
+            $name = $this->character->getChname($project['owner_id']);
+            $project['owner'] = '<a href="/chname/'.$project['owner_id'].'">'.$name.'</a>';
         } else {
             $project['owner'] = 'Już go tu nie ma';
         }
@@ -91,14 +81,7 @@ class Controller_User_Project extends Controller_Base_Character {
         
         if (is_array($workers)) {
             foreach ($workers as $worker) {
-                $name = ORM::factory('ChName')->name($this->character->id, $worker)->name;
-                if (!$name) {
-                    if ($worker == $this->character->id) {
-                        $name = $this->character->name;
-                    } else {
-                        $name = ORM::factory('Character')->getUnknownName($worker, $this->lang);
-                    }
-                }
+                $name = $this->character->getChname($worker);
                 $project['workers'][] = array(
                     'id'=>$worker,
                     'name'=>$name

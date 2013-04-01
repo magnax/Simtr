@@ -2,7 +2,7 @@
 <div id="people_list">
     <?php foreach ($characters as $ch): ?>
     <div>
-        <a href="<?= URL::base(); ?>chname?id=<?=$ch->id; ?>" title="Info o postaci">
+        <a href="<?= URL::base(); ?>chname/<?=$ch->id; ?>" title="Info o postaci">
             <img src="/assets/images/info.png" height=32 width=32>
         </a>
         <a href="<?= URL::base(); ?>user/point/person/<?=$ch->id; ?>" title="Wskaż tę postać">
