@@ -217,31 +217,27 @@ class Controller_User_Project extends Controller_Base_Character {
         
         if (HTTP_Request::POST == $this->request->method()) {
             
-            $project_manager = Model_ProjectManager::getInstance(
-                Model_Project::getInstance($project_type->key, $this->redis)//;
-            );
+            $project = Model_Project::factory($project_type->key);
 
             $data = array(
                 'name'=>'Produkcja: '.$spec->item->name,
                 'owner_id'=>$this->character->id,
-                'amount'=>1,
                 'time'=>$spec->time,
                 'type_id'=>$project_type->key,
-                'place_type'=>$this->location->locationtype_id,
-                'place_id'=>$this->location->id,
+                'location_id'=>$this->location->id,
                 'itemtype_id'=>$spec->itemtype_id,
                 'created_at'=>$this->game->getRawTime()
             );
 
-            $project_manager->set($data);
-            $project_manager->save();
+            $project->values($data);
+            $project->save();
 
-            $this->location->addProject($project_manager->getId(), $this->redis);
+            $this->location->add_project($project->id);
             
             foreach ($raws as $raw) {
                 
                 $project_raw = new Model_Project_Raw();
-                $project_raw->project_id = $project_manager->getId();
+                $project_raw->project_id = $project->id;
                 $project_raw->resource_id = $raw->resource_id;
                 $project_raw->amount = 0;
                 

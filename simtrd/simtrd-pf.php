@@ -193,8 +193,7 @@ while(!System_Daemon::isDying() && $runningOK) {
             $project = load_project($redis, $project_id);
             
             echo 'Project:'.$project['id'].':'.$project['type_id']."\n";
-            
-            $project_key = "Project:{$project['id']}";
+
             //project initiator (owner)
             $query = mysql_query("select * from characters where id={$project['owner_id']}");
             $owner = mysql_fetch_array($query);
@@ -244,7 +243,9 @@ while(!System_Daemon::isDying() && $runningOK) {
                     $sql = "insert into buildings values (0, $location_id, $capacity, $max_weight)";
                     $query = mysql_query($sql) 
                         or die ('3: ' . mysql_error(). ' SQL: ' . $sql);
-                    $building_id = mysql_insert_id();
+                    
+                    //building id may be used later in event, for now it's not used
+                    //$building_id = mysql_insert_id();
                     break;
                 
                 case 'Make':
@@ -259,7 +260,7 @@ while(!System_Daemon::isDying() && $runningOK) {
                         $redis->sadd("items:{$owner['id']}", $new_item_id);
                     } else {
                         $event_type .= 'Ground';
-                        $redis->sadd("locations:{$project['place_id']}:items", $new_item_id);
+                        $redis->sadd("locations:{$project['location_id']}:items", $new_item_id);
                     }
                     break;
                 
@@ -276,7 +277,7 @@ while(!System_Daemon::isDying() && $runningOK) {
                                 //utworzyć nowy surowiec
                                 $raws[$project['resource_id']] = $project['amount'];
                             }
-                            $redis->setJSON("raws:{$owner['id']}", $raws);
+                            $redis->set("raws:{$owner['id']}", json_encode($raws));
                         } else {
                             //połóż na ziemię
                             $ground = true;

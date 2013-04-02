@@ -192,11 +192,10 @@ class Controller_Events extends Controller_Base_Character {
     public function action_use_raw() {
      
         $this->view->resource = new Model_Resource($this->request->param('id'));
-        $manager = Model_ProjectManager::getInstance(null, $this->redis);
         
         if (HTTP_Request::POST == $this->request->method()) {
         
-            $project = $manager->findOneById($this->request->post('project_id'), TRUE);
+            $project = Model_Project::factory(null, $this->request->post('project_id'));
             $resource = new Model_Resource($this->request->param('id'));
                 
             if ($this->request->post('submit_project')) {
@@ -217,7 +216,7 @@ class Controller_Events extends Controller_Base_Character {
                     ->bind('needed_amount', $needed_amount)
                     ->bind('got_amount', $got_amount)
                     ->bind('resource', $resource)
-                    ->bind('project_id', $project->id);
+                    ->bind('project', $project);
                 return;
                 
             } elseif ($this->request->post('submit_raw')) {
@@ -235,7 +234,7 @@ class Controller_Events extends Controller_Base_Character {
 
                     $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
                     $event->add('params', array('name' => 'project_id', 'value' => $project->id));
-                    $event->add('params', array('name' => 'project_name', 'value' => $project->getName()));
+                    $event->add('params', array('name' => 'project_name', 'value' => $project->get_name()));
                     $event->add('params', array('name' => 'res_id', 'value' => $resource_id));
                     $event->add('params', array('name' => 'amount', 'value' => $amount));
 
@@ -256,9 +255,9 @@ class Controller_Events extends Controller_Base_Character {
         $this->view->projects = array();
         
         foreach ($projects_ids as $project_id) {
-            $project = $manager->findOneById($project_id, true);
+            $project = Model_Project::factory(null, $project_id);
             if (!$project->hasAllResources()) {
-                $this->view->projects[$project_id] = Model_GameTime::formatDateTime($project->created_at, "d-h:m"). ' ' . $project->getName() . ' ('. $this->character->getChname($project->owner_id) . ')';
+                $this->view->projects[$project_id] = Model_GameTime::formatDateTime($project->created_at, "d-h:m"). ' ' . $project->get_name() . ' ('. $this->character->getChname($project->owner_id) . ')';
             }
         }
         

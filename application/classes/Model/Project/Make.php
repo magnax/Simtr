@@ -2,16 +2,14 @@
 
 class Model_Project_Make extends Model_Project {
 
-    public $amount;
-    public $itemtype_id;
+    protected $_object_name = 'project';
 
-    /**
-     * Identyfikator przedmiotu produkcji
-     *
-     * @var string
-     */
-    protected $item_id;
-    protected $resource_id;
+    public function __construct($id) {
+        
+        $this->_columns = array_merge($this->_columns, array('itemtype_id'));
+        parent::__construct($id);
+        
+    }
 
     public function getProjectRequirements() {
         return null;
@@ -21,29 +19,9 @@ class Model_Project_Make extends Model_Project {
         return null;
     }
     
-    public function toArray() {
-
-        $tmp_arr = parent::toArray();
-        $tmp_arr['name'] = $this->name;
-        $tmp_arr['amount'] = $this->amount;
-        $tmp_arr['itemtype_id'] = $this->itemtype_id;
-
-        return $tmp_arr;
-
-    }
-    
-    public function getName() {
+    public function get_name() {
         
         $item = new Model_ItemType($this->itemtype_id);
-        return 'Produkcja: '.$item->name;
-        
-    }
-
-
-    public function name($project_data) {
-        
-        $item = new Model_ItemType($project_data['itemtype_id']);
-        
         return 'Produkcja: '.$item->name;
         
     }
