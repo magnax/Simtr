@@ -12,7 +12,7 @@
 require_once "System/Daemon.php";                 // Include the Class
 //
 //version of this file
-define('VER', '0.0.6');
+define('VER', '0.0.7');
 
 /**
  * config file from framework
@@ -90,11 +90,12 @@ if (!$runmode['write-initd']) {
 //redis init:
 require_once '../application/modules/redisent/classes/redisent.php';
 require_once '../application/modules/redisent/classes/redisexception.php';
-require_once '../application/classes/redisdb.php';
 
-$redis = RedisDB::getInstance()
-    ->connect($config['database_dsn']);
-//    ->getConnectionObject();
+try {
+    $redis = new Redisent($config['database_dsn']);
+} catch (RedisException $e) {
+    throw new RedisException($e->getMessage());
+}
 
 //mysql connection
 $db = mysql_connect($config['db_server'], $config['db_username'], $config['db_password']) or die ('Cannot connect to MySQL');
@@ -112,6 +113,38 @@ function getTime() {
 
 function strip(&$v) {
     $v = str_replace('finished_projects:', '', $v);
+}
+
+function load_project($redis, $project_id) {
+    $keys = $redis->hgetall("Project:$project_id");
+    $project = array('id' => $project_id);
+    $l = count($keys);
+    while (count($keys)) {
+        $key = array_shift($keys);
+        $val = array_shift($keys);
+        $project[$key] = $val;
+    }
+    return $project;
+}
+
+function save_event($redis, array $event) {
+    $id = $redis->incr("Event:ID");
+    $redis_key = "Event:{$id}";
+    foreach (array_keys($event) as $key) {
+        $redis->hset($redis_key, $key, $event[$key]);
+    }
+    return $id;
+}
+
+function save_params($redis, $id, $params) {
+    foreach ($params as $param) {
+        $param_id = $redis->incr("Param:ID");
+        $redis->hset("Param:$param_id", 'name', $param['name']);
+        $redis->hset("Param:$param_id", 'value', $param['value']);
+        $redis->hset("Param:$param_id", 'event_id', $id);
+        $redis->sadd("Param:indices:event_id:$id", $param_id);
+        echo 'Param:'.$param_id."\n";
+    }
 }
 
 $runningOK = true;
@@ -156,27 +189,28 @@ while(!System_Daemon::isDying() && $runningOK) {
         foreach ($projects_ids as $project_id) {
             
             System_Daemon::info(microtime(true).': rozliczam: '.$project_id);
+
+            $project = load_project($redis, $project_id);
             
-            $project = json_decode($redis->get("projects:$project_id"), true);
+            echo 'Project:'.$project['id'].':'.$project['type_id']."\n";
             
-            print_r($project);
-            
+            $project_key = "Project:{$project['id']}";
             //project initiator (owner)
             $query = mysql_query("select * from characters where id={$project['owner_id']}");
             $owner = mysql_fetch_array($query);
 
-            print_r($owner);
+            echo 'Owner:'.$owner['id']."\n";
             
             //is project owner present in location?
-            $is_owner_present = ($owner['location_id'] == $project['place_id']);
+            $is_owner_present = ($owner['location_id'] == $project['location_id']);
 
-            System_Daemon::info(microtime(true)."Owner present: $is_owner_present\n");
+            //System_Daemon::info(microtime(true)."Owner present: $is_owner_present\n");
 
             //owner weight and existence of given resource in his inventory
             $owner_weight = 0;
             $owner_has_resource = false;
 
-            $raws = $redis->getJSON("raws:{$owner['id']}");
+            $raws = json_decode($redis->get("raws:{$owner['id']}"), true);
             if ($raws) {
                 foreach ($raws as $k => $raw) {
                     $owner_weight += $raw;
@@ -252,13 +286,13 @@ while(!System_Daemon::isDying() && $runningOK) {
                     }
                     if ($ground) {
                         $event_type .= 'Ground';
-                        $location_raws = $redis->getJSON("locations:{$project['place_id']}:raws");
+                        $location_raws = json_decode($redis->get("locations:{$project['location_id']}:raws"), true);
                         if (isset($location_raws[$project['resource_id']])) {
                             $location_raws[$project['resource_id']] += $project['amount'];
                         } else {
                             $location_raws[$project['resource_id']] = $project['amount'];
                         }
-                        $redis->setJSON("locations:{$project['place_id']}:raws", $location_raws);
+                        $redis->set("locations:{$project['location_id']}:raws", json_encode($location_raws));
                     }
                     break;
                 
@@ -285,7 +319,7 @@ while(!System_Daemon::isDying() && $runningOK) {
              */
             
             //pobierz tablicę pracowników
-            $workers = $redis->getJSON("projects:$project_id:workers");
+            $workers = $redis->smembers("projects:$project_id:workers");
             $num_workers = count($workers);
             //pusta tablica odbiorców eventu
             $event_recipients[] = array();
@@ -306,34 +340,33 @@ while(!System_Daemon::isDying() && $runningOK) {
             $redis->del("finished_projects:$project_id");
             
             //usuń projekt z listy projektów lokacji
-            $redis->srem("locations:{$project['place_id']}:projects", $project_id);
+            $redis->srem("locations:{$project['location_id']}:projects", $project_id);
 
-//            $resource = json_decode($redis->get("resources:{$project['res_id']}"), true);
             //dopisać event:
             $event = array(
                 'date'=>$time,
                 'type'=>$event_type,
                 'name'=>$project['name'],
-                'sndr'=>$project['owner_id'],
+            );
+            $params = array(
+                array('name' => 'sndr', 'value' => $project['owner_id'])
             );
             switch ($project['type_id']) {
                 case 'Build':
-                    $event['itemtypeid'] = $project['itemtype_id'];
+                case 'Make':
+                    $params[] = array('name' => 'itemtypeid', 'value' => $project['itemtype_id']);
                     break;
                 case 'GetRaw':
-                    $event['res_id'] = $project['resource_id']; //@todo: ujednolicić res_id/resource_id
-                    $event['amount'] = $project['amount'];
-                    break;
-                case 'Make':
-                    $event['itemtypeid'] = $project['itemtype_id'];
+                    $params[] = array('name' => 'res_id', 'value' => $project['resource_id']);
+                    $params[] = array('name' => 'amount', 'value' => $project['amount']);
+                    $params[] = array('name' => 'name', 'value' => $project['name']);
                     break;
             }
-            $serialised_event = json_encode($event);
 
-            //zapisać samo zdarzenie:
-            $event_id = $redis->incr('global:IDEvent');
-            $redis->set("events:$event_id", $serialised_event);
-
+            $event_id = save_event($redis, $event);
+            echo 'Event:'.$event_id."\n";
+            save_params($redis, $event_id, $params);
+            
             //jeśli trzeba, dodać inicjatora projektu
             if (!in_array($project['owner_id'], $event_recipients) && $is_owner_present) {
                 $event_recipients[] = $project['owner_id'];

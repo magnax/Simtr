@@ -108,9 +108,9 @@ class Model_Location extends ORM {
         return $random_location;
     }
     
-    public function addProject($project_id, $source) {
+    public function add_project($project_id) {
         
-        $source->sadd("locations:{$this->id}:projects", $project_id);
+        RedisDB::sadd("locations:{$this->id}:projects", $project_id);
         
     }
     

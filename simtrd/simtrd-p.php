@@ -2,14 +2,10 @@
 
 <?php
 
-/**
- * Demon przeliczający stan projektów
- */
-
 require_once "System/Daemon.php";                 // Include the Class
 
 //version of this file
-define('VER', '0.0.1');
+define('VER', '0.0.2');
 
 /**
  * config file from framework
@@ -90,6 +86,7 @@ unset($runmode);
 //redis init:
 require_once '../application/modules/redisent/classes/redisent.php';
 require_once '../application/modules/redisent/classes/redisexception.php';
+
 try {
     $redis = new Redisent($config['database_dsn']);
 } catch (RedisException $e) {
@@ -110,6 +107,26 @@ function strip(&$v) {
     $v = str_replace('active_projects:', '', $v);
 }
 
+function load_project($redis, $project_id) {
+    $keys = $redis->hgetall("Project:$project_id");
+    $project = array('id' => $project_id);
+    $l = count($keys);
+    while (count($keys)) {
+        $key = array_shift($keys);
+        $val = array_shift($keys);
+        $project[$key] = $val;
+    }
+    return $project;
+}
+
+function save_project($redis, array $project) {
+    $redis_key = "Project:{$project['id']}";
+    unset($project['id']);
+    foreach (array_keys($project) as $key) {
+        $redis->hset($redis_key, $key, $project[$key]);
+    }
+}
+
 $runningOK = true;
 
 while(!System_Daemon::isDying() && $runningOK) {
@@ -125,7 +142,8 @@ while(!System_Daemon::isDying() && $runningOK) {
         array_walk($projects_ids, 'strip');
         foreach ($projects_ids as $project_id) {
             System_Daemon::info('Uaktualniam: '.$project_id);
-            $project = json_decode($redis->get("projects:$project_id"), true);
+            //$project = json_decode($redis->get("projects:$project_id"), true);
+            $project = load_project($redis, $project_id);
             $elapsed = 0;
 
             $participants = json_decode($redis->get("projects:$project_id:participants"), true);
@@ -146,7 +164,9 @@ while(!System_Daemon::isDying() && $runningOK) {
             } else {
                 $project['time_elapsed'] = $elapsed;
             }
-            $redis->set("projects:$project_id", json_encode($project));
+            //$redis->set("projects:$project_id", json_encode($project));
+            //$project->save();
+            save_project($redis, $project);
             unset($elapsed);
         }
     }

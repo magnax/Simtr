@@ -58,9 +58,9 @@ class Model_Character extends ORM {
         
         if ($location->parent_id) {
             $parent_location = ORM::factory('Location', $location->parent_id);
-            $sublocation = $location->get_lname($this->id); //$location->name;
+            $sublocation = $location->get_lname($this->id);
             $location_id = $parent_location->id;
-            $location_name = $parent_location->get_lname($this->id); //ORM::factory('LName')->name($this->id, $parent_location->id)->name;
+            $location_name = $parent_location->get_lname($this->id);
         } else {
             //is grand location
             $sublocation = null;
@@ -69,18 +69,21 @@ class Model_Character extends ORM {
         }
         
         $my_project_id = RedisDB::instance()->get("characters:{$this->id}:current_project");
-        $my_project = ($my_project_id) ? RedisDB::instance()->getJSON("projects:$my_project_id") : null;
+        $project = Model_Project::factory(null, $my_project_id);
 
-        if ($my_project) {
-            if (!$my_project['time_elapsed']) {
+        $my_project = array();
+        
+        if ($project->loaded()) {
+            if (!$project->time_elapsed) {
                 $my_project['time_elapsed'] = 0;
+            } else {
+                $my_project['time_elapsed'] = $project->time_elapsed;
             }
-            $my_project['percent'] = number_format($my_project['time_elapsed'] / $my_project['time'] * 100, 2);
+            $my_project['time'] = $project->time;
+            $my_project['percent'] = $project->calculateProgress(2);
             $my_project['time_zero'] = $raw_time;
             $my_project['speed'] = 1; //for now, will be calculated
-            
-            $project_name = Model_Project::getInstance($my_project['type_id'])
-                ->name($my_project, $this->id);
+            $project_name = $project->get_name();
         }
         
         return array(
@@ -124,10 +127,6 @@ class Model_Character extends ORM {
 
     public function setIDLocation($id) {
         $this->location_id = $id;
-    }
-
-    public function setProjectId($id) {
-        $this->project_id = $id;
     }
     
     public function getId() {
@@ -622,11 +621,9 @@ class Model_Character extends ORM {
         $project_id = RedisDB::get("characters:{$this->id}:current_project");
         
         if ($project_id) {
-            $manager = Model_ProjectManager::getInstance(null, RedisDB::instance())
-                ->findOneById($project_id);
 
-            $manager->removeParticipant($this, $raw_time);
-            $manager->save();
+            $project = Model_Project::factory(null, $project_id);            
+            $project->removeParticipant($this, $raw_time);
 
             RedisDB::del("characters:{$this->id}:current_project");
         }
@@ -697,9 +694,10 @@ class Model_Character extends ORM {
 
         foreach ($events as $id_event) {
             
-            $event = new Model_Event($id_event);
-            
-            $return_events[] = $event->format_output($this, $id_event);
+            if ($id_event) {
+                $event = new Model_Event($id_event);
+                $return_events[] = $event->format_output($this, $id_event);
+            }
 
         }
         

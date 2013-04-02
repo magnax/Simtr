@@ -2,8 +2,14 @@
 
 class Model_Project_GetRaw extends Model_Project {
 
-    protected $amount;
-    protected $resource_id;
+    protected $_object_name = 'project';
+
+    public function __construct($id) {
+        
+        $this->_columns = array_merge($this->_columns, array('amount', 'resource_id'));
+        parent::__construct($id);
+        
+    }
 
     public function getProjectRequirements() {
         return null;
@@ -13,24 +19,9 @@ class Model_Project_GetRaw extends Model_Project {
         return null;
     }
 
-    public function toArray() {
-
-        $tmp_arr = parent::toArray();
-        $tmp_arr['amount'] = $this->amount;
-        $tmp_arr['resource_id'] = $this->resource_id;
-
-        return $tmp_arr;
-        
-    }
-
-    public function getName() {
+    public function get_name() {
         $res = new Model_Resource($this->resource_id);
-        return 'Kopanie lub zbieranie '.$res->d;
-    }
-    
-    public function name($project_data) {
-        $res = new Model_Resource($project_data['resource_id']);
-        return 'Kopanie lub zbieranie '.$res->d;
+        return 'Kopanie lub zbieranie ' . $res->d;
     }
     
     /**

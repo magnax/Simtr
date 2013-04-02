@@ -7,19 +7,6 @@
  * - create projects: MAKE, GET_RAW
  */
 class Controller_User_Project extends Controller_Base_Character {
-    
-    /**
-     * project manager object - manages project get/save
-     */
-    protected $manager = null;
-    
-    public function before() {
-        
-        parent::before();
-        
-        //create manager
-        $this->manager = Model_ProjectManager::getInstance(null, $this->redis);
-    }
 
     /**
      * lists all projects in current location
@@ -29,14 +16,13 @@ class Controller_User_Project extends Controller_Base_Character {
         $projects = $this->location->getProjectsIds();
         
         $this->view->projects = array();
-        
+
         foreach ($projects as $project_id) {
             
-            $project = $this->manager->findOneById($project_id, true);
+            $project = Model_Project::factory(null, $project_id);
+            $project_name = $project->get_name();
             
-            $project_name = $project->getName();
-            
-            $workers = $this->manager->getWorkersIds($project_id);
+            $workers = $project->get_workers();
             
             $progress = $project->calculateProgress();
             
@@ -60,61 +46,61 @@ class Controller_User_Project extends Controller_Base_Character {
 
     public function action_info() {
         
-        $id = $this->request->param('id');
+        $project = Model_Project::factory(null, $this->request->param('id'));
         
-        $manager = Model_ProjectManager::getInstance(null, $this->redis)
-            ->findOneById($id);
-        $project = $manager->getProject()->toArray();
+        if (!$project->loaded()) {
+            $this->redirectError('Nieprawidłowy projekt', 'user/project');
+        }
+        
+        $project_array = $project->as_array();
         
         $characters = $this->location->getHearableCharacters();
-        if (in_array($project['owner_id'], $characters)) {
-            $owner = ORM::factory('User', $project['owner_id']);
-            $name = $this->character->getChname($project['owner_id']);
-            $project['owner'] = '<a href="/chname/'.$project['owner_id'].'">'.$name.'</a>';
+        if (in_array($project->owner_id, $characters)) {
+            $owner = ORM::factory('User', $project->owner_id);
+            $name = $this->character->getChname($project->owner_id);
+            $project_array['owner'] = '<a href="/chname/'.$project->owner_id.'">'.$name.'</a>';
         } else {
-            $project['owner'] = 'Już go tu nie ma';
+            $project_array['owner'] = 'Już go tu nie ma';
         }
         
         //get all workers
-        $workers = json_decode($this->redis->get("projects:{$project['id']}:workers"), true);
-        $project['workers'] = array();
+        $workers = $project->get_workers();
+        $project_array['workers'] = array();
         
         if (is_array($workers)) {
             foreach ($workers as $worker) {
                 $name = $this->character->getChname($worker);
-                $project['workers'][] = array(
+                $project_array['workers'][] = array(
                     'id'=>$worker,
                     'name'=>$name
                 );
             }
         }
         
-        $project['name'] = Model_Project::getInstance($project['type_id'])
-            ->name($project, $this->character->id);
-        $project['date'] = Model_GameTime::formatDateTime($project['created_at'], 'd-h');
-        $project['progress'] = number_format((100 * $project['time_elapsed'] / $project['time']), 2).' procent';
-        $project['materials'] = array();
-        if ($project['time'] < 86400) {
-            $project['time'] = gmdate('H:i:s', $project['time']);
+        $project_array['name'] = $project->get_name();
+        $project_array['date'] = Model_GameTime::formatDateTime($project->created_at, 'd-h');
+        $project_array['progress'] = number_format((100 * $project->time_elapsed / $project->time), 2).' procent';
+        $project_array['materials'] = array();
+        if ($project->time < 86400) {
+            $project_array['time'] = gmdate('H:i:s', $project->time);
         } else {
-            $project['time'] = gmdate('d H:i', $project['time']);
+            $project_array['time'] = gmdate('d H:i', $project->time);
         }
         //print_r($project);
-        $this->view->project = $project;
+        $this->view->project = $project_array;
 
-        $project_for_specs = Model_ProjectManager::getInstance(null, $this->redis)->findOneById($project['id'], true);
-        $this->view->project_specs = $project_for_specs->getAllSpecs();
-        $this->view->can_join = $project_for_specs->hasAllSpecs();
+        $this->view->project_specs = $project->getAllSpecs();
+        $this->view->can_join = $project->hasAllSpecs();
         
     }
 
     public function action_join() {
 
-        $id = $this->request->param('id');
-        //manager
-        $manager = Model_ProjectManager::getInstance(null, $this->redis)
-            ->findOneById($id);
-        $project = $manager->getProject();
+        $project = Model_Project::factory(null, $this->request->param('id'));
+        
+        if (!$project->loaded()) {
+            $this->redirectError('Nieprawidłowy projekt', 'user/project');
+        }
 
         $errors = $project->getProjectRequirements();
 
@@ -124,25 +110,28 @@ class Controller_User_Project extends Controller_Base_Character {
 
             if (!$errors) {
 
-                if ($project->getTypeId() == 'GetRaw') {
+                if ($project->type_id == 'GetRaw') {
                     $used_slots = $this->location->countUsedSlots($this->redis);
                     
                     if ($used_slots < $this->location->town->slots) {
-                        $manager->addParticipant($this->character, $this->game->raw_time);
-                        $manager->save();
+//                        $manager->addParticipant($this->character, $this->game->raw_time);
+//                        $manager->save();
                         /**
                          * @todo move this stuff to character model, or to project model
                          */
-                        $this->redis->set("characters:{$this->character->id}:current_project", $project->getId());
+//                        $this->redis->set("characters:{$this->character->id}:current_project", $project->getId());
                     } else {
                         Session::instance()->set('error', $used_slots);
                     }  
 
                 } else {
-                    $manager->addParticipant($this->character, $this->game->raw_time);                 
-                    $manager->save();
-                    $this->redis->set("characters:{$this->character->id}:current_project", $project->getId());
+//                    $manager->addParticipant($this->character, $this->game->raw_time);                 
+//                    $manager->save();
+//                    $this->redis->set("characters:{$this->character->id}:current_project", $project->getId());
                 }
+                
+                $project->addParticipant($this->character, $this->game->raw_time);
+                
             }
         }
 
@@ -180,7 +169,7 @@ class Controller_User_Project extends Controller_Base_Character {
 
     public function action_get_raw() {
         
-        if ($_POST) {
+        if (HTTP_Request::POST == $this->request->method()) {
             
             //pierwsze, naiwne liczenie czasu trwania projektu
             //tylko na podstawie ilości i dziennego zbioru
@@ -188,9 +177,7 @@ class Controller_User_Project extends Controller_Base_Character {
             
             $time = ceil($_POST['amount'] / $res->gather_base * Model_GameTime::DAY_LENGTH);
 
-            $project_manager = Model_ProjectManager::getInstance(
-                Model_Project::getInstance(Model_Project::TYPE_GET_RAW, $this->redis)//;
-            );
+            $project = Model_Project::factory(Model_Project::TYPE_GET_RAW);
 
             $data = array(
                 'name'=>$res->projecttype->name.' '.$res->d,
@@ -198,16 +185,15 @@ class Controller_User_Project extends Controller_Base_Character {
                 'amount'=>$_POST['amount'],
                 'time'=>$time,
                 'type_id'=>$_POST['type_id'],
-                'place_type'=>$this->location->locationtype_id,
-                'place_id'=>$this->location->id,
+                'location_id'=>$this->location->id,
                 'resource_id'=>$_POST['resource_id'],
                 'created_at'=>$this->game->getRawTime()
             );
+            //print_r($project);
+            $project->values($data);
+            $project->save();
 
-            $project_manager->set($data);
-            $project_manager->save();
-
-            $this->location->addProject($project_manager->getId(), $this->redis);
+            $this->location->add_project($project->id);
 
             $this->redirect('events');
         }

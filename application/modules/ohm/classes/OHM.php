@@ -58,6 +58,12 @@ class OHM extends Model {
         
     }
 
+    public function as_array() {
+        
+        return $this->_object;
+        
+    }
+
     public function create(Validation $validation = NULL) {
      
         $data = array();
@@ -176,8 +182,10 @@ class OHM extends Model {
     
     protected function _initialize() {
         
-        // Set the object name and plural name
-        $this->_object_name = strtolower(substr(get_class($this), 6));
+        if (!$this->_object_name) {
+            // Set the object name and plural name
+            $this->_object_name = strtolower(substr(get_class($this), 6));
+        }
     
         if ( ! $init = Arr::get(OHM::$_init_cache, $this->_object_name, FALSE)) {
             if ( ! is_object($this->_redis)) {
@@ -287,32 +295,21 @@ class OHM extends Model {
         if ($expected === NULL) {
             
             $expected = $this->_columns;
-
+            
             // Don't set the primary key by default
             unset($values[$this->_primary_key]);
         }
 
-        foreach ($expected as $key => $column) {
-            
-            if (is_string($key)) {
-                
-                // isset() fails when the value is NULL (we want it to pass)
-                if (!array_key_exists($key, $values)) {
-                    continue;
-                }
+        foreach ($expected as $key) {
 
-                // Try to set values to a related model
-                $this->{$key}->values($values[$key], $column);
-            } else {
-                
-                // isset() fails when the value is NULL (we want it to pass)
-                if (!array_key_exists($column, $values)) {
-                    continue;
-                }
-
-                // Update the column, respects __set()
-                $this->$column = $values[$column];
+            // isset() fails when the value is NULL (we want it to pass)
+            if (!array_key_exists($key, $values)) {
+                continue;
             }
+
+            // Try to set values to a related model
+            $this->{$key} = $values[$key];
+            
         }
     
         return $this;

@@ -51,37 +51,29 @@ class Model_ProjectManager_Redis extends Model_ProjectManager {
 
     public function findOneById($id, $return_project = false) {
 
-        $tmp_proj = $this->source->get("projects:$id");
-        if ($tmp_proj) {
-            $tmp_proj = json_decode($tmp_proj, true);
-            //właściwa klasa:
-            $model_name = 'Model_Project_'.$tmp_proj['type_id'];
-            $p = new $model_name($tmp_proj['type_id'], $this->source);
-            //"hydration":
-            foreach ($tmp_proj as $key => $val) {
-                $p->{$key} = $val;
-            }
+        try {
+            $tmp_proj = $this->source->get("projects:$id");
+            if ($tmp_proj) {
+                $tmp_proj = json_decode($tmp_proj, true);
+                //właściwa klasa:
+                $model_name = 'Model_Project_'.$tmp_proj['type_id'];
+                $p = new $model_name($tmp_proj['type_id'], $this->source);
+                //"hydration":
+                foreach ($tmp_proj as $key => $val) {
+                    $p->{$key} = $val;
+                }
 
-            $participants = json_decode($this->source->get("projects:$id:participants"), true);
-            if ($participants && is_array($participants)) {
-                $p->setParticipants($participants);
+                if ($return_project) {
+                    return $p;
+                } else {
+                    $this->_project = $p;
+                    return $this;
+                }
             }
-
-            $workers = json_decode($this->source->get("projects:$id:workers"), true);
-            if ($workers && is_array($workers)) {
-                $p->setWorkers($workers);
-            }
-
-            $p->setActive($this->source->get("active_projects:$id"));
-                
-            if ($return_project) {
-                return $p;
-            } else {
-                $this->_project = $p;
-                return $this;
-            }
+            return null;
+        } catch (RedisException $e) {
+            print_r($id);
         }
-        return null;
 
     }
 
@@ -94,6 +86,8 @@ class Model_ProjectManager_Redis extends Model_ProjectManager {
         $this->source->set("active_projects:{$id}", 1);
         $this->source->set("projects:{$id}:participants", 
             json_encode($this->_project->getParticipants()));
+        $this->source->set("projects:{$id}:workers", 
+            json_encode($this->_project->getWorkers()));
 
         //$this->saveWorkers();
     }
@@ -103,12 +97,6 @@ class Model_ProjectManager_Redis extends Model_ProjectManager {
         $res = json_decode($this->source->get("resources:{$this->resource_id}"), true);
         return $this->source->get("project_types:{$this->type_id}").': '.$res['name'];
 
-    }
-    
-    public function getWorkersIds($project_id) {
-        
-        return json_decode($this->source->get("projects:{$project_id}:workers"));
-        
     }
     
 }

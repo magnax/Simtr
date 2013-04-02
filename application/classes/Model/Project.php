@@ -1,7 +1,9 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-abstract class Model_Project {
+class Model_Project extends OHM {
 
+    protected $_columns = array('owner_id', 'type_id', 'location_id', 'time', 'time_elapsed', 'created_at', 'name');
+    
     // typy projektów
     const TYPE_BUILD = 'Build'; //produkcja budynków
     const TYPE_BURY = 'Bury'; //zakopywanie ciał
@@ -11,44 +13,25 @@ abstract class Model_Project {
     
     protected static $checkSpecsArray = array('Make', 'Build', 'Lockbuild');
 
-    //pola zapisywane metodą toArray()
-    public $id;
-    public $owner_id;
-    public $type_id;
-    protected $place_type;
-    protected $place_id;
-    protected $time;
-    protected $time_elapsed;
-    public $created_at;
-    protected $name;
-
-    //pozostałe pola
-    protected $active;
-
-    /**
-     * zbiór uczestników projektu - do obliczania czasu
-     * @var array
-     */
-    protected $participants = array();
-    
-    /**
-     * zbiór pracujących postaci (id)
-     * @var array
-     */
-    protected $workers = array();
-
-    protected $source;
-
-    public function  __construct($type, $source) {
-        $this->type_id = $type;
-        $this->source = $source;
-    }
-    
-    public static function getInstance($type, $source = null) {
-
-        $model = 'Model_Project_'.$type;
-        return new $model($type, $source);
-
+    public static function factory($type = null, $id = null) {
+        
+        if (is_null($type) && !is_null($id)) {
+            $project = new Model_Project($id);
+            if ($project->type_id) {
+                $type = $project->type_id;
+            } else {
+                return $project;
+            }
+        }
+        
+        if ($type) {
+            $class = 'Model_Project_'.ucfirst($type);
+        } else {
+            $class = 'Model_Project';
+        }
+        
+        return new $class($id);
+        
     }
 
     public function getPercent($accuracy = 0) {
@@ -66,73 +49,11 @@ abstract class Model_Project {
         return number_format(100 * $this->time_elapsed / $this->time, $decimals) . '%';
         
     }
-    
-    public function getSource() {
-        return $this->source;
-    }
-
-    public function getId() {
-        return $this->id;
-    }
-
-    public function  __set($name,  $value) {
-        $this->$name = $value;
-    }
-
-    public function setId($id) {
-        $this->id = $id;
-    }
-
-    public function getTypeId() {
-        return $this->type_id;
-    }
-
-    public function getName() {
-        return $this->name;
-    }
-
-    public function setActive($act) {
-        $this->active = $act;
-    }
-
-    public function getActive() {
-        return $this->active;
-    }
-
-    public function setParticipants(array $participants) {
-        $this->participants = $participants;
-    }
-
-    public function getParticipants() {
-        return $this->participants;
-    }
-
-    public function setWorkers($workers) {
-        $this->workers = $workers;
-    }
-
-    public function getWorkers() {
-        return $this->workers;
-    }
-
-    public function toArray() {
-        return array(
-            'id'=>$this->id,
-            'name'=>$this->name,
-            'owner_id'=>$this->owner_id,
-            'type_id'=>$this->type_id,
-            'place_type'=>$this->place_type,
-            'place_id'=>$this->place_id,
-            'time'=>$this->time,
-            'time_elapsed'=>$this->time_elapsed,
-            'created_at'=>$this->created_at
-        );
-    }
 
     public function addParticipant(Model_Character $character, $time) {
 
-        $character->setProjectId($this->id);
-
+        $participants_key = "projects:{$this->id}:participants";
+        
         $new_participant = array(
             'id'=>$character->getId(),
             'start'=>$time,
@@ -140,39 +61,38 @@ abstract class Model_Project {
             'factor'=>1 //na razie, w przyszłości będzie różny
         );
 
-        $this->participants[] = $new_participant;
-        $this->workers[] = $character->getId();
-        $this->active = true;
+        $participants = RedisDB::getJSON($participants_key);
+        $participants[] = $new_participant;
+        RedisDB::setJSON($participants_key, $participants);
+        
+        RedisDB::sadd("projects:{$this->id}:workers", $character->id);
+        
+        RedisDB::set("characters:{$character->id}:current_project", $this->id);
+        RedisDB::set("active_projects:{$this->id}", 1);
 
     }
 
     public function removeParticipant(Model_Character $character, $time) {
 
-        $character->setProjectId($this->id);
+        $participants_key = "projects:{$this->id}:participants";
+        
+        $participants = RedisDB::getJSON($participants_key);
+        RedisDB::srem("projects:{$this->id}:workers", $character->id);
 
-        foreach ($this->participants as &$p) {
-            if ($p['id'] == $character->getId() && !$p['end']) {
+        foreach ($participants as &$p) {
+            if ($p['id'] == $character->id && !$p['end']) {
                 $p['end'] = $time;
             }
         }
 
-        $tmp_wrk = array();
-        foreach ($this->workers as $w) {
-            if ($w != $character->getId()) {
-                $tmp_wrk[] = $w;
-            }
-        }
-        $this->workers = $tmp_wrk;
-
-    }
-
-    public function set($data) {
-
-        foreach ($data as $k=>$v) {
-            $this->$k = $v;
+        RedisDB::setJSON($participants_key, $participants);
+        
+        if (!count(RedisDB::smembers("projects:{$this->id}:workers"))) {
+            RedisDB::del("active_projects:{$this->id}");
         }
 
     }
+
     
     /**
      * gets already addes resources and items
@@ -267,6 +187,14 @@ abstract class Model_Project {
     public function hasAllResources() {
         
         return true;
+        
+    }
+    
+    public function get_workers() {
+        
+        try {
+            return RedisDB::smembers("projects:{$this->id}:workers");
+        } catch (RedisException $e) {}
         
     }
     
