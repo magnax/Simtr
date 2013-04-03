@@ -8,8 +8,8 @@ class Controller_User_Location extends Controller_Base_Character {
         
         $this->view->locationtype = $this->location->locationtype_id;
         
-        if ($this->location->locationtype_id == 1) {
-            $this->view->exits = array();
+        if ($this->location->locationtype_id == 1) {    //town
+            $this->view->exits = $this->location->get_exits($this->character);
             $this->view->used_slots = 999;
             $this->view->res_slots = $this->location->town->slots;
             

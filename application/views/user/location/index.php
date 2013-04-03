@@ -13,7 +13,7 @@
     <div>
         <?php echo HTML::anchor('user/point/e/'.$exit['id'], '[wskaż]'); ?> 
         [idź] [buduj] 
-        <?php echo $exit['level'].' do '.HTML::anchor('user/location/nameform/'.$exit['lid'], $exit['name']).' (kierunek: '.$exit['direction'].')'; ?>
+        <?php echo $exit['level'].' do '.HTML::anchor('lname/'.$exit['destination_id'], $exit['destination_name']).' (kierunek: '.$exit['direction'].')'; ?>
     </div>
 <?php endforeach; ?>
 <?php else: ?>

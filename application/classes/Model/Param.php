@@ -46,6 +46,13 @@ class Model_Param extends OHM {
         return self::_location_link($id, $character);
     }
     
+    private static function road_id($id, $character) {
+        $pointed_road = new Model_Road($id);
+        $start_location = $character->get_main_location();
+        $end_location = new Model_Location($pointed_road->get_end($start_location->id));
+        return $pointed_road->get_level_name().' w kierunku '.Utils::getDirectionString(Utils::calculateDirection($start_location->town->x, $start_location->town->y, $end_location->town->x, $end_location->town->y));
+    }
+    
     private static function exit_id($id, $character) {
         return self::_location_link($id, $character);
     }

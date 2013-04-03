@@ -13,7 +13,8 @@ class Controller_User_Point extends Controller_Base_Character {
      */
     public function action_e() {
         
-        $pointed_location = new Model_Location($this->request->param('id'));
+        $pointed_road = new Model_Road($this->request->param('id'));
+        $pointed_location = new Model_Location($pointed_road->get_end($this->location->id));
         
         //wysłanie eventu
         $event = new Model_Event();
@@ -21,6 +22,7 @@ class Controller_User_Point extends Controller_Base_Character {
         $event->date = $this->game->getRawTime();
 
         $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
+        $event->add('params', array('name' => 'road_id', 'value' => $pointed_road->id));
         $event->add('params', array('name' => 'exit_id', 'value' => $pointed_location->id));
 
         $event->save();

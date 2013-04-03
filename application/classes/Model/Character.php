@@ -736,6 +736,15 @@ class Model_Character extends ORM {
         
     }
     
+    public function get_main_location() {
+        $location = new Model_Location($this->location_id);
+        while ($location->parent_id) {
+            $location = new Model_Location($location->parent_id);
+        }
+        
+        return $location;
+        
+    }
 }
 
 ?>

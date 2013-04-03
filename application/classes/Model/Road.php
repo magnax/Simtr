@@ -1,41 +1,18 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
-abstract class Model_Road {
+class Model_Road extends ORM {   
     
-    //fields
-    protected $id = null;
-    protected $start_location_id;
-    protected $end_location_id;
-    protected $distance;
-    protected $direction;
-    protected $level;
+    public $levels = array(
+        '0' => 'ścieżka',
+        '1' => 'piaszczysta',
+        '2' => 'brukowana',
+        '3' => 'szosa',
+        '4' => 'autostrada',
+    );
 
-    protected $source;
-
-    public function  __construct($source) {
-        $this->source = $source;
+    public function get_level_name() {
+        return $this->levels[$this->level];
     }
-    
-    public static function getInstance($source) {
-        //if ($source instanceof Redisent) {
-        if ($source instanceof Redis) {
-            return new Model_Road_Redis($source);
-        }
-    }
-    
-    public function getID() {
-        return $this->id;
-    }
-
-    public function getLevel() {
-        return $this->level;
-    }
-    
-    public function getLevelString() {
-        $levels = $this->getLevels();
-        return $levels[$this->level];
-    }
-
 
     public function getDistance() {
         return $this->distance;
@@ -49,38 +26,9 @@ abstract class Model_Road {
         return $this->end_location_id;
     }
     
-    public function setDistance($d) {
-        $this->distance = $d;
+    public function get_end($start_id) {
+        return ($this->location_1_id == $start_id) ? $this->location_2_id : $this->location_1_id;
     }
-
-    public function setDirection($dir) {
-        $this->direction = $dir;
-    }
-    
-    public function setLevel($level) {
-        $this->level = $level;
-    }
-    
-    public function setLocations($start, $end) {
-        $this->start_location_id = $start;
-        $this->end_location_id = $end;
-    }
-
-
-    public function toArray() {
-        return array(
-            'id'=>$this->id,
-            'start'=>$this->start_location_id,
-            'end'=>$this->end_location_id,
-            'distance'=>$this->distance,
-            'direction'=>$this->direction,
-            'level'=>$this->level
-        );
-    }
-
-    abstract public function getLevels();
-    abstract public function save();
-    
 }
 
 ?>

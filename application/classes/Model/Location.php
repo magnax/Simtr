@@ -326,6 +326,25 @@ class Model_Location extends ORM {
         return ($this->parent_id) ? $this->name : 'nienazwane miejsce';
     }
     
+    public function get_exits(Model_Character $character) {
+        //for now just one fixed road from database to show result
+        $roads = array(ORM::factory('Road', 1));
+        $returned = array();
+        foreach ($roads as $road) {
+            $destination_id = ($road->location_1_id == $this->id) ? $road->location_2_id : $road->location_1_id;
+            $destination = new Model_Location($destination_id);
+            $returned[] = array(
+                'id' => $road->id,
+                'destination_id' => $destination->id,
+                'destination_name' => $destination->get_lname($character->id),
+                'level' => $road->get_level_name(),
+                'direction' => Utils::getDirectionString(Utils::calculateDirection($this->town->x, $this->town->y, $destination->town->x, $destination->town->y)),
+            );
+        }
+        return $returned;
+        
+    }
+    
 }
 
 ?>

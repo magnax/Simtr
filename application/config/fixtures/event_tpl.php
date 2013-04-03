@@ -184,12 +184,14 @@ $key = "global:event_tpl:PointExit";
 $person = 1;
 $this->redis->set("$key:$person", 'Wskazujesz drogę: %s do %s');$loaded++;
 $this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'road_id');$loaded++;
 $this->redis->rpush("$key:$person:params", 'exit_id');$loaded++;
 
 $person = 3;
 $this->redis->set("$key:$person", 'Widzisz jak %s wskazuje drogę: %s do %s');$loaded++;
 $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
+$this->redis->rpush("$key:$person:params", 'road_id');$loaded++;
 $this->redis->rpush("$key:$person:params", 'exit_id');$loaded++;
 
 //PointPerson
