@@ -2,7 +2,7 @@
     Profil postaci
 </div>
 <div id="userinfo">
-    <table width="600">
+    <table width="800">
         <tr>
             <td width="180">
                Nazwa:
@@ -40,14 +40,7 @@
                 Miejsce:
             </td>
             <td>
-               <?php echo HTML::anchor('lname/'.$character['location_id'], $character['location']); ?>
-                <?php if ($character['sublocation']): ?>
-                    <?php if ($character['sublocation_id']): ?>
-                        : <?php echo HTML::anchor('lname/'.$character['sublocation_id'], $character['sublocation']); ?>
-                    <?php else: ?>
-                        : <?= $character['sublocation']; ?>
-                    <?php endif; ?>
-                <?php endif; ?>
+               <span id="location"><?= $character['location']['str']; ?></span>
             </td>
         </tr>
         <tr>

@@ -112,6 +112,12 @@ class OHM extends Model {
         
     }
 
+    public function delete() {
+        
+        return $this->_redis->del(ucfirst($this->_object_name).":".$this->id);
+        
+    }
+    
     protected function find($id) {
         
         if ($this->_loaded) {

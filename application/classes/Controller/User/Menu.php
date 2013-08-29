@@ -30,7 +30,7 @@ class Controller_User_Menu extends Controller_Base_User {
             $returnedCharacters[] = array(
                 'id' => $character->id,
                 'name' => $name ? $name : $character->name,
-                'location' => ($location_name) ? $location_name : 'unknown location',
+                'location' => Helper_View::LocationInfo($character, $links = false), //($location_name) ? $location_name : 'unknown location',
                 'sex' => $character->sex,
                 'project' => $current_project ? $my_project['percent'].'%' : '-',
                 'age' => $character->created,

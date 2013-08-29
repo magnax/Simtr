@@ -22,6 +22,19 @@
             var project = {};
         <? endif; ?>
 
+        //travel update
+        <? if (isset($character['location']['time_zero'])): ?>
+            var travel = {
+                'time_zero': <?= $character['location']['time_zero']; ?>,
+                'current_progress': <?= $character['location']['current_progress']; ?>,
+                'progress': <?= $character['location']['progress_for_second']; ?>
+            };
+            travel.getProgress = function(time) {
+                return this.current_progress + (this.progress * (time - this.time_zero));
+            }
+        <? else: ?>
+            var travel = {};
+        <? endif; ?>
         
         socket.on('connect', function(data) {
             console.log('connected');
@@ -39,6 +52,10 @@
             if (exists == 0) {
                 console.log('adding...');
                 $('#events ul').prepend('<li data-id="' + data.event_id + '" class="new_event">' + data.text.date + ': ' + data.text.text + '</li>');
+                if (data.text.type === 'ArriveInfo') {
+                    $('#location').html($('#dest_location').html());
+                    travel = {};
+                }
             }
           });
 
@@ -51,6 +68,16 @@
                     project = {};
                 } else {
                     $('#project_percent').html(Math.round(now*100)/100);
+                }
+            }
+            if (travel.hasOwnProperty('time_zero')) {
+                var progress = travel.getProgress(data.time);
+                if (progress >= 100) {
+                    //$('#location').html($('#dest_location').html());
+                    $('#travel_progress').html('<b>100</b>');
+                    travel = {};
+                } else {
+                    $('#travel_progress').html(Math.round(progress*100)/100);
                 }
             }
         });
@@ -87,7 +114,7 @@
                     $('#event_input_small').removeAttr("disabled");
                     $('#talk_error').html('something went wrong').delay(6000).hide(1000);
                 });
-            });           
+            });
         });
         
         </script>

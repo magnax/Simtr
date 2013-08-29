@@ -3,10 +3,16 @@
 //ArriveInfo
 $key = "global:event_tpl:ArriveInfo";
 $person = 1;
-$this->redis->set("$key:$person", 'Znajdujesz się w miejscu, które wygląda jak %s, widzisz tu %s innych osób');$loaded++;
+$this->redis->set("$key:$person", 'Przybywasz do %s');$loaded++;
 $this->redis->del("$key:$person:params");
-$this->redis->lpush("$key:$person:params", 'characters_count');$loaded++;
-$this->redis->lpush("$key:$person:params", 'location_type');$loaded++;
+$this->redis->lpush("$key:$person:params", 'location_id');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Widzisz jak %s przybywa do %s drogą z %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->lpush("$key:$person:params", 'from_location_id');$loaded++;
+$this->redis->lpush("$key:$person:params", 'location_id');$loaded++;
+$this->redis->lpush("$key:$person:params", 'sndr');$loaded++;
 
 //BuryEnd
 $key = "global:event_tpl:BuryEnd";
@@ -17,6 +23,21 @@ $this->redis->del("$key:$person:params");
 $person = 3;
 $this->redis->set("$key:$person", 'Projekt: "zakopywanie ciała" został zakończony');$loaded++;
 $this->redis->del("$key:$person:params");
+
+//DepartureInfo
+$key = "global:event_tpl:DepartureInfo";
+$person = 1;
+$this->redis->set("$key:$person", 'Opuszczasz %s drogą do %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->lpush("$key:$person:params", 'location_id');$loaded++;
+$this->redis->lpush("$key:$person:params", 'from_location_id');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Widzisz jak %s opuszcza %s drogą do %s');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->lpush("$key:$person:params", 'location_id');$loaded++;
+$this->redis->lpush("$key:$person:params", 'from_location_id');$loaded++;
+$this->redis->lpush("$key:$person:params", 'sndr');$loaded++;
 
 //GetRaw
 $key = "global:event_tpl:GetRaw";
@@ -65,6 +86,14 @@ $this->redis->del("$key:$person:params");
 $this->redis->lpush("$key:$person:params", 'res_id');$loaded++;
 $this->redis->lpush("$key:$person:params", 'amount');$loaded++;
 $this->redis->lpush("$key:$person:params", 'name');$loaded++;
+
+//LocationInfo
+$key = "global:event_tpl:LocationInfo";
+$person = 1;
+$this->redis->set("$key:$person", 'Znajdujesz się w miejscu, które wygląda jak %s, widzisz tu %s innych osób');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->lpush("$key:$person:params", 'characters_count');$loaded++;
+$this->redis->lpush("$key:$person:params", 'location_type');$loaded++;
 
 //Spawn - utworzenie nowej postaci
 $key = "global:event_tpl:Spawn";

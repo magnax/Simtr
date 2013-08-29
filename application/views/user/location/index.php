@@ -1,5 +1,5 @@
 <div class="title_bar">
-    <?php echo HTML::anchor('lname/'.$location->id, $location->get_lname($character['id'])); ?>: WYJŚCIA
+    <?php echo $character['location']; ?>: WYJŚCIA
 </div>
 
 <?php if ($doors): ?>
@@ -12,7 +12,8 @@
 <?php foreach ($exits as $exit): ?>
     <div>
         <?php echo HTML::anchor('user/point/e/'.$exit['id'], '[wskaż]'); ?> 
-        [idź] [buduj] 
+        <?php echo HTML::anchor('user/go/'.$exit['id'], '[idź]'); ?>
+        [buduj] 
         <?php echo $exit['level'].' do '.HTML::anchor('lname/'.$exit['destination_id'], $exit['destination_name']).' (kierunek: '.$exit['direction'].')'; ?>
     </div>
 <?php endforeach; ?>
@@ -21,7 +22,7 @@
 <?php endif; ?>
     <?php if ($locationtype == 1): ?>
         <div class="title_bar">
-            <?php echo HTML::anchor('lname/'.$character['location_id'], $character['location']); ?>: OPIS
+            <?php echo $character['location']; ?>: OPIS
         </div>
         Zajętych miejsc wydobycia: <?php echo $used_slots; ?> z <?php echo $res_slots; ?> dostępnych<br />
         <?php foreach ($resources as $res): ?>

@@ -1,0 +1,9 @@
+1
+2
+3
+2013-08-08 07:34:31 --- INFO: daemon test: Starting... in /var/www/redis-test/application/classes/Task/Test.php:28
+2013-08-08 07:34:32 --- INFO: daemon test: Executing: 10307354 in /var/www/redis-test/application/classes/Task/Test.php:59
+2013-08-08 07:34:35 --- INFO: daemon test: Executing: 10307357 in /var/www/redis-test/application/classes/Task/Test.php:59
+2013-08-08 07:34:38 --- INFO: daemon test: Executing: 10307360 in /var/www/redis-test/application/classes/Task/Test.php:59
+2013-08-08 07:34:39 --- INFO: daemon test: Received signal '2' in /var/www/redis-test/modules/minion/classes/Kohana/Minion/Daemon.php:137
+2013-08-08 07:34:39 --- INFO: daemon test: Ending... in /var/www/redis-test/application/classes/Task/Test.php:74

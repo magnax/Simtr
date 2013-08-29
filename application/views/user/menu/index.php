@@ -12,7 +12,7 @@
             <?php echo HTML::anchor('character?id='.$character['id'], $character['name']); ?>
         </div>
         <div class="character_location">
-            <?php echo $character['location']; ?>
+            <?php echo $character['location']['str']; ?>
         </div>
         <div class="character_project">
             <?php if(isset($character['project'])): ?>

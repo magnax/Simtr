@@ -117,6 +117,7 @@ Kohana::modules(array(
     'cache'         => MODPATH.'cache',             //cache module
     'ohm'           => APPPATH.'modules/ohm',       // object-hash mapping redis library
     'elephant'      => APPPATH.'modules/elephant',  // ElephantIOClient socket.io implementation
+    'minion'        => MODPATH.'minion',            // CLI Tasks
 ));
 
 // Load the routes

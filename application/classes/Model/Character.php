@@ -52,21 +52,8 @@ class Model_Character extends ORM {
 
     public function getInfo($raw_time) {
         
-        $name = $this->getChname($this->id);
-        $location = new Model_Location($this->location_id);
         $spawn_location = new Model_Location($this->spawn_location_id);
-        
-        if ($location->parent_id) {
-            $parent_location = ORM::factory('Location', $location->parent_id);
-            $sublocation = $location->get_lname($this->id);
-            $location_id = $parent_location->id;
-            $location_name = $parent_location->get_lname($this->id);
-        } else {
-            //is grand location
-            $sublocation = null;
-            $location_id = $location->id;
-            $location_name = $location->get_lname($this->id);
-        }
+        $name = $this->getChname($this->id);
         
         $my_project_id = RedisDB::instance()->get("characters:{$this->id}:current_project");
         $project = Model_Project::factory(null, $my_project_id);
@@ -91,12 +78,9 @@ class Model_Character extends ORM {
             'name' => $name ? $name : $this->name,
             'age' => $this->countRealAge($raw_time),
             'spawn_day' => $this->created,
-            'location_id' => $location_id,
             'spawn_location_id' => $this->spawn_location_id,
-            'location' => $location_name,
+            'location' => Helper_View::LocationInfo($this),
             'spawn_location' => $spawn_location->get_lname($this->id),
-            'sublocation' => $sublocation,
-            'sublocation_id' => null, //for now, later it may be ie. vehicle
             'life' => $this->life,
             'fed' => $this->fed,
             'strength' => 1.2,
@@ -745,6 +729,69 @@ class Model_Character extends ORM {
         return $location;
         
     }
+    
+    public function get_position_object() {
+        
+        $position_id = RedisDB::get("characters:{$this->id}:position");
+        if ($position_id) {
+            $position = new Model_Position($position_id);
+            if ($position->loaded()) {
+                return $position;
+            }
+        }
+        
+        return null;
+        
+    }
+
+    public function set_position(Model_Position $position, Model_Road $road) {
+    
+        RedisDB::set("characters:{$this->id}:position", $position->id);
+        $this->location_id = $road->location_id;
+        $this->save();
+        
+    }
+    
+    public function set_location($location_id) {
+    
+        $position_id = RedisDB::get("characters:{$this->id}:position");
+        $position = new Model_Position($position_id);
+        $position->delete();
+        RedisDB::del("characters:{$this->id}:position");
+        $this->location_id = $location_id;
+        $this->save();
+        
+    }
+    
+    public function back() {
+        
+        $position_id = RedisDB::get("characters:{$this->id}:position");
+        $position = new Model_Position($position_id);
+        $position->back();
+        
+    }
+    
+    public static function getTravellingIds() {
+        
+        return ORM::factory('Character')
+            ->join('locations', 'LEFT')
+            ->on('locations.id', '=', 'character.location_id')
+            ->where('locations.locationtype_id', '=', 3)
+            ->find_all()
+            ->as_array('id');
+        
+    }
+    
+    public function get_road() {
+        
+        $road = ORM::factory('Road')
+            ->where('location_id', '=', $this->location_id)
+            ->find();
+        
+        return $road;
+        
+    }
+    
 }
 
 ?>

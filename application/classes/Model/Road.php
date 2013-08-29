@@ -2,6 +2,19 @@
 
 class Model_Road extends ORM {   
     
+    protected $_belongs_to = array(
+        'location_1' => array(
+            'model' => 'Location',
+            'foreign_key' => 'location_1_id',
+            'far_key' => 'id',
+        ),
+        'location_2' => array(
+            'model' => 'Location',
+            'foreign_key' => 'location_2_id',
+            'far_key' => 'id',
+        ),
+    );
+
     public $levels = array(
         '0' => 'ścieżka',
         '1' => 'piaszczysta',

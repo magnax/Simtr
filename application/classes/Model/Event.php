@@ -11,6 +11,7 @@ class Model_Event extends OHM {
     );
 
     const ARRIVE_INFO = 'ArriveInfo';
+    const DEPARTURE_INFO = 'DepartureInfo';
     const EAT = 'Eat';
     const ENTER_LOCATION = 'EnterLocation';
     const GET_ITEM = 'GetItem';
@@ -51,7 +52,8 @@ class Model_Event extends OHM {
             
             $notified_char = new Model_Character($character_id);
             
-            $this->_redis->lpush("characters:$character_id:events", $this->id);
+            //$this->_redis->lpush("characters:$character_id:events", $this->id);
+            RedisDB::lpush("characters:$character_id:events", $this->id);
             
             Model_EventNotifier::notify($elephant, $notified_char, $this);
             
@@ -123,6 +125,7 @@ class Model_Event extends OHM {
         } else {
             return array(
                 'id'  => $this->id,
+                'type' => $this->type,
                 'date'=> Model_GameTime::formatDateTime($this->date),
                 'text'=> '('.$this->id.') ' . $this->dispatch($character)
             );

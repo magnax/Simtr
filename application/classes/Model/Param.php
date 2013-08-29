@@ -46,6 +46,14 @@ class Model_Param extends OHM {
         return self::_location_link($id, $character);
     }
     
+    private static function location_id($id, $character) {
+        return self::_location_link($id, $character);
+    }
+    
+    private static function from_location_id($id, $character) {
+        return self::_location_link($id, $character);
+    }
+    
     private static function road_id($id, $character) {
         $pointed_road = new Model_Road($id);
         $start_location = $character->get_main_location();
