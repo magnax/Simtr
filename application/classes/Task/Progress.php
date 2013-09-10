@@ -109,10 +109,10 @@ class Task_Progress extends Minion_Daemon {
 		// This will be continuously executed
 		$this->_log(Log::INFO, "Executing: $time");
 
-//		return TRUE;
+		return TRUE;
 //        
         //end loop immediately for testing purpose
-        return false;
+//        return false;
         
 	}
 
