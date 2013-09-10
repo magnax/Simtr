@@ -54,7 +54,11 @@ class Model_Project extends OHM {
             }
         }
         
-        return number_format(100 * $this->time_elapsed / $this->time, $decimals, ',', '') . '%';
+        if ($this->time) {
+            return number_format(100 * $this->time_elapsed / $this->time, $decimals, ',', '') . '%';
+        }
+        
+        return '-';
         
     }
 
