@@ -36,6 +36,12 @@ class Model_Project extends OHM {
         
     }
 
+    public function get_name() {
+        
+        return 'Dummy project name because of no type';
+        
+    }
+
     public function getPercent($accuracy = 0) {
         return round(($this->time_elapsed / $this->time * 100), $accuracy);
     }
