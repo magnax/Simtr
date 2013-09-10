@@ -13,15 +13,17 @@ class Model_Project extends OHM {
     
     protected static $checkSpecsArray = array('Make', 'Build', 'Lockbuild');
 
+    /*
+     * creates new project if id is null, if type is provided then creates 
+     * project of this type
+     * or returns existed project
+     * 
+     */
     public static function factory($type = null, $id = null) {
         
         if (is_null($type) && !is_null($id)) {
             $project = new Model_Project($id);
-            if ($project->type_id) {
-                $type = $project->type_id;
-            } else {
-                return $project;
-            }
+            $type = $project->type_id;
         }
         
         if ($type) {
@@ -46,7 +48,7 @@ class Model_Project extends OHM {
             }
         }
         
-        return number_format(100 * $this->time_elapsed / $this->time, $decimals) . '%';
+        return number_format(100 * $this->time_elapsed / $this->time, $decimals, ',', '') . '%';
         
     }
 
@@ -190,11 +192,36 @@ class Model_Project extends OHM {
         
     }
     
+    public function get_participants() {
+        
+        return RedisDB::getJSON("projects:{$this->id}:participants");
+        
+    }
+
     public function get_workers() {
         
         try {
             return RedisDB::smembers("projects:{$this->id}:workers");
         } catch (RedisException $e) {}
+        
+    }
+    
+    public function finish() {
+        
+        RedisDB::set("finished_projects:{$this->id}", 1);
+        RedisDB::del("active_projects:{$this->id}");
+        
+    }
+
+    public static function get_active_projects_ids() {
+        
+        $keys = RedisDB::keys("active_projects:*");
+        
+        array_walk($keys, function(&$v) {
+            $v = str_replace('active_projects:', '', $v);
+        });
+
+        return $keys;
         
     }
     
