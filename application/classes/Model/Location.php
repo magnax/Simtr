@@ -2,6 +2,10 @@
 
 class Model_Location extends ORM {  
     
+    const TYPE_TOWN = 1;
+    const TYPE_BUILDING = 2;
+    const TYPE_ROAD = 3;
+
     protected $_belongs_to = array(
         
         'locationtype' => array(
@@ -342,6 +346,18 @@ class Model_Location extends ORM {
             );
         }
         return $returned;
+        
+    }
+    
+    public function remove_project($project_id) {
+        
+        RedisDB::srem("locations:{$this->id}:projects", $project_id);
+        
+    }
+
+    public function show_roads() {
+        
+        return ($this->locationtype->id == self::TYPE_TOWN || $this->locationtype->movable);
         
     }
     

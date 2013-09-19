@@ -113,21 +113,13 @@ class Controller_User_Project extends Controller_Base_Character {
                 if ($project->type_id == 'GetRaw') {
                     $used_slots = $this->location->countUsedSlots($this->redis);
                     
-                    if ($used_slots < $this->location->town->slots) {
-//                        $manager->addParticipant($this->character, $this->game->raw_time);
-//                        $manager->save();
-                        /**
-                         * @todo move this stuff to character model, or to project model
-                         */
-//                        $this->redis->set("characters:{$this->character->id}:current_project", $project->getId());
-                    } else {
+                    if ($used_slots >= $this->location->town->slots) {
+
                         Session::instance()->set('error', $used_slots);
                     }  
 
                 } else {
-//                    $manager->addParticipant($this->character, $this->game->raw_time);                 
-//                    $manager->save();
-//                    $this->redis->set("characters:{$this->character->id}:current_project", $project->getId());
+                    /* do check if user can join to other types of projects */
                 }
                 
                 $project->addParticipant($this->character, $this->game->raw_time);
@@ -150,18 +142,19 @@ class Controller_User_Project extends Controller_Base_Character {
 
     }
 
+    /**
+     * @todo: sprawdzić, czy można usunąć projekt
+     */
     public function action_destroy() {
         
-        $project_id = $this->request->param('id');
+        $project = Model_Project::factory(null, $this->request->param('id'));
         
-        $project = $this->manager->findOneById($project_id, true);
-        if (!$project->id || $project->owner_id != $this->character->id) {
-            Session::instance()->set('error', 'Bad project!');
-        } else {
-        
-            RedisDB::del("projects:{$project->id}");
-            RedisDB::srem("locations:{$this->location->id}:projects", $project->id);
+        if (!$project->loaded()) {
+            $this->redirectError('Nieprawidłowy projekt', 'user/project');
         }
+        
+        $project->remove_all();
+        
         $this->redirect('events');
         
     }
@@ -208,7 +201,7 @@ class Controller_User_Project extends Controller_Base_Character {
         
         $itemtype = ORM::factory('ItemType', $this->request->param('id'));
         $project_type = ORM::factory('ProjectType', $itemtype->projecttype_id);
-        
+
         $spec = ORM::factory('Spec')
             ->where('itemtype_id', '=', $this->request->param('id'))
             ->find();
@@ -220,15 +213,19 @@ class Controller_User_Project extends Controller_Base_Character {
             $project = Model_Project::factory($project_type->key);
 
             $data = array(
-                'name'=>'Produkcja: '.$spec->item->name,
-                'owner_id'=>$this->character->id,
-                'time'=>$spec->time,
-                'type_id'=>$project_type->key,
-                'location_id'=>$this->location->id,
-                'itemtype_id'=>$spec->itemtype_id,
-                'created_at'=>$this->game->getRawTime()
+                'name'          => 'Produkcja: '.$spec->item->name,
+                'owner_id'      => $this->character->id,
+                'time'          => $spec->time,
+                'type_id'       => $project_type->key,
+                'location_id'   => $this->location->id,
+                'itemtype_id'   => $spec->itemtype_id,
+                'created_at'    => $this->game->getRawTime()
             );
 
+            if ($project_type->key == 'Build') {
+                $data['building_name'] = $this->request->post('building_name');
+            }
+            
             $project->values($data);
             $project->save();
 
@@ -250,6 +247,7 @@ class Controller_User_Project extends Controller_Base_Character {
         
         $this->view->spec = $spec;
         $this->view->raws = $raws;
+        $this->view->name_needed = $project_type->name_needed;
         
     }
     

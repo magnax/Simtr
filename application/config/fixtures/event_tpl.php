@@ -14,6 +14,21 @@ $this->redis->lpush("$key:$person:params", 'from_location_id');$loaded++;
 $this->redis->lpush("$key:$person:params", 'location_id');$loaded++;
 $this->redis->lpush("$key:$person:params", 'sndr');$loaded++;
 
+//BuildEnd
+$key = "global:event_tpl:BuildEnd";
+
+$person = 1;
+$this->redis->set("$key:$person", 'Projekt budowy: %s o nazwie: "%s" zakończony');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'itemtype_id');$loaded++;
+$this->redis->rpush("$key:$person:params", 'building_name');$loaded++;
+
+$person = 3;
+$this->redis->set("$key:$person", 'Projekt budowy: %s o nazwie: "%s" zakończony');$loaded++;
+$this->redis->del("$key:$person:params");
+$this->redis->rpush("$key:$person:params", 'itemtype_id');$loaded++;
+$this->redis->rpush("$key:$person:params", 'building_name');$loaded++;
+
 //BuryEnd
 $key = "global:event_tpl:BuryEnd";
 $person = 1;
@@ -361,21 +376,6 @@ $this->redis->del("$key:$person:params");
 $this->redis->rpush("$key:$person:params", 'sndr');$loaded++;
 $this->redis->rpush("$key:$person:params", 'locid');$loaded++;
 $this->redis->rpush("$key:$person:params", 'exit_id');$loaded++;
-
-//BuildEnd
-$key = "global:event_tpl:BuildEnd";
-
-$person = 1;
-$this->redis->set("$key:$person", 'Projekt %s zakończony');$loaded++;
-$this->redis->del("$key:$person:params");
-$this->redis->rpush("$key:$person:params", 'name');$loaded++;
-$this->redis->rpush("$key:$person:params", 'itemtypeid');$loaded++;
-
-$person = 3;
-$this->redis->set("$key:$person", 'Projekt %s zakończony');$loaded++;
-$this->redis->del("$key:$person:params");
-$this->redis->rpush("$key:$person:params", 'name');$loaded++;
-$this->redis->rpush("$key:$person:params", 'itemtypeid');$loaded++;
 
 //MakeEnd
 $key = "global:event_tpl:MakeEnd";

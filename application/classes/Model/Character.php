@@ -271,6 +271,15 @@ class Model_Character extends ORM {
     }
 
     /**
+     * calculates how much character can get to inventory
+     */
+    public function calculate_free_weight() {
+        
+        return self::MAX_WEIGHT - $this->calculateWeight();
+        
+    }
+
+    /**
      * gets inventory raws for character
      * 
      * @todo make user resources hash instead of json'ed array
@@ -350,8 +359,8 @@ class Model_Character extends ORM {
     
     public function get_raw_from_location(Model_Location $location, $resource_id, $amount) {
         
-        if (!is_integer($amount) || ($amount <= 0)) {
-            throw new Exception('Nieprawidłowa ilość');
+        if (!is_numeric($amount) || (strpos($amount, '.') !== false) || ($amount <= 0)) {
+            throw new Exception('Nieprawidłowa ilość (nie liczba)');
         }
         
         $location_raws = $location->getRaws(true);
@@ -442,7 +451,10 @@ class Model_Character extends ORM {
         
         //odjęcie postaci podanej ilości materiału
         $this->putRaw($resource_id, $amount);
-        $project->addRaw($resource_id, $amount);
+        
+        if (! $added = $project->addRaw($resource_id, $amount)) {
+            throw new Exception('Nie udało się dodać surowca');
+        }
         
     }
     

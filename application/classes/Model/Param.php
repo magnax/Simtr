@@ -86,6 +86,16 @@ class Model_Param extends OHM {
         return ORM::factory('Item', $id)->itemtype->name;
     }
     
+    /**
+     * events: BuildEnd,
+     * returns name of item type (building type)
+     * @param int $id item type ID
+     * @return string 
+     */
+    private static function itemtype_id($id) {
+        return ORM::factory('ItemType', $id)->name;
+    }
+    
     private static function wpid($id) {
         return ORM::factory('ItemType', $id)->name;
     }

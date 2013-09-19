@@ -1,4 +1,4 @@
-Projekt wymaga <?php echo $needed_amount; ?> gram <?php echo $resource->name; ?>. Posiadasz: <?php echo $got_amount; ?> gram.
+Projekt wymaga <?php echo $needed_amount; ?> gram <?php echo $resource->d; ?>. Posiadasz: <?php echo $got_amount; ?> gram.
 <?php echo Form::open(); ?>
 <?php echo Form::hidden('project_id', $project->id); ?>
 <?php echo Form::hidden('resource_id', $resource->id); ?>

@@ -110,7 +110,7 @@ class Model_Project extends OHM {
      * gets already addes resources and items
      */    
     public function getRaws($simple = false) {
-        
+
         return Model_Project_Raw::getRaws($this->id, $simple);
         
     }
@@ -216,6 +216,17 @@ class Model_Project extends OHM {
         
     }
     
+    public function remove_all() {
+        //remove workers
+        RedisDB::del("projects:{$this->id}:workers");
+        //remove project participants
+        RedisDB::del("projects:{$this->id}:participants");
+        //remove project from finished
+        RedisDB::del("finished_projects:{$this->id}");
+        //remove project from location
+        RedisDB::srem("locations:{$this->location_id}:projects", $this->id);
+    }
+
     public function finish() {
         
         RedisDB::set("finished_projects:{$this->id}", 1);
@@ -225,11 +236,24 @@ class Model_Project extends OHM {
 
     public static function get_active_projects_ids() {
         
-        $keys = RedisDB::keys("active_projects:*");
+        return self::_get_projects_ids('active');
         
-        array_walk($keys, function(&$v) {
-            $v = str_replace('active_projects:', '', $v);
-        });
+    }
+    
+    public static function get_finished_projects_ids() {
+        
+        return self::_get_projects_ids('finished');
+        
+    }
+    
+    public static function _get_projects_ids($type) {
+        
+        $key = $type . '_projects:';
+        $keys = RedisDB::keys($key . '*');
+        
+        array_walk($keys, function(&$v, $index, $replaced_key) {
+            $v = str_replace($replaced_key, '', $v);
+        }, $key);
 
         return $keys;
         

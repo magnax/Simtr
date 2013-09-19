@@ -13,9 +13,19 @@ class Controller_Admin_Menu extends Controller_Base_Admin {
     
     //dump all keys in database
     public function action_keys() {
-        $keys = $this->redis->keys("*");
+        
+        if (HTTP_Request::POST == $this->request->method()) {
+            $pattern = $this->request->post('pattern');
+            Session::instance()->set('pattern', $pattern);
+        } else {
+            $pattern = Session::instance()->get('pattern', '*');
+        }
+        
+        $keys = $this->redis->keys($pattern);
         asort($keys);
+        
         $this->view->keys = $keys;
+        $this->view->pattern = $pattern;
     }
 
 }

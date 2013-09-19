@@ -18,5 +18,8 @@ Wymagania:
 Zajmie Ci to: <?php echo $spec->time; ?> sekund, sam sobie policz, ile to dni czy czego tam chcesz.<br />
 <?php echo Form::open(); ?>
 <?php echo Form::hidden('itemtype_id', $spec->itemtype_id); ?>
+<?php if ($name_needed): ?>
+    Nazwa budynku: <?php echo Form::input('building_name'); ?><br />
+<?php endif; ?>
 <?php echo Form::submit('submit', ' Na co czekasz, produkuj!! '); ?>
 <?php echo Form::close(); ?>

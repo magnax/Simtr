@@ -47,6 +47,36 @@ class Model_Project_Make extends Model_Project {
         return false;
         
     }
+    
+    public function settle(Model_Character $owner, Model_Location $location) {
+        
+        $itemtype = new Model_ItemType($this->itemtype_id);
+        $item = new Model_Item;
+        $item->itemtype_id = $itemtype->id;
+        $item->points = $itemtype->points;
+        $item->save();
+        
+        if ($owner->location_id == $this->location_id) {
+            //owner is present
+            $owner_possible_weight = $owner->calculate_free_weight();
+            if ($owner_possible_weight >= $itemtype->weight) {
+                //owner can get all
+                $owner->addItem($item->id);
+                return 'MakeEnd';
+            }
+        }
+
+        $location->addItem($item->id);       
+        return 'MakeEndGround';
+        
+    }
+    
+    public function add_event_params(Model_Event $event) {
+        
+        $event->add('params', array('name' => 'name', 'value' => $this->get_name()));
+        return $event;
+        
+    }
 
 }
 

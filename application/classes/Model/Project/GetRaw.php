@@ -35,6 +35,29 @@ class Model_Project_GetRaw extends Model_Project {
         
     }
     
+    public function settle(Model_Character $owner, Model_Location $location) {
+        
+        if ($owner->location_id == $this->location_id) {
+            //owner is present
+            $owner_possible_weight = $owner->calculate_free_weight();
+            if ($owner_possible_weight >= $this->amount) {
+                //owner can get all
+                $owner->addRaw($this->resource_id, $this->amount);
+                return 'GetRawEnd';
+            }
+        }
+
+        $location->addRaw($this->resource_id, $this->amount);       
+        return 'GetRawEndGround';
+        
+    }
+    
+    public function add_event_params(Model_Event $event) {
+        $event->add('params', array('name' => 'res_id', 'value' => $this->resource_id));
+        $event->add('params', array('name' => 'amount', 'value' => $this->amount));
+        return $event;
+    }
+    
 }
 
 ?>

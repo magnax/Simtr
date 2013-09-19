@@ -1,5 +1,5 @@
 <div class="title_bar">
-    <?php echo $character['location']; ?>: WYJŚCIA
+    <?php echo $character['location']['str']; ?>: WYJŚCIA
 </div>
 
 <?php if ($doors): ?>
@@ -8,25 +8,28 @@
     </div>
 <?php endif; ?>
 
-<?php if ($exits): ?>
-<?php foreach ($exits as $exit): ?>
-    <div>
-        <?php echo HTML::anchor('user/point/e/'.$exit['id'], '[wskaż]'); ?> 
-        <?php echo HTML::anchor('user/go/'.$exit['id'], '[idź]'); ?>
-        [buduj] 
-        <?php echo $exit['level'].' do '.HTML::anchor('lname/'.$exit['destination_id'], $exit['destination_name']).' (kierunek: '.$exit['direction'].')'; ?>
-    </div>
-<?php endforeach; ?>
-<?php else: ?>
-    Nie widać żadnych dróg
-<?php endif; ?>
-    <?php if ($locationtype == 1): ?>
-        <div class="title_bar">
-            <?php echo $character['location']; ?>: OPIS
+<?php if ($location->show_roads()): ?>
+    <?php if ($exits): ?>
+    <?php foreach ($exits as $exit): ?>
+        <div>
+            <?php echo HTML::anchor('user/point/e/'.$exit['id'], '[wskaż]'); ?> 
+            <?php echo HTML::anchor('user/go/'.$exit['id'], '[idź]'); ?>
+            [buduj] 
+            <?php echo $exit['level'].' do '.HTML::anchor('lname/'.$exit['destination_id'], $exit['destination_name']).' (kierunek: '.$exit['direction'].')'; ?>
         </div>
-        Zajętych miejsc wydobycia: <?php echo $used_slots; ?> z <?php echo $res_slots; ?> dostępnych<br />
-        <?php foreach ($resources as $res): ?>
-            <?php echo HTML::anchor('user/project/get_raw/'.$res->id, '[zbieraj]'); ?>
-            <?php echo $res->name; ?> (<?php echo $res->id; ?>)<br />
-        <?php endforeach; ?>
+    <?php endforeach; ?>
+    <?php else: ?>
+        Nie widać żadnych dróg
+    <?php endif; ?>
+<?php endif; ?>
+        
+<?php if ($locationtype == Model_Location::TYPE_TOWN): ?>
+    <div class="title_bar">
+        <?php echo $character['location']['str']; ?>: Dostępne surowce
+    </div>
+    Zajętych miejsc wydobycia: <?php echo $used_slots; ?> z <?php echo $res_slots; ?> dostępnych<br />
+    <?php foreach ($resources as $res): ?>
+        <?php echo HTML::anchor('user/project/get_raw/'.$res->id, '[zbieraj]'); ?>
+        <?php echo $res->name; ?> (<?php echo $res->id; ?>)<br />
+    <?php endforeach; ?>
 <?php endif; ?>

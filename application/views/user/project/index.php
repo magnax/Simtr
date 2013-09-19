@@ -15,7 +15,7 @@ Projekty:<br />
         <?php endif; ?>
     
         <?php echo $project['name']; ?>
-        (<?php echo $project['progress']; ?>, <?php echo Model_GameTime::formatDateTime($project['created_at'], "d-h:m"); ?>
+        (<span class="project_<?php echo $project['id']; ?>_percent"><?php echo $project['progress']; ?></span>, <?php echo Model_GameTime::formatDateTime($project['created_at'], "d-h:m"); ?>
         <?php echo Helper_View::CharacterName($project['owner_id'], $project['owner_name']); ?>)
         <?php if ($project['running']): ?>
             R (<?php echo $project['workers']; ?>)

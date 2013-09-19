@@ -49,7 +49,7 @@
             </td>
             <td>
                 <?php if (isset($character['project_id']) && $character['project_id']) : ?>
-                    (<?php echo $character['project_name']; ?> <span id="project_percent"><?php echo $character['myproject']['percent']; ?></span>)
+                    (<?php echo $character['project_name']; ?> <span class="project_<?php echo $character['project_id']?>_percent" id="project_percent"><?php echo $character['myproject']['percent']; ?></span>)
                     <?php echo HTML::anchor('user/project/leave/'.$character['project_id'], '[Porzuć]'); ?>
                 <?php endif; ?>
             </td>

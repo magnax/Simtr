@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Task_Progress extends Minion_Daemon {
+class Task_Finish extends Minion_Daemon {
     
     /**
 	 * @var array Minion config options.  Merged with Minion_Daemon options
@@ -72,47 +72,56 @@ class Task_Progress extends Minion_Daemon {
             return false;
         }
 
-        $projects_ids = Model_Project::get_active_projects_ids();
+        $projects_ids = Model_Project::get_finished_projects_ids();
         foreach ($projects_ids as $project_id) {
             echo $project_id . "\n";
             $project = Model_Project::factory(NULL, $project_id);
-            print_r($project->as_array());
-            
-            $participants = $project->get_participants();
-            print_r($participants);
-            
-            $elapsed = 0;
-            
-            if (count($participants)) {
-                foreach ($participants as $p) {
-                    if ($p['end']) {
-                        $elapsed += ($p['end'] - $p['start']) * $p['factor'];
-                    } else {
-                        $elapsed += ($time - $p['start']) * $p['factor'];
-                    }
-                }
+            echo $project->type_id . "\n";
+            $owner = new Model_Character($project->owner_id);
+            $location = new Model_Location($project->location_id);
+            echo 'Owner: ' . $owner->name . "\n";
+            echo 'Location: ' . $location->name . "\n";
+            $is_owner_present = ($project->location_id == $owner->location_id);
+            echo 'Owner present: ' . (int) $is_owner_present . "\n";
+            $event_type = $project->settle($owner, $location);
+            echo 'Event type: ' . $event_type . "\n";
+            $workers = $project->get_workers();
+            print_r($workers);
+            if (count($workers)) {
+                foreach($workers as $worker_id) {
+                    //usuń pracownika
+                    RedisDB::del("characters:$worker_id:current_project");
+                }                
+                //$project->remove_all_workers();
             }
-             
-            if ($elapsed >= $project->time) {
-                
-                $project->time_elapsed = $project->time;
-                //dodaj projekt do rozliczenia i usuń z aktywnych
-                $project->finish();
-                
-            } else {
-                
-                $project->time_elapsed = $elapsed;
-                $project->save();
-                
+            if ($is_owner_present && !in_array($project->owner_id, $workers)) {
+                array_push($workers, $project->owner_id);
             }
+            
+            $project->remove_all();
+            
+            //wysłanie eventu
+            $event = new Model_Event();
+            $event->type = $event_type;
+            $event->date = $time;
 
+            $event->add('params', array('name' => 'sndr', 'value' => $project->owner_id));
+            
+            $event = $project->add_event_params($event);
+
+            $event->save();
+
+            $event->notify($workers);
+            
+            print_r($event);
+                
         }
         
 		// This will be continuously executed
 		$this->_log(Log::INFO, "Executing: $time");
 
 		return TRUE;
-//        
+        
         //end loop immediately for testing purpose
 //        return false;
         
@@ -134,3 +143,4 @@ class Task_Progress extends Minion_Daemon {
 }
 
 ?>
+

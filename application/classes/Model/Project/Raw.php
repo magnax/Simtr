@@ -9,7 +9,7 @@ class Model_Project_Raw extends ORM {
         $raws = ORM::factory('Project_Raw')
             ->where('project_id', '=', $project_id)
             ->find_all();
-        
+
         if ($simple_table) {
             return $raws->as_array('resource_id', 'amount');
         } else {
