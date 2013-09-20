@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access');
 
-class Model_GameTimeTest extends Kohana_UnitTest_TestCase {
+class Model_GameTimeTest extends PHPUnit_Framework_TestCase {
     
     public function testAdd() {
         $this->assertEquals(2, 2);

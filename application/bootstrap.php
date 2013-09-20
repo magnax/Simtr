@@ -57,10 +57,20 @@ I18n::lang('en-us');
  *
  * Note: If you supply an invalid environment name, a PHP warning will be thrown
  * saying "Couldn't find constant Kohana::<INVALID_ENV_NAME>"
+ * 
+ * Default environment is DEVELOPMENT
+ * 
  */
-if (isset($_SERVER['KOHANA_ENV']))
-{
-	Kohana::$environment = constant('Kohana::'.strtoupper($_SERVER['KOHANA_ENV']));
+$env = getenv('KOHANA_ENV');
+
+if ($env  && defined('Kohana::'.strtoupper($env))) {
+    
+	Kohana::$environment = constant('Kohana::'.strtoupper($env));
+    
+} else {
+    
+    Kohana::$environment = Kohana::DEVELOPMENT;
+    
 }
 
 /**
@@ -98,10 +108,8 @@ Kohana::$log->attach(new Log_File(APPPATH.'logs'));
 
 Kohana::$config->attach(new Config_File);
  
-//Kohana::$config->attach(new Config_Database);
- 
 if (Kohana::$environment === Kohana::TESTING) {
-    Kohana::$config->attach(new Config_File('config/testing'));
+    Kohana::$config->attach(new Config_File('config/testing'), true);
 }
 
 /**
@@ -109,7 +117,7 @@ if (Kohana::$environment === Kohana::TESTING) {
  */
 Kohana::modules(array(
     'email'         => APPPATH.'modules/email',     //email module
-    'unittest'      => MODPATH.'unittest',          // Unit testing
+    //'unittest'      => MODPATH.'unittest',          // Unit testing
     'redisent'      => APPPATH.'modules/redisent',  // redisent library
 	'orm'           => MODPATH.'orm',               // Object Relationship Mapping
 	'auth'          => MODPATH.'auth',              // Auth module

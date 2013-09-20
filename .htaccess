@@ -1,5 +1,6 @@
 DirectoryIndex index.php
 php_flag short_open_tag on
+SetEnv KOHANA_ENV development
 RewriteEngine on
 RewriteCond $1 !^(index\.php|images|css|js|robots\.txt|favicon\.ico)
 RewriteCond %{REQUEST_FILENAME} !-f

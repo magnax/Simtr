@@ -104,32 +104,29 @@ require APPPATH.'bootstrap'.EXT;
 /**
  * Execute the main request. A source of the URI can be passed, eg: $_SERVER['PATH_INFO'].
  * If no source is specified, the URI will be automatically detected.
+ * 
+ * Process Request or run task only if not in testing environment
+ * 
  */
-//if (Kohana::$environment !== Kohana::TESTING) {
-//    echo Request::factory()
-//        ->execute()
-//        ->send_headers()
-//        ->body();
-//}
+if (Kohana::$environment !== Kohana::TESTING) {
+    
+    if (PHP_SAPI == 'cli') {
+        // Try and load minion
+        class_exists('Minion_Task') OR die('Please enable the Minion module for CLI support.');
+        set_exception_handler(array('Minion_Exception', 'handler'));
 
-if (PHP_SAPI == 'cli') // Try and load minion
-{
-	class_exists('Minion_Task') OR die('Please enable the Minion module for CLI support.');
-	set_exception_handler(array('Minion_Exception', 'handler'));
+        Minion_Task::factory(Minion_CLI::options())->execute();
+    } else {
+        /**
+         * Execute the main request. A source of the URI can be passed, eg: $_SERVER['PATH_INFO'].
+         * If no source is specified, the URI will be automatically detected.
+         * 
+         */
 
-	Minion_Task::factory(Minion_CLI::options())->execute();
-}
-else
-{
-	/**
-	 * Execute the main request. A source of the URI can be passed, eg: $_SERVER['PATH_INFO'].
-	 * If no source is specified, the URI will be automatically detected.
-     * 
-     */
-        
-	echo Request::factory(TRUE, array(), FALSE)
-		->execute()
-		->send_headers(TRUE)
-		->body();
+        echo Request::factory(TRUE, array(), FALSE)
+            ->execute()
+            ->send_headers(TRUE)
+            ->body();
 
+    }
 }

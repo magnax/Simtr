@@ -1,14 +1,14 @@
 <?php defined('SYSPATH') or die('No direct access allowed!');
 
-class Model_CharacterTest extends Kohana_UnitTest_TestCase {
+class Model_CharacterTest extends PHPUnit_Framework_TestCase {
     
     public function setUp() {
         parent::setUp();
     }
 
-    public function testCharacterCanDropResource() {
-        $character = new Model_Character(2);
-        $this->assertTrue($character->loaded());
+    public function testCharacterModelIsWorking() {
+        $character = new Model_Character();
+        $this->assertTrue($character instanceof Model_Character);
     }
     
 }
