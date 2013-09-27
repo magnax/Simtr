@@ -40,11 +40,13 @@ class Model_User extends Model_Auth_User {
 
     }
 
-    public static function get_password_validation($values) {
+    public static function registration_validation($values) {
 
         return Validation::factory($values)
-            ->rule('password', 'min_length', array(':value', 6))
-            ->rule('password_confirm', 'matches', array(':validation', ':field', 'password'));
+                ->rule('password', 'not_empty')
+                ->rule('password_confirm', 'not_empty')
+                ->rule('password_confirm', 'matches', array(':validation', ':field', 'password'))
+                ->rule('rule_agreement', 'not_empty');
 
     }
     

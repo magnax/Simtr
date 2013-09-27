@@ -54,8 +54,8 @@ class Controller_Base_Base extends Controller_Template {
         /**
          * flash messages: error and info message
          */
-        $this->template->set_global('error', $this->session->get_once('error'));
-        $this->template->set_global('message', $this->session->get_once('message'));
+        $this->template->set_global('error', Session::instance()->get_once('error'));
+        $this->template->set_global('message', Session::instance()->get_once('message'));
         
         /**
          * Redis database init

@@ -15,8 +15,8 @@ class Model_Location extends ORM {
         ),
         'locationclass' => array(
             'model' => 'LocationClass',
-            'foreign_key' => 'id',
-            'far_key' => 'class_id',
+            'foreign_key' => 'class_id',
+            'far_key' => 'id',
         ),
         'parent' => array(
             'model' => 'Location',

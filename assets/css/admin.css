@@ -1,0 +1,64 @@
+/* 
+    Document   : admin
+    Created on : 2013-09-20, 22:54:11
+    Author     : mn
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+root { 
+    display: block;
+}
+
+body, table, th, td {
+    margin: 0px;
+    font-family: Verdana,sans-serif;
+    font-size: 8pt;
+}
+#menu {
+    border: 1px dotted #3d77cb;
+    margin-bottom: 0px;
+    padding: 0px;
+    
+    
+    line-height: 21px;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    color: #002a80;
+}
+
+#menu a {
+    padding: 3px;
+    background-color: #acd4f0;
+    margin: 0px;
+}
+
+table {
+    background-color: #005580;
+    
+}
+
+th, td {
+    padding: 2px 4px;
+    /**/
+    margin: 2px;
+}
+
+tr {
+    background-color: #D3FBFF;
+}
+th {
+    background-color: #005580;
+    color: #eee;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid #D3FBFF;
+}
+tr:hover {
+    background-color: #D3FB33;
+}

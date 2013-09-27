@@ -12,6 +12,16 @@
 
 class Controller_Admin_Characters extends Controller_Base_Admin {
     
+    public function action_index() {
+        
+        $characters = ORM::factory('Character')->find_all();
+        
+        $this->template->content = View::factory('admin/characters/index')
+            ->set('count', ORM::factory('Character')->count_all())
+            ->bind('characters', $characters);
+        
+    }
+    
     public function action_menu() {
         
     }
@@ -64,24 +74,6 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
         
         //redirect to characters menu
         $this->redirect('/admin/characters/menu');
-        
-    }
-    
-    public function action_all() {
-        
-        $users_id = $this->redis->smembers('global:characters');
-        $this->view->users = array();
-        
-        foreach ($users_id as $user) {
-            $user_data = json_decode($this->redis->get("characters:$user"), true);
-            $this->view->users[] = array(
-                'id' => $user,
-                'name' => isset($user_data['name']) ? $user_data['name'] : '---',
-                'sex' => isset($user_data['sex']) ? $user_data['sex'] : '---',
-            );
-        }
-        
-        asort($this->view->users);
         
     }
     

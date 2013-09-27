@@ -3,9 +3,8 @@
 class Controller_Admin_Fixtures extends Controller_Base_Admin {
 
     private $redis_keys = array(
-        'characters', 'resources', 'event_tpl',
-        'dict', 'locations', 'buildmenu',
-        'productionspec', 'itemtype', 'location_type',
+        'event_tpl',
+        'dict',
     );
 
     public function action_menu() {

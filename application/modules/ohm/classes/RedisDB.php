@@ -42,6 +42,14 @@ class RedisDB {
         return self::$_connection;
     }
 
+    /**
+     * Proxy methods
+     */
+    
+    public static function del($key) {
+        return self::$_connection->del($key);
+    }
+    
     public static function exists($key) {
         return self::$_connection->exists($key);
     }
@@ -82,8 +90,8 @@ class RedisDB {
         return self::$_connection->set($key, json_encode($value));
     }
     
-    public static function del($key) {
-        return self::$_connection->del($key);
+    public static function type($key) {
+        return self::$_connection->type($key);
     }
     
     public static function smembers($key) {

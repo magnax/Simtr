@@ -12,6 +12,7 @@ class Controller_Base_Admin extends Controller_Base_User {
         parent::before();
         
         $this->template->bind_global('request', $this->request);
+        $this->template->set_global('server_addr', Kohana::$config->load('general.server_addr'));
         
     }
     

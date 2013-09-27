@@ -38,10 +38,18 @@ Route::set('lock_default', 'lock(/<action>)')
 		'action'     => 'index'
 	));
 
-Route::set('activate', 'activate')
+//User management actions
+Route::set('user_actions', '<action>', array('action' => 'activate|register|remind'))
 	->defaults(array(
-		'controller' => 'login',
-		'action'     => 'activate'
+		'controller' => 'users',
+		'action'     => ':action'
+	));
+
+//Session management actions
+Route::set('session_actions', '<action>', array('action' => 'login|logout'))
+	->defaults(array(
+		'controller' => 'sessions',
+		'action'     => ':action'
 	));
 
 //default admin routes
@@ -81,7 +89,7 @@ Route::set('user_default', 'user(/<controller>(/<action>(/<id>)))', array('id'=>
 //default route
 Route::set('default', '(<controller>(/<action>(/<id>)))', array('id'=>'.*'))
 	->defaults(array(
-		'controller' => 'welcome',
+		'controller' => 'static',
 		'action'     => 'index',
 	)); 
 

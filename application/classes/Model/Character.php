@@ -1,6 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
+
 /**
- * klasa postaci gracza
+ * Character class
  */
 class Model_Character extends ORM {
 
@@ -16,7 +17,12 @@ class Model_Character extends ORM {
             'model' => 'Location',
             'foreign_key' => 'location_id',
             'far_key' => 'id'
-        )
+        ),
+        'user' => array(
+            'model' => 'User',
+            'foreign_key' => 'user_id',
+            'far_key' => 'id'
+        ),
     );
 
     protected $_has_many = array(

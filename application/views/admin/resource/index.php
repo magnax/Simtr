@@ -1,18 +1,12 @@
-<style>
-    td, th {
-        border:1px solid #555;
-        padding: 4px;
-        margin: 0px;
-    }
-</style>
+<h2>Materiały</h2>
 <table>
-    <tr>
+    <thead>
         <th>ID</th>
         <th>Nazwa</th>
         <th>Raw?</th>
         <th>Dz. uzysk</th>
         <th>Dopełniacz</th>
-    </tr>
+    </thead>
     <?php foreach ($resources as $res): ?>
     <tr>
         <td><?php echo $res->id; ?></td>

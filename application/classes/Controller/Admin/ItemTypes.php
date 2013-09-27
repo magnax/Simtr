@@ -4,9 +4,10 @@ class Controller_Admin_ItemTypes extends Controller_Base_Admin {
     
     public function action_index() {
         
-        $itemtypes = ORM::factory('ItemType')->find_all()->as_array();
+        $itemtypes = ORM::factory('ItemType')->find_all();
         
-        $this->view->itemtypes = $itemtypes;
+        $this->template->content = View::factory('admin/itemtypes/index')
+            ->bind('itemtypes', $itemtypes);
         
     }
     

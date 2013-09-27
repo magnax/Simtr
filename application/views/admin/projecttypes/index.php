@@ -1,17 +1,11 @@
-<style>
-    td, th {
-        border:1px solid #555;
-        padding: 4px;
-        margin: 0px;
-    }
-</style>
+<h2>Typy przedmiotów</h2>
 <table>
-    <tr>
+    <thead>
         <th>ID</th>
         <th>Nazwa</th>
         <th>Klucz</th>
         <th>Opis</th>
-    </tr>
+    </thead>
     <?php foreach ($projecttypes as $projecttype): ?>
     <tr>
         <td><?php echo $projecttype->id; ?></td>

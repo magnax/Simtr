@@ -4,9 +4,10 @@ class Controller_Admin_Resource extends Controller_Base_Admin {
     
     public function action_index() {
         
-        $resources = ORM::factory('Resource')->find_all()->as_array();
+        $resources = ORM::factory('Resource')->find_all();
         
-        $this->view->resources = $resources;
+        $this->template->content = View::factory('admin/resource/index')
+            ->bind('resources', $resources);
         
     }
     

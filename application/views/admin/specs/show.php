@@ -6,6 +6,7 @@ Menu: <?php echo Form::select('buildmenu_id', $menus, $specs->buildmenu_id); ?><
 Czas: <?php echo Form::input('time', $specs->time); ?><br />
 <?php echo Form::submit('add', 'Zapisz'); ?>
 <?php echo Form::close(); ?>
+<h2>Materiały:</h2>
 <?php foreach ($raws as $raw): ?>
     <div>
         <?php echo $raw->resource->name; ?>: <?php echo $raw->amount; ?> gram 
@@ -15,4 +16,13 @@ Czas: <?php echo Form::input('time', $specs->time); ?><br />
     </div>
 <?php endforeach; ?>
 <?php echo HTML::anchor('admin/specs/add/'.$itemtype->id, 'Dodaj nowy materiał'); ?><br />
+
+<h2>Narzędzia:</h2>
+
+<h2>Urządzenia:</h2>
+
+<h2>Typy lokacji:</h2>
+
+<h2>Obecność zasobu:</h2>
+
 <a href="<?php echo $request->referrer(); ?>">Powrót</a>

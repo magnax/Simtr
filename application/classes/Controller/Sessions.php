@@ -3,12 +3,10 @@
 /**
  * user login controller
  */
-class Controller_Login extends Controller_Base_Guest {
+class Controller_Sessions extends Controller_Base_Guest {
 
     //default login action - shows login form or validate/login user if POST
-    public function action_index() {
-        
-        $this->view->bind('errors', $errors);
+    public function action_login() {
         
         if (HTTP_Request::POST == $this->request->method()) {
             
@@ -17,7 +15,7 @@ class Controller_Login extends Controller_Base_Guest {
             $user = Auth::instance()->login($this->request->post('email'), $this->request->post('password'), $remember);
              
             // If successful, redirect user
-            if ($user) {
+            if (Auth::instance()->logged_in()) {
                 
                 $this->redirect('user');
                 
@@ -27,58 +25,20 @@ class Controller_Login extends Controller_Base_Guest {
                 
             }
         }
+        
+        $this->template->content = View::factory('sessions/login')
+            ->bind('errors', $errors);
 
     }
 
     public function action_logout() {
         
         // Log user out
-        Auth::instance()->logout();
+        Auth::instance()->logout(TRUE);
          
         // Redirect to login page
         $this->redirect('login');
  
-    }
-    
-    public function action_activate() {
-       
-        if (!isset($_GET['id']) 
-            || !is_numeric($_GET['id']) 
-            || !isset($_GET['code']) 
-            || (strlen($_GET['code']) != 16)) {
-            
-            $this->redirectError('Bad request!');
-        }
-        
-        $user = ORM::factory('User', $_GET['id']);
-        
-        if (!$user->id) {
-            $this->redirectError('This user does not exists!');
-        }
-        
-        if ($user->active) {
-            $this->redirectMessage('User already active', 'user');
-        }
-        
-        $activateCode = $user->activation_code;
-        
-        if (!$activateCode) {
-            $this->redirectError('Something went wrong with activation process');
-        }
-        
-        if ($_GET['code'] == $activateCode) {           
-            
-            $user->active = 1;
-            $user->activation_code = null;
-            $user->save();
-            $this->redirectMessage('Your account is now activated.', 'user');
-            
-        } else {
-            
-            $this->redirectError('Bad activation code!');
-            
-        }
-        
     }
 
     public function action_mailme() {

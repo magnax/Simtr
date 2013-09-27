@@ -21,22 +21,18 @@ class Controller_Admin_Location extends Controller_Base_Admin {
 
     public function action_index($page = 1) {
         
-        $this->view->locationsCount = ORM::factory('Location')->count_all();
+        $locations = ORM::factory('Location')->find_all();
+        
+        $this->template->content = View::factory('admin/location/index')
+            ->set('locations_count', ORM::factory('Location')->count_all())
+            ->bind('locations', $locations);
 
     }
 
-    public function action_all() {
+    public function action_show() {
         
-        $locations = $this->redis->smembers("global:locations");
         
-        $this->view->count = count($locations);
         
-        $locations_array = array();
-        
-        foreach ($locations as $location_id) {
-             $locations_array[] = json_decode($this->redis->get("locations:$location_id"), true);
-        }
-        $this->view->locations = $locations_array;
     }
 
     public function action_edit($location_id) {
