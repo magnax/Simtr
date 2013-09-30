@@ -19,7 +19,7 @@ class Model_Project_Make extends Model_Project {
         return null;
     }
     
-    public function get_name() {
+    public function get_name(array $params = null) {
         
         $item = new Model_ItemType($this->itemtype_id);
         return 'Produkcja: '.$item->name;

@@ -42,7 +42,7 @@ class Model_Project extends OHM {
         
     }
 
-    public function get_name() {
+    public function get_name(array $params = null) {
         
         return 'Dummy project name because of no type';
         

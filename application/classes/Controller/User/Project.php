@@ -20,7 +20,13 @@ class Controller_User_Project extends Controller_Base_Character {
         foreach ($projects as $project_id) {
             
             $project = Model_Project::factory(null, $project_id);
-            $project_name = $project->get_name();
+            
+            $project_name = $project->get_name(
+                array(
+                    'location' => $this->location, 
+                    'character' => $this->character
+                )
+            );
             
             $workers = $project->get_workers();
             

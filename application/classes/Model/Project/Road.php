@@ -17,9 +17,27 @@ class Model_Project_Road extends Model_Project {
         return null;
     }
     
-    public function get_name() {
+    public function get_name(array $params = null) {
 
-        return 'Ulepszanie drogi';
+        $road = new Model_Road($this->road_id);
+        
+        $road_type = Model_RoadType::get_next_level($road->level);
+        
+        if ($params['location']->id == $road->location_1_id) {
+            $dest_location = $road->location_2;
+            $reverse = false;
+        } else {
+            $dest_location = $road->location_1;
+            $reverse = true;
+        }
+        
+        $dest_name = HTML::anchor('lname/'.$dest_location->id, $dest_location->get_lname($params['character']->id));
+
+        $direction = $road->get_direction_string($reverse);
+        $level = $road_type->name;
+        
+        return sprintf('Ulepszanie drogi do %s (kierunek %s) do poziomu: %s', 
+            $dest_name, $direction, $level);
         
     }
     

@@ -17,6 +17,14 @@ class Model_RoadType extends ORM {
         
     }
     
+    public static function get_next_level($level) {
+        
+        return ORM::factory('RoadType')
+            ->where('level', '=', $level + 1)
+            ->find();
+        
+    }
+    
 }
 
 ?>

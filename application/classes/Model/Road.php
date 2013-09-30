@@ -35,6 +35,25 @@ class Model_Road extends ORM {
         return $this->direction;
     }
     
+    public function get_direction($reverse = false) {
+        
+        $direction = Utils::calculateDirection(
+            $this->location_1->town->x, $this->location_1->town->y, 
+            $this->location_2->town->x, $this->location_2->town->y
+        );
+        
+        if ($reverse) {
+            return Utils::reverseDirection($direction);
+        }
+        
+        return $direction;
+        
+    }
+
+    public function get_direction_string($reverse = false) {
+        return Utils::getDirectionString($this->get_direction($reverse));
+    }
+
     public function getDestinationLocationID() {
         return $this->end_location_id;
     }
