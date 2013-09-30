@@ -337,12 +337,14 @@ class Model_Location extends ORM {
         foreach ($roads as $road) {
             $destination_id = ($road->location_1_id == $this->id) ? $road->location_2_id : $road->location_1_id;
             $destination = new Model_Location($destination_id);
+            $can_be_upgraded = $road->can_be_upgraded();
             $returned[] = array(
                 'id' => $road->id,
                 'destination_id' => $destination->id,
                 'destination_name' => $destination->get_lname($character->id),
                 'level' => $road->get_level_name(),
                 'direction' => Utils::getDirectionString(Utils::calculateDirection($this->town->x, $this->town->y, $destination->town->x, $destination->town->y)),
+                'can_be_upgraded' => $can_be_upgraded,
             );
         }
         return $returned;

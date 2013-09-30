@@ -2,6 +2,11 @@
 
 class Model_Project extends OHM {
 
+    /**
+     * @var string lowercase object name (main key in db)
+     */
+    protected $_object_name = 'project';
+    
     protected $_columns = array('owner_id', 'type_id', 'location_id', 'time', 'time_elapsed', 'created_at', 'name');
     
     // typy projektów
@@ -10,8 +15,9 @@ class Model_Project extends OHM {
     const TYPE_GET_RAW = 'GetRaw'; //wydobycie surowców z ziemi
     const TYPE_LOCKBUILD = 'Lockbuild'; //wstawianie i rozbudowa zamków
     const TYPE_MAKE = 'Make'; //produkcja przedmiotów
+    const TYPE_ROAD = 'Road'; //Ulepszanie dróg
     
-    protected static $checkSpecsArray = array('Make', 'Build', 'Lockbuild');
+    protected static $checkSpecsArray = array('Make', 'Build', 'Lockbuild', 'Road');
 
     /*
      * creates new project if id is null, if type is provided then creates 

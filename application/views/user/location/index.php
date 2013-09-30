@@ -14,7 +14,9 @@
         <div>
             <?php echo HTML::anchor('user/point/e/'.$exit['id'], '[wskaż]'); ?> 
             <?php echo HTML::anchor('user/go/'.$exit['id'], '[idź]'); ?>
-            [buduj] 
+            <?php if ($exit['can_be_upgraded']): ?>
+                <?php echo HTML::anchor('user/road/upgrade/'.$exit['id'], '[buduj]'); ?>
+            <?php endif; ?>
             <?php echo $exit['level'].' do '.HTML::anchor('lname/'.$exit['destination_id'], $exit['destination_name']).' (kierunek: '.$exit['direction'].')'; ?>
         </div>
     <?php endforeach; ?>

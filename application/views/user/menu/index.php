@@ -3,7 +3,7 @@
     <?php foreach ($characters as $character): ?>
     <div class="character" id="character-<?=$character['id']?>">
         <div class="character_sex">
-            <?php echo $character['sex']; ?>
+            <i class="<?php echo ($character['sex'] == 'K') ? 'icon-female' : 'icon-male'; ?>"></i>
         </div>
         <div class="character_name">
             <?php if ($character['rip']): ?>

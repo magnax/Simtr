@@ -56,13 +56,13 @@ Route::set('session_actions', '<action>', array('action' => 'login|logout'))
 Route::set('admin_expanded', 'admin(/<controller>(/<action>(/<id>(/<param>))))')
 	->defaults(array(
         'directory'  => 'admin',
-		'controller' => 'menu',
+		'controller' => 'welcome',
 		'action'     => 'index'
 	));
 Route::set('admin', 'admin(/<controller>(/<action>(/<id>)))', array('id'=>'.*'))
 	->defaults(array(
         'directory'  => 'admin',
-		'controller' => 'menu',
+		'controller' => 'welcome',
 		'action'     => 'index'
 	));
 

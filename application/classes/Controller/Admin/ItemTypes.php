@@ -30,8 +30,11 @@ class Controller_Admin_ItemTypes extends Controller_Base_Admin {
             $this->redirect($this->request->post('redir'));
             
         }
-             
+          
+        $projecctypes = array('0' => '-- wybierz --') +
+                ORM::factory('ProjectType')->find_all()->as_array('id', 'name');
         $this->view->itemtype = $itemtype;
+        $this->view->projecctypes = $projecctypes;
     }
     
 }

@@ -1,12 +1,10 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Admin_Welcome extends Controller_Base_Base {
-
-    public $template = 'templates/guest'; 
+class Controller_Admin_Welcome extends Controller_Base_Admin {
     
 	public function action_index() {
 
-        echo 'Hello and welcome';
+        $this->template->content = 'Hello and welcome in Fabular Admin ;-)';
         
 	}
 
