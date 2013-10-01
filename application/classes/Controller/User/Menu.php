@@ -44,7 +44,7 @@ class Controller_User_Menu extends Controller_Base_User {
         $this->view->characters = $returnedCharacters;
         $this->template->chars = $returnedCharacters;
 
-    }
+    } 
 
     /**
      * ustawia bieżącą postać - wszystkie akcje będą dotyczyły właśnie

@@ -71,6 +71,7 @@
             </td>
             <td>
                 <a href="<?php echo URL::base(); ?>admin/characters/edit/<?php echo $character->id; ?>">Edit</a>
+                <a href="<?php echo URL::base(); ?>admin/characters/skills/<?php echo $character->id; ?>">Skills</a>
             </td>
         </tr>
     <?php endforeach; ?>

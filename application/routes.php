@@ -5,6 +5,13 @@
  * defaults for the URI.
  */
 
+Route::set('info', 'info')
+    ->defaults(array(
+        'directory' => 'user',
+        'controller' => 'char',
+        'action' => 'info'
+    ));
+
 Route::set('go', 'user/go/<id>', array('id' => '[0-9]*'))
     ->defaults(array(
         'directory' => 'user',

@@ -22,69 +22,30 @@ class Controller_Admin_Characters extends Controller_Base_Admin {
         
     }
     
-    public function action_menu() {
-        
-    }
-    
     /**
      * randomizing some characters parameters
      */
-    public function action_random_skills() {
+    public function action_skills() {
         
-        $users_ids = $this->redis->smembers("global:characters");
+        $character = new Model_Character($this->request->param('id'));
         
-        foreach ($users_ids as $user_id) {
-            
-            //read character
-            $user = json_decode($this->redis->get("characters:$user_id"), true);
-            
-            //vitality 800-1200
-            $user['vitality'] = rand(800, 1200);
-            //current life set to character vitality
-            $user['life'] = $user['vitality'];
-            //strength 0.6 - 1.8
-            $user['strength'] = rand(6, 18) / 10;
-            //fighting skill 0.8 - 1.2
-            $user['fighting'] = rand(8, 12) / 10;
-            
-            //save character
-            $this->redis->set("characters:$user_id", json_encode($user));
-            
-        }
+        $character->check_skills();
         
-        //redirect to characters menu
-        $this->redirect('/admin/characters/menu');
+        $skills = ORM::factory('CharacterSkill')->where('character_id', '=', $character->id)->find_all()->as_array();
         
-    }
-
-
-    public function action_correct() {
-        $users = $this->redis->keys("characters:*");
-        foreach ($users as $u) {
-            $n = explode(':', $u);
-            if (strpos($u, 'lnames') !== false) {
-                $this->redis->set("lnames:{$n[1]}:{$n[3]}", $this->redis->get($u));
-                $this->redis->del($u);
-            } elseif (strpos($u, 'chnames') !== false) {
-                $this->redis->set("chnames:{$n[1]}:{$n[3]}", $this->redis->get($u));
-                $this->redis->del($u);
-            }
-            $this->redis->sadd('global:characters', $n[1]);
-        }
-        
-        //redirect to characters menu
-        $this->redirect('/admin/characters/menu');
+        $this->template->content = View::factory('admin/characters/skills')
+            ->bind('character', $character)
+            ->bind('skills', $skills);
         
     }
     
-    public function action_del($user_id) {
+    public function action_add_initial_skills() {
         
-        $this->redis->del("characters:$user_id");
-        $this->redis->del("characters:$user_id:events");
-        $this->redis->del("characters:$user_id:equipment:raws");
-        $this->redis->srem("global:characters", $user_id);
+        $character = new Model_Character($this->request->param('id'));
         
-        $this->redirect('/admin/characters/all');
+        $character->add_initial_skills();
+        
+        $this->redirect('admin/characters/skills/' . $character->id);
         
     }
     

@@ -30,7 +30,11 @@ class Model_Character extends ORM {
             'model' => 'Key',
             'foreign_key' => 'character_id',
             'far_key' => 'id',
-        )
+        ),
+        'skills' => array(
+            'model' => 'Skill',
+            'through' => 'characters_skills',
+        ),
     );
 
     public function rules() {
@@ -83,6 +87,7 @@ class Model_Character extends ORM {
             'id' => $this->id,
             'name' => $name ? $name : $this->name,
             'age' => $this->countRealAge($raw_time),
+            'sex' => $this->sex,
             'spawn_day' => $this->created,
             'spawn_location_id' => $this->spawn_location_id,
             'location' => Helper_View::LocationInfo($this),
@@ -807,6 +812,55 @@ class Model_Character extends ORM {
             ->find();
         
         return $road;
+        
+    }
+    
+    /*
+     *  SKILLS
+     */
+    
+    public function check_skills() {
+        
+        $skills_dictionary = ORM::factory('Skill')->find_all()->as_array();
+        
+        //add skill if not present in characters_skills table
+        foreach ($skills_dictionary as $skill) {
+            if (!$this->has('skills', $skill)) {
+                $this->add('skills', $skill);
+            }
+        }
+        
+    }
+    
+    public function get_skills() {
+        
+        return ORM::factory('CharacterSkill')
+            ->where('character_id', '=', $this->id)
+            ->find_all()
+            ->as_array();
+        
+    }
+    
+    public function add_initial_skills() {
+        
+        //5 points to dispose among skills
+        $i = 0;
+        
+        while($i < 5) {
+            
+            $skill = ORM::factory('CharacterSkill')
+                ->where('character_id', '=', $this->id)
+                ->order_by(DB::expr('RAND()'))
+                ->limit(1)
+                ->find();
+            
+            if ($skill->level < 4) {
+                $skill->level++;
+                $skill->save();
+                $i++;
+            }
+            
+        }
         
     }
     

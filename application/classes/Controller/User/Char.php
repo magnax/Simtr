@@ -33,6 +33,19 @@ class Controller_User_Char extends Controller_Base_Character {
 
         $this->redirect('events');
     }
+    
+    /**
+     * Info page about current character
+     */
+    public function action_info() {
+        
+        $skills = $this->character->get_skills();
+        
+        $this->template->content = View::factory('user/char/info')
+            ->bind('skills', $skills);
+        
+    }
+    
 }
 
 ?>

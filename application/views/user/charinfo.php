@@ -8,7 +8,10 @@
                Nazwa:
             </td>
             <td width="420">
-               <?php echo HTML::anchor('chname/'.$character['id'], $character['name']); ?>
+                <a href="<?php echo URL::base(); ?>info">
+                    <i class="<?php echo ($character['sex'] == 'K') ? 'icon-female' : 'icon-male'; ?>"></i>
+                </a> 
+                <?php echo HTML::anchor('chname/'.$character['id'], $character['name']); ?>
             </td>
         </tr>
         <tr>

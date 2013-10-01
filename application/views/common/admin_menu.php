@@ -4,7 +4,7 @@
     <?php echo HTML::anchor('admin/location', 'Locations'); ?> 
     <?php echo HTML::anchor('admin/resource', 'Resources'); ?>
     <?php echo HTML::anchor('admin/fixtures/menu', 'Fixtures menu'); ?>
-    <?php echo HTML::anchor('admin/characters/menu', 'Characters menu'); ?> 
+    <?php echo HTML::anchor('admin/characters', 'Characters menu'); ?> 
     <?php echo HTML::anchor('admin/itemtypes', 'Item types'); ?> 
     <?php echo HTML::anchor('admin/projecttypes', 'Project types'); ?> 
     <?php echo HTML::anchor('admin/keys', 'DB Keys'); ?> 

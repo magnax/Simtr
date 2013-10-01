@@ -117,6 +117,12 @@ class Helper_View {
         return $location_array;
         
     }
+    
+    public static function FormatSkill($level) {
+        
+        echo Model_Skill::$level_names[$level];
+        
+    }
 }
 
 ?>
