@@ -5,5 +5,9 @@ RewriteEngine on
 RewriteCond $1 !^(index\.php|images|css|js|robots\.txt|favicon\.ico)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+
+#normal rule
 RewriteRule ^(.*)$ ./index.php/$1 [L,QSA]
 
+#rule when server doesn't provide PATH_INFO
+#RewriteRule ^(.*)$ ./index.php?kohana_uri=$0 [PT,L,QSA]
