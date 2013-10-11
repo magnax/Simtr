@@ -274,6 +274,28 @@ class Model_Project extends OHM {
         
     }
     
+    /**
+     * Default empty list (overriden by child classes)
+     * 
+     * @return array()
+     */
+    public function get_mandatory_tools() {
+        
+        return array();
+        
+    }
+    
+    /**
+     * Default empty list (overriden by child classes)
+     * 
+     * @return array()
+     */
+    public function get_optional_tools() {
+        
+        return array();
+        
+    }
+    
 }
 
 ?>

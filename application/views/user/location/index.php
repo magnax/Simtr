@@ -29,9 +29,11 @@
     <div class="title_bar">
         <?php echo $character['location']['str']; ?>: Dostępne surowce
     </div>
-    Zajętych miejsc wydobycia: <?php echo $used_slots; ?> z <?php echo $res_slots; ?> dostępnych<br />
-    <?php foreach ($resources as $res): ?>
-        <?php echo HTML::anchor('user/project/get_raw/'.$res->id, '[zbieraj]'); ?>
-        <?php echo $res->name; ?> (<?php echo $res->id; ?>)<br />
-    <?php endforeach; ?>
+    <div class="list">
+        Zajętych miejsc wydobycia: <?php echo $used_slots; ?> z <?php echo $res_slots; ?> dostępnych<br />
+        <?php foreach ($resources as $res): ?>
+            <?php echo HTML::anchor('user/project/get_raw/'.$res->id, '<i class="icon-leaf icon-large"></i>', array('title' => 'Pozyskuj ten surowiec')); ?>
+            <?php echo $res->name; ?> (<?php echo $res->id; ?>)<br />
+        <?php endforeach; ?>
+    </div>
 <?php endif; ?>
