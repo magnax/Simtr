@@ -33,6 +33,7 @@
             <i class="icon-group icon-large"></i> <?php echo $project['workers']; ?>
         <?php endif; ?>
     </div>
+    <div class="clearfix"></div>
 </div>
 <?php endforeach; ?>
-<div class="clear"></div>
+<div class="clearfix"></div>
