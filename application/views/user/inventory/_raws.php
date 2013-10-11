@@ -1,19 +1,17 @@
+<div class="objects-menu">Surowce</div>
 <div class="list">
-    <div class="objects-menu">Surowce</div>
     <?php foreach ($raws as $r): ?>
-        <div>
-            <span style="font-size: 1.3em;">
-                <a href="/events/put_raw/<?=$r['id']; ?>" title="Upuść surowiec">
-                    <i class="icon-signout icon-rotate-90"></i> 
-                </a>
-                <a href="/events/give_raw/<?=$r['id']; ?>" title="Podaj surowiec">
-                    <i class="icon-signout"></i> 
-                </a>
-                <a href="/events/use_raw/<?=$r['id']; ?>" title="Użyj do projektu">
-                    <i class="icon-cogs "></i> 
-                </a>
-            </span>
-            <?php echo $r['amount']; ?> gram <?php echo $r['name']; ?><br />
-        </div>
+    <div>
+        <a href="/events/put_raw/<?=$r['id']; ?>" title="Upuść surowiec">
+            <i class="icon-signout icon-rotate-90 icon-large"></i> 
+        </a>
+        <a href="/events/give_raw/<?=$r['id']; ?>" title="Podaj surowiec">
+            <i class="icon-signout icon-large"></i> 
+        </a>
+        <a href="/events/use_raw/<?=$r['id']; ?>" title="Użyj do projektu">
+            <i class="icon-cogs icon-large"></i> 
+        </a>
+        <?php echo $r['amount']; ?> gram <?php echo $r['name']; ?>
+    </div>
     <?php endforeach; ?>
 </div>

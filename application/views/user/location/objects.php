@@ -35,17 +35,36 @@
         
 <?php if (count($raws)): ?>
     <div class="objects-menu">Surowce</div>
-    <?php foreach ($raws as $r): ?>
-    <?php echo HTML::anchor('events/get_raw/'.$r['id'], '[podnieś]'); ?> <?php echo $r['amount']; ?> gram <?php echo $r['name']; ?><br />
-    <?php endforeach; ?>
+    <div class="list">
+        <?php foreach ($raws as $r): ?>
+            <span style="font-size: 1.3em;">
+                <?php echo HTML::anchor('events/get_raw/'.$r['id'], '<i class="icon-signin icon-rotate-270"></i>'); ?>
+            </span>
+            <?php echo $r['amount']; ?> gram <?php echo $r['name']; ?><br />
+        <?php endforeach; ?>
+    </div>
 <?php endif; ?>
 
+<?php if (count($machines)): ?>
+    <div class="objects-menu">Urządzenia</div>
+    <div class="list">
+        <?php foreach ($machines as $item): ?>
+            <?php echo HTML::anchor('user/location/use/'.$item->id, '<i class="icon-gear icon-large"></i>'); ?>
+            <?php echo $item->itemtype->name; ?><br />
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
+    
 <?php if (count($items)): ?>
     <div class="objects-menu">Przedmioty</div>
-    <?php foreach ($items as $item): ?>
-        <?php echo HTML::anchor('user/location/getitem/'.$item['id'], '[podnieś]'); ?>
-        <?php echo $item['name']; ?><br />
-    <?php endforeach; ?>
+    <div class="list">
+        <?php foreach ($items as $item): ?>
+            <span style="font-size: 1.3em;">
+                <?php echo HTML::anchor('user/location/getitem/'.$item['id'], '<i class="icon-signin icon-rotate-270"></i>'); ?>
+            </span>
+            <?php echo $item['state']; ?> <?php echo $item['name']; ?><br />
+        <?php endforeach; ?>
+    </div>
 <?php endif; ?>
 
 <?php if (count($corpses)): ?>

@@ -29,11 +29,16 @@ class Controller_Admin_Specs extends Controller_Base_Admin {
             $menus = array(0 => '- brak -') + $menus;
         }
         
+        $mandatory_tools = $itemtype->get_mandatory_tools();
+        $optional_tools = $itemtype->get_optional_tools();
+        
         $this->view
             ->bind('itemtype', $itemtype)
             ->bind('specs', $specs)
             ->bind('raws', $raws)
             ->bind('menus', $menus)
+            ->bind('mandatory_tools', $mandatory_tools)
+            ->bind('optional_tools', $optional_tools)
             ->set('redir', Session::instance()->get('redir', $this->request->referrer()));
     }
     
@@ -57,7 +62,7 @@ class Controller_Admin_Specs extends Controller_Base_Admin {
                 
             }
             
-            $resources = ORM::factory('Resource')->find_all()->as_array('id', 'name');
+            $resources = ORM::factory('Resource')->order_by('name')->find_all()->as_array('id', 'name');
             $resources = array('0' => '-- wybierz --') + $resources;
             
             $this->template->content = View::factory('admin/specs/edit')

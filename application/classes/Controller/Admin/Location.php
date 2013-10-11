@@ -35,60 +35,45 @@ class Controller_Admin_Location extends Controller_Base_Admin {
         
     }
 
-    public function action_edit($location_id) {
+    public function action_edit() {
 
-        //save changed location data
-        if (isset($_POST['submit'])) {   
-            $this->_add($_POST, $location_id);
+        $location = new Model_Location($this->request->param('id'));
+        
+        if ($location->loaded()) {
+            $location_detail_object = $location->get_detail_object();
         }
         
-        //append building
-        if (isset($_POST['append'])) {   
-            
-            $building = json_decode($this->redis->get("locations:{$_POST['building_id']}"), true);
-            $building['parent'] = $location_id;
-            $this->redis->set("locations:{$_POST['building_id']}", json_encode($building));
-            $this->redis->sadd("twn:$location_id:bld", $_POST['building_id']);
-            
-            $this->redirect('admin/location/edit/'.$location_id);
-            
+        $possible_parent_locations = Model_Location::get_possible_parent_locations();
+        $towns = Model_Location::get_towns();
+        
+        $location_classes = array(0 => '-- wybierz --') + 
+            ORM::factory('LocationClass')
+                ->find_all()
+                ->as_array('id', 'name');
+        
+        $location_types = array(0 => '-- wybierz --') + 
+            ORM::factory('LocationType')
+                ->find_all()
+                ->as_array('id', 'name');
+        
+        if ($location->is_town()) {
+            $resources = $location->resources->find_all();
         }
         
-        //get location
-        $location = json_decode($this->redis->get("locations:$location_id"), true);
-        
-        $location['resources'] = array(); 
-        
-        //buildings
-        $bld_ids = $this->redis->smembers("twn:$location_id:bld");
-        
-        $locations_array = array();
-        
-        foreach ($bld_ids as $bld_id) {
-            $locations_array[] = json_decode($this->redis->get("locations:$bld_id"), true);
+        if ($location->is_workable()) {
+            $machines = $location->machines->find_all();
         }
-        $location['buildings'] = $locations_array;
         
-        $this->view->location = $location;
+        $this->template->content = View::factory('admin/location/edit')
+            ->bind('location', $location)
+            ->bind('possible_parent_locations', $possible_parent_locations)
+            ->bind('location_classes', $location_classes)
+            ->bind('location_types', $location_types)
+            ->bind('location_detail_object', $location_detail_object)
+            ->bind('machines', $machines)
+            ->bind('resources', $resources)
+            ->bind('towns', $towns);
         
-        $types = json_decode($this->redis->get("loc_type"), true);
-        $this->view->types = $types;
-        
-        $this->view->locations_classes = $this->locations_classes;
-        $this->view->level_types = $this->level_types;
-        
-        //buildings not added to any location
-        $bld_ids = $this->redis->smembers("bld");
-        
-        $locations_array = array();
-        
-        foreach ($bld_ids as $location_id) {
-            $building = json_decode($this->redis->get("locations:$location_id"), true);
-            if (!isset($building['parent']) or !$building['parent']) {
-                $locations_array[$building['id']] = $building['name'].' ('.$building['type'].')';
-            }
-        }
-        $this->view->orphan_buildings = $locations_array;
         
     }
     

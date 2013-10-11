@@ -6,8 +6,16 @@ class Model_ItemType extends ORM {
         'projecttype' => array(
             'model' => 'ProjectType',
             'foreign_key' => 'projecttype_id',
-            'far_key' => 'id'
-        )
+            'far_key' => 'id',
+        ),
+    );
+    
+    protected $_has_many = array(
+        'tools' => array(
+            'model' => 'Tool',
+            'foreign_key' => 'itemtype_id',
+            'far_key' => 'id',
+        ),
     );
 
     public static $states = array(
@@ -38,7 +46,7 @@ class Model_ItemType extends ORM {
         )
     );
 
-        public static function getState($percent, $kind = 'M') {
+    public static function getState($percent, $kind = 'M') {
         if ($percent > 0.8) $state = 'brand_new';
         elseif ($percent > 0.6) $state = 'new';
         elseif ($percent > 0.4) $state = 'used';
@@ -51,8 +59,25 @@ class Model_ItemType extends ORM {
         return $this->attack;
     }
 
-//    abstract public function fetchOne($itemtype_id, $as_array = false);
-//    abstract public function getName($item_id);
+    /**
+     * get all tools (itemtypes) which are mandatory when this type of item
+     * is build
+     */
+    public function get_mandatory_tools() {
+        
+        return $this->tools->where('optional', '=', 0)->find_all();
+        
+    }
+    
+    /**
+     * get optional tools (itemtypes) which may be used to speed up project 
+     * when this type of item is build
+     */
+    public function get_optional_tools() {
+        
+        return $this->tools->where('optional', '=', 1)->find_all();
+        
+    }
     
 }
 

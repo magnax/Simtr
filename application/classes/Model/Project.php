@@ -48,6 +48,14 @@ class Model_Project extends OHM {
         
     }
 
+    public function get_full_name(array $params = null) {
+        
+        return strip_tags($this->get_name($params)) 
+            . ' ('. Model_GameTime::formatDateTime($this->created_at, "d-h:m")
+            . ', ' . $params['character']->getChname($this->owner_id) . ')';
+        
+    }
+
     public function getPercent($accuracy = 0) {
         return round(($this->time_elapsed / $this->time * 100), $accuracy);
     }
@@ -188,6 +196,7 @@ class Model_Project extends OHM {
         if ($raw->loaded()) {
             
             $raw->amount += $amount;
+            $raw->needed -= $amount;
             $raw->save();
             return true;
             

@@ -1,6 +1,6 @@
 <html>
     <head>
-        <?php include Kohana::find_file('views', 'common/header') ?>
+        <?php echo View::factory('common/header'); ?>
         <script src="<?= $server_uri;?>/socket.io/socket.io.js"></script>
         <script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
         <script src="/assets/js/general.js"></script>

@@ -14,7 +14,7 @@ class Controller_User_Inventory extends Controller_Base_Character {
 
     public function action_index($type = 'raws') {
 
-        $type = Session::instance()->get_once('inventory', 'raws');
+        $type = Session::instance()->get('inventory', 'raws');
         
         $types = array('all', 'raws', 'items', 'notes', 'keys', 'coins');
         if (!in_array($type, $types)) {
@@ -95,7 +95,7 @@ class Controller_User_Inventory extends Controller_Base_Character {
             
         }
         
-        $this->redirect('events');
+        $this->redirect('user/inventory');
         
     }
     

@@ -80,7 +80,7 @@ class Model_Character extends ORM {
             $my_project['percent'] = $project->calculateProgress(2);
             $my_project['time_zero'] = $raw_time;
             $my_project['speed'] = 1; //for now, will be calculated
-            $project_name = $project->get_name();
+            $project_name = $project->get_name(array('character' => $this, 'location' => $this->location));
         }
         
         return array(
@@ -861,6 +861,30 @@ class Model_Character extends ORM {
             }
             
         }
+        
+    }
+    
+    public function get_inventory_items_types() {
+        
+        $itemtypes = array();
+        
+        $items_ids = RedisDB::smembers("items:{$this->id}");
+        
+        if (count($items_ids)) {
+            
+            $items = ORM::factory('Item')
+                ->where('id', 'IN', DB::expr('('. join(',',$items_ids).')'))
+                ->find_all();
+
+            foreach ($items as $item) {
+                if (!in_array($item->itemtype_id, $itemtypes)) {
+                    $itemtypes[] = $item->itemtype_id;
+                }
+            }
+            
+        }
+        
+        return $itemtypes;
         
     }
     

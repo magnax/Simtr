@@ -44,7 +44,7 @@ class Model_Project_Road extends Model_Project {
     public function getAllSpecs() {
         
         $raws = Model_Project_Raw::getRaws($this->id);
-
+        return $raws;
         foreach ($raws as $raw) {
 
             if ($raw->amount < $raw->needed) {
@@ -119,6 +119,22 @@ class Model_Project_Road extends Model_Project {
         
         $event->add('params', array('name' => 'name', 'value' => $this->get_name()));
         return $event;
+        
+    }
+    
+    public function get_mandatory_tools() {
+        
+        $itemtype = new Model_ItemType($this->itemtype_id);
+        
+        return $itemtype->get_mandatory_tools();
+        
+    }
+    
+    public function get_optional_tools() {
+        
+        $itemtype = new Model_ItemType($this->itemtype_id);
+        
+        return $itemtype->get_optional_tools();
         
     }
 

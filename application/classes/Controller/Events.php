@@ -191,6 +191,12 @@ class Controller_Events extends Controller_Base_Character {
 
     public function action_use_raw() {
      
+        //params for project name
+        $params = array(
+            'character' => $this->character, 
+            'location' => $this->location
+        );
+        
         $this->view->resource = new Model_Resource($this->request->param('id'));
         
         if (HTTP_Request::POST == $this->request->method()) {
@@ -205,8 +211,9 @@ class Controller_Events extends Controller_Base_Character {
                 $needed_amount = 0;
                 
                 foreach ($specs as $spec) {
-                    if ($spec['resource_id'] == $this->request->param('id')) {
-                        $needed_amount = $spec['needed'] - $spec['added'];
+                    if ($spec->resource_id == $this->request->param('id')) {
+                        $needed_amount = $spec->needed - $spec->amount;
+                        break;
                     }
                 }
                 
@@ -225,6 +232,7 @@ class Controller_Events extends Controller_Base_Character {
                 $resource_id = $this->request->post('resource_id');
 
                 try {
+                    
                     $this->character->add_raw_to_project($project, $resource_id, $amount);
 
                     //wysłanie eventu
@@ -234,7 +242,7 @@ class Controller_Events extends Controller_Base_Character {
 
                     $event->add('params', array('name' => 'sndr', 'value' => $this->character->id));
                     $event->add('params', array('name' => 'project_id', 'value' => $project->id));
-                    $event->add('params', array('name' => 'project_name', 'value' => $project->get_name()));
+                    $event->add('params', array('name' => 'project_name', 'value' => $project->get_name($params)));
                     $event->add('params', array('name' => 'res_id', 'value' => $resource_id));
                     $event->add('params', array('name' => 'amount', 'value' => $amount));
 
@@ -257,7 +265,7 @@ class Controller_Events extends Controller_Base_Character {
         foreach ($projects_ids as $project_id) {
             $project = Model_Project::factory(null, $project_id);
             if (!$project->hasAllResources()) {
-                $this->view->projects[$project_id] = Model_GameTime::formatDateTime($project->created_at, "d-h:m"). ' ' . $project->get_name() . ' ('. $this->character->getChname($project->owner_id) . ')';
+                $this->view->projects[$project_id] = $project->get_full_name($params);
             }
         }
         

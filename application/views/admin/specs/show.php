@@ -17,8 +17,34 @@ Czas: <?php echo Form::input('time', $specs->time); ?><br />
 <?php endforeach; ?>
 <?php echo HTML::anchor('admin/specs/add/'.$itemtype->id, 'Dodaj nowy materiał'); ?><br />
 
-<h2>Narzędzia:</h2>
-
+<h2>Narzędzia potrzebne do wykonywania projektu:</h2>
+<h3>Niezbędne:</h3>
+<?php if ($mandatory_tools): ?>
+    <?php foreach ($mandatory_tools as $tool): ?>
+        <div>
+            <?php echo $tool->required_itemtype->name; ?>
+            <a href="<?php echo URL::base(); ?>admin/tools/delete/<?php echo $tool->id; ?>">
+                [X]
+            </a>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    Nie ma żadnych<br />
+<?php endif; ?>
+<h3>Opcjonalne (zwiększające szybkość pracy):</h3>
+<?php if ($optional_tools): ?>
+    <?php foreach ($optional_tools as $tool): ?>
+        <div>
+            <?php echo $tool->required_itemtype->name; ?>
+            <a href="<?php echo URL::base(); ?>admin/tools/delete/<?php echo $tool->id; ?>">
+                [X]
+            </a>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    Nie ma żadnych<br />
+<?php endif; ?>
+<?php echo HTML::anchor('admin/tools/add/'.$itemtype->id, 'Dodaj nowe'); ?><br />
 <h2>Urządzenia:</h2>
 
 <h2>Typy lokacji:</h2>

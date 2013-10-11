@@ -37,6 +37,11 @@ class Model_Location extends ORM {
             'foreign_key' => 'location_id',
             'far_key' => 'resource_id'
         ),
+        'machines' => array(
+            'model' => 'Machine',
+            'foreign_key' => 'location_id',
+            'far_key' => 'id'
+        ),
     );
     
     protected $_has_one = array(
@@ -362,6 +367,50 @@ class Model_Location extends ORM {
         return ($this->locationtype->id == self::TYPE_TOWN || $this->locationtype->movable);
         
     }
+    
+    public static function get_possible_parent_locations() {
+        
+        return array('' => ' - nadrzędna - ') + ORM::factory('Location')
+            ->where('locationtype_id', 'IN', DB::expr('(1,2)'))
+            ->find_all()->as_array('id', 'name');
+        
+    }
+    
+    public function get_detail_object() {
+        
+        $class_name = ORM::factory('LocationType', $this->locationtype_id)->name;
+        
+        return ORM::factory(ucfirst($class_name), array('location_id' => $this->id));
+        
+    }
+    
+    public function is_town() {
+        
+        return $this->locationtype_id == self::TYPE_TOWN;
+        
+    }
+    
+    public static function get_towns() {
+        
+        return ORM::factory('Location')
+            ->where('locationtype_id', '=', self::TYPE_TOWN)
+            ->find_all()
+            ->as_array('id', 'name');
+        
+    }
+
+    /**
+     * true if it's possible in this location to work and build machines
+     * 
+     * @return boolean
+     */
+    public function is_workable() {
+        
+        return $this->locationtype->workable;
+        
+    }
+    
+    
     
 }
 

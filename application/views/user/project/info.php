@@ -51,7 +51,8 @@
     <?php else: ?>
         <?php foreach($project_specs as $spec): ?>
             <div>
-                <?php echo $spec['name']; ?> (Musisz jeszcze dodać <?php echo ($spec['needed'] - $spec['added']); ?> z potrzebnych <?php echo $spec['needed']; ?> gram)
+                <?php echo $spec->resource->name; ?> 
+                (Musisz jeszcze dodać <?php echo ($spec->needed - $spec->amount); ?> z potrzebnych <?php echo $spec->needed; ?> gram)
             </div>
         <?php endforeach; ?>
     <?php endif; ?>
@@ -70,7 +71,22 @@
     Narzędzia:
 </div>
 <div class="table_right">
-    
+    <?php if (!count($mandatory_tools) && !count($optional_tools)): ?>
+        Nie potrzeba żadnych do tego projektu.
+    <?php else: ?>
+        <?php foreach($mandatory_tools as $tool): ?>
+            <div>
+                <i class="<?php echo (in_array($tool->req_itemtype_id, $inventory_items_types)) ? 'icon-check' : 'icon-check-empty'; ?>"></i>
+                <?php echo $tool->required_itemtype->name; ?>
+            </div>
+        <?php endforeach; ?>
+        <?php foreach($optional_tools as $tool): ?>
+            <div>
+                <i class="<?php echo (in_array($tool->req_itemtype_id, $inventory_items_types)) ? 'icon-check' : 'icon-check-empty'; ?>"></i>
+                <?php echo $tool->required_itemtype->name; ?> (opcja, zwiększa szybkość o <?php echo $tool->speed; ?>)
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </div>
 <div class="clear"></div> 
 

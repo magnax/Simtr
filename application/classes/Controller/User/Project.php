@@ -16,6 +16,9 @@ class Controller_User_Project extends Controller_Base_Character {
         $projects = $this->location->getProjectsIds();
         
         $this->view->projects = array();
+        
+        //get character's inventory items types
+        $inventory_items_types = $this->character->get_inventory_items_types();
 
         foreach ($projects as $project_id) {
             
@@ -31,6 +34,20 @@ class Controller_User_Project extends Controller_Base_Character {
             $workers = $project->get_workers();
             
             $progress = $project->calculateProgress();
+            $can_join = !(isset($progress) && $progress == '-');
+
+            //get tools required to work with this project
+            $mandatory_tools = $project->get_mandatory_tools();
+            
+            foreach ($mandatory_tools as $tool) {
+
+                if (!in_array($tool->req_itemtype_id, $inventory_items_types)) {
+                    $can_join = false;
+                    $tools_required = true;
+                    break;
+                }
+
+            }
             
             $this->view->projects[] = array(
                 'id' => $project->id,
@@ -41,7 +58,8 @@ class Controller_User_Project extends Controller_Base_Character {
                 'progress' => $progress,
                 'running' => !!$workers,
                 'workers' => count($workers),
-                'can_join' => !(isset($progress) && $progress == '-'),
+                'can_join' => $can_join,
+                'tools_required' => (isset($tools_required) && $tools_required) ? true : false,
                 'can_delete' => !$workers && (($project->owner_id == $this->character->id) || 
                         ($project->created_at - $this->game->raw_time >= 20*Model_GameTime::DAY_LENGTH)),
             );
@@ -83,7 +101,10 @@ class Controller_User_Project extends Controller_Base_Character {
             }
         }
         
-        $project_array['name'] = $project->get_name();
+        $project_array['name'] = $project->get_name(array(
+            'location' => $this->location,
+            'character' => $this->character
+        ));
         $project_array['date'] = Model_GameTime::formatDateTime($project->created_at, 'd-h');
         $project_array['progress'] = number_format((100 * $project->time_elapsed / $project->time), 2).' procent';
         $project_array['materials'] = array();
@@ -92,11 +113,28 @@ class Controller_User_Project extends Controller_Base_Character {
         } else {
             $project_array['time'] = gmdate('d H:i', $project->time);
         }
-        //print_r($project);
+
         $this->view->project = $project_array;
 
         $this->view->project_specs = $project->getAllSpecs();
         $this->view->can_join = $project->hasAllSpecs();
+        
+        $mandatory_tools = $project->get_mandatory_tools();
+        $optional_tools = $project->get_optional_tools();
+        
+        $this->view->mandatory_tools = $mandatory_tools;
+        $this->view->optional_tools = $optional_tools;
+        
+        $this->view->inventory_items_types = $inventory_items_types = $this->character->get_inventory_items_types();
+        
+        foreach ($mandatory_tools as $tool) {
+        
+            if (!in_array($tool->req_itemtype_id, $inventory_items_types)) {
+                $this->view->can_join = false;
+                break;
+            }
+            
+        }
         
     }
 

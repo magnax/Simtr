@@ -69,6 +69,8 @@ class Controller_User_Location extends Controller_Base_Character {
         $this->view->items = $this->location->getItems();
         $this->view->notes = $this->location->getNotes();
         $corpses = $this->location->getCorpses();
+        
+        $this->view->machines = $this->location->machines->find_all();
        
         $this->view->corpses = array();
         
