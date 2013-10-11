@@ -31,7 +31,10 @@ class Controller_Admin_Resource extends Controller_Base_Admin {
             
         }
         
-        $this->view->resource = $resource;
+        $this->template->content = View::factory('admin/resource/edit')
+            ->bind('resource', $resource)
+            ->set('projecttypes', Model_ProjectType::get_all());
+        
     }
     
 }

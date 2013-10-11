@@ -7,6 +7,7 @@
 <?php echo Form::hidden('redir', isset($redir) ? $redir : $request->referrer()); ?>
 <?php echo Form::hidden('id', $resource->id); ?>
 Nazwa: <?php echo Form::input('name', $resource->name); ?><br />
+Typ projektu: <?php echo Form::select('projecttype_id', $projecttypes, $resource->projecttype_id); ?><br />
 Podstawa: <?php echo Form::input('gather_base', $resource->gather_base); ?><br />
 Raw: <?php echo Form::checkbox('is_raw', 1, !!$resource->is_raw); ?><br />
 Dopełniacz: <?php echo Form::input('d', $resource->d); ?><br />
